@@ -343,7 +343,7 @@ static void dm_test_fill_color_attr_rgb_format(struct kunit *test)
 	plane_state.color_encoding = DRM_COLOR_YCBCR_BT709;
 	plane_state.color_range = DRM_COLOR_YCBCR_FULL_RANGE;
 
-	ret = fill_plane_color_attributes(&plane_state,
+	ret = fill_plane_color_attributes(NULL, &plane_state,
 					  SURFACE_PIXEL_FORMAT_GRPH_ARGB8888,
 					  &color_space);
 	KUNIT_EXPECT_EQ(test, ret, 0);
@@ -363,7 +363,7 @@ static void dm_test_fill_color_attr_bt601_full(struct kunit *test)
 	plane_state.color_encoding = DRM_COLOR_YCBCR_BT601;
 	plane_state.color_range = DRM_COLOR_YCBCR_FULL_RANGE;
 
-	ret = fill_plane_color_attributes(&plane_state,
+	ret = fill_plane_color_attributes(NULL, &plane_state,
 					  SURFACE_PIXEL_FORMAT_VIDEO_420_YCbCr,
 					  &color_space);
 	KUNIT_EXPECT_EQ(test, ret, 0);
@@ -383,7 +383,7 @@ static void dm_test_fill_color_attr_bt601_limited(struct kunit *test)
 	plane_state.color_encoding = DRM_COLOR_YCBCR_BT601;
 	plane_state.color_range = DRM_COLOR_YCBCR_LIMITED_RANGE;
 
-	ret = fill_plane_color_attributes(&plane_state,
+	ret = fill_plane_color_attributes(NULL, &plane_state,
 					  SURFACE_PIXEL_FORMAT_VIDEO_420_YCbCr,
 					  &color_space);
 	KUNIT_EXPECT_EQ(test, ret, 0);
@@ -404,7 +404,7 @@ static void dm_test_fill_color_attr_bt709_full(struct kunit *test)
 	plane_state.color_encoding = DRM_COLOR_YCBCR_BT709;
 	plane_state.color_range = DRM_COLOR_YCBCR_FULL_RANGE;
 
-	ret = fill_plane_color_attributes(&plane_state,
+	ret = fill_plane_color_attributes(NULL, &plane_state,
 					  SURFACE_PIXEL_FORMAT_VIDEO_420_YCbCr,
 					  &color_space);
 	KUNIT_EXPECT_EQ(test, ret, 0);
@@ -424,7 +424,7 @@ static void dm_test_fill_color_attr_bt709_limited(struct kunit *test)
 	plane_state.color_encoding = DRM_COLOR_YCBCR_BT709;
 	plane_state.color_range = DRM_COLOR_YCBCR_LIMITED_RANGE;
 
-	ret = fill_plane_color_attributes(&plane_state,
+	ret = fill_plane_color_attributes(NULL, &plane_state,
 					  SURFACE_PIXEL_FORMAT_VIDEO_420_YCbCr,
 					  &color_space);
 	KUNIT_EXPECT_EQ(test, ret, 0);
@@ -445,7 +445,7 @@ static void dm_test_fill_color_attr_bt2020_full(struct kunit *test)
 	plane_state.color_encoding = DRM_COLOR_YCBCR_BT2020;
 	plane_state.color_range = DRM_COLOR_YCBCR_FULL_RANGE;
 
-	ret = fill_plane_color_attributes(&plane_state,
+	ret = fill_plane_color_attributes(NULL, &plane_state,
 					  SURFACE_PIXEL_FORMAT_VIDEO_420_YCbCr,
 					  &color_space);
 	KUNIT_EXPECT_EQ(test, ret, 0);
@@ -466,7 +466,7 @@ static void dm_test_fill_color_attr_bt2020_limited(struct kunit *test)
 	plane_state.color_encoding = DRM_COLOR_YCBCR_BT2020;
 	plane_state.color_range = DRM_COLOR_YCBCR_LIMITED_RANGE;
 
-	ret = fill_plane_color_attributes(&plane_state,
+	ret = fill_plane_color_attributes(NULL, &plane_state,
 					  SURFACE_PIXEL_FORMAT_VIDEO_420_YCbCr,
 					  &color_space);
 	KUNIT_EXPECT_EQ(test, ret, 0);
@@ -487,7 +487,7 @@ static void dm_test_fill_color_attr_invalid_encoding(struct kunit *test)
 	plane_state.color_encoding = 99;
 	plane_state.color_range = DRM_COLOR_YCBCR_FULL_RANGE;
 
-	ret = fill_plane_color_attributes(&plane_state,
+	ret = fill_plane_color_attributes(NULL, &plane_state,
 					  SURFACE_PIXEL_FORMAT_VIDEO_420_YCbCr,
 					  &color_space);
 	KUNIT_EXPECT_EQ(test, ret, -EINVAL);
@@ -3628,8 +3628,9 @@ dm_test_plane_info_ctx_alloc(struct kunit *test, struct amdgpu_device *adev,
 
 static int dm_test_fill_plane_info(struct dm_test_plane_info_ctx *ctx)
 {
-	return fill_dc_plane_info_and_addr(ctx->adev, ctx->plane_state,
-					   &ctx->plane_info, &ctx->address, false);
+	return fill_dc_plane_info_and_addr(ctx->adev, ctx->plane_state->state,
+					   ctx->plane_state, &ctx->plane_info,
+					   &ctx->address, false);
 }
 
 static const struct {
