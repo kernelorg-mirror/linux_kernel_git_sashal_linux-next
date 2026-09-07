@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>linux-next Merge Run Report</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+       line-height: 1.6; color: #333; max-width: 1400px; margin: 0 auto; padding: 20px; }
+h1 { margin-bottom: 10px; }
+h2 { margin: 30px 0 15px; border-bottom: 2px solid #ddd; padding-bottom: 8px; }
+h3 { margin: 20px 0 10px; }
+.timestamp { color: #666; margin-bottom: 5px; }
+.time-range { color: #888; font-size: 0.9em; margin-bottom: 20px; }
+.summary { display: flex; gap: 15px; flex-wrap: wrap; margin: 20px 0; }
+.stat { background: #f5f5f5; border-radius: 8px; padding: 15px 20px; min-width: 120px; }
+.stat .number { font-size: 2em; font-weight: bold; }
+.stat .label { color: #666; font-size: 0.9em; }
+.stat.conflict .number { color: #9a6700; }
+.stat.rerere .number { color: #0969da; }
+.stat.build-fix .number { color: #cf222e; }
+table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #eee; }
+th { background: #f5f5f5; font-weight: 600; }
+tr:hover { background: #f9f9f9; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.85em;
+          font-weight: 500; }
+.badge.conflict { background: #fff8c5; color: #9a6700; }
+.badge.build-fix { background: #ffebe9; color: #cf222e; }
+.badge.rerere { background: #ddf4ff; color: #0969da; }
+details { margin: 5px 0; }
+summary { cursor: pointer; padding: 5px; font-weight: 500; }
+summary:hover { background: #f5f5f5; }
+.diff { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 6px;
+         overflow-x: auto; font-family: 'SFMono-Regular', Consolas, monospace;
+         font-size: 0.85em; white-space: pre; margin: 10px 0; max-height: 600px;
+         overflow-y: auto; }
+.diff .add { color: #3fb950; }
+.diff .del { color: #f85149; }
+.diff .hdr { color: #79c0ff; }
+.diff .ctx { color: #8b949e; }
+nav { position: sticky; top: 0; background: white; padding: 10px 0; border-bottom: 1px solid #ddd;
+       margin-bottom: 20px; z-index: 100; }
+nav a { margin-right: 20px; text-decoration: none; color: #0969da; }
+nav a:hover { text-decoration: underline; }
+.controls { display: flex; gap: 15px; align-items: center; margin: 10px 0; }
+.controls select { padding: 5px 10px; border: 1px solid #ccc; border-radius: 4px; }
+.controls button { padding: 5px 12px; border: 1px solid #ccc; border-radius: 4px;
+                    background: #f5f5f5; cursor: pointer; }
+.controls button:hover { background: #e5e5e5; }
+.empty-state { text-align: center; padding: 60px 20px; color: #666; }
+.empty-state .icon { font-size: 3em; color: #2ea043; }
+.empty-state p { font-size: 1.1em; margin-top: 10px; }
+.category-count { background: #f5f5f5; border-radius: 12px; padding: 2px 10px;
+                   font-size: 0.85em; color: #666; display: inline-block; margin-left: 8px; }
+</style>
+</head>
+<body>
+<h1>linux-next Merge Run Report</h1>
+<p class="timestamp">Generated: 2026-09-07 22:24 UTC</p>
+<p class="time-range">Run window: 2026-09-07 20:26 UTC &mdash; 2026-09-07 22:18 UTC</p>
+
+<nav>
+    <a href="#summary">Summary</a>
+    <a href="#interventions">All Interventions</a>
+    <a href="#by-category">By Category</a>
+</nav>
+
+<h2 id="summary">Summary</h2>
+<div class="summary">
+    <div class="stat"><div class="number">3</div><div class="label">Total Interventions</div></div>
+    <div class="stat conflict"><div class="number">2</div><div class="label">Conflicts</div></div>
+    <div class="stat rerere"><div class="number">1</div><div class="label">Rerere</div></div>
+    <div class="stat build-fix"><div class="number">0</div><div class="label">Build Fixes</div></div>
+    <div class="stat"><div class="number">3</div><div class="label">Trees Affected</div></div>
+    <div class="stat"><div class="number">2</div><div class="label">Categories</div></div>
+</div>
+
+<h2 id="interventions">All Interventions</h2>
+<div class="controls">
+    <label>Filter: <select id="type-filter" onchange="filterByType(this.value)">
+        <option value="all">All types</option>
+        <option value="conflict">Conflicts</option>
+        <option value="rerere">Rerere</option>
+        <option value="build-fix">Build Fixes</option>
+    </select></label>
+    <button onclick="toggleAll()">Expand / Collapse All</button>
+</div>
+<table id="main-table">
+<thead>
+<tr><th>Tree</th><th>Category</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr data-type="rerere" data-category="fs">
+<td><code>ksmbd</code></td>
+<td>fs</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>-</code></td>
+<td>20:26 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">d0191e7d24bbf10d213310131f6ed1fa802bd855
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="fs">
+<td><code>fs-next</code></td>
+<td>fs</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>Documentation/filesystems/proc.rst, MAINTAINERS, arch/powerpc/Kconfig (+2 more)</code></td>
+<td>22:05 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">50bb23815fc99a51889815e47c1feb0867d17173
+<span class="hdr">diff --cc tools/testing/selftests/Makefile</span>
+<span class="ctx">index 330d061f6366f,08f228765a930..a0de44e7bb61f</span>
+<span class="hdr">--- a/tools/testing/selftests/Makefile</span>
+<span class="hdr">+++ b/tools/testing/selftests/Makefile</span>
+<span class="ctx">@@@ -35,11 -35,9 +35,12 @@@ TARGETS += fchmodat</span>
+  TARGETS += filesystems
+  TARGETS += filesystems/binderfs
+  TARGETS += filesystems/epoll
+ +TARGETS += filesystems/eventfd
+  TARGETS += filesystems/failfs
+  TARGETS += filesystems/fat
+<span class="add">+ TARGETS += filesystems/file_stressor</span>
+ +TARGETS += filesystems/openat2
+ +TARGETS += filesystems/open_tree_ns
+  TARGETS += filesystems/overlayfs
+  TARGETS += filesystems/statmount
+  TARGETS += filesystems/mount-notify
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="security">
+<td><code>security-next</code></td>
+<td>security</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>include/linux/ns/ns_common_types.h, include/linux/sched.h</code></td>
+<td>22:18 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">106027097c9701dbc88b9df062a0aa7aea97d632
+<span class="hdr">diff --cc include/linux/ns/ns_common_types.h</span>
+<span class="ctx">index 6ed6b497831c7,5cfe0ce3c8818..47a5cfe2326a3</span>
+<span class="hdr">--- a/include/linux/ns/ns_common_types.h</span>
+<span class="hdr">+++ b/include/linux/ns/ns_common_types.h</span>
+<span class="ctx">@@@ -116,8 -116,13 +116,11 @@@ struct ns_common </span>
+  	struct dentry *stashed;
+  	const struct proc_ns_operations *ops;
+  	unsigned int inum;
+<span class="add">+ #ifdef CONFIG_SECURITY</span>
+<span class="add">+ 	void *ns_security;</span>
+<span class="add">+ #endif</span>
+ -	union {
+ -		struct ns_tree;
+ -		struct rcu_head ns_rcu;
+ -	};
+ +	struct ns_tree;
+ +	struct rcu_head ns_rcu;
+  };
+  
+  #define to_ns_common(__ns)                                    \
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h2 id="by-category">By Category</h2>
+<h3>fs <span class="category-count">2</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ksmbd</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>-</code></td>
+<td>20:26 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">d0191e7d24bbf10d213310131f6ed1fa802bd855
+</div>
+</details></td>
+</tr>
+<tr>
+<td><code>fs-next</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>Documentation/filesystems/proc.rst, MAINTAINERS, arch/powerpc/Kconfig (+2 more)</code></td>
+<td>22:05 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">50bb23815fc99a51889815e47c1feb0867d17173
+<span class="hdr">diff --cc tools/testing/selftests/Makefile</span>
+<span class="ctx">index 330d061f6366f,08f228765a930..a0de44e7bb61f</span>
+<span class="hdr">--- a/tools/testing/selftests/Makefile</span>
+<span class="hdr">+++ b/tools/testing/selftests/Makefile</span>
+<span class="ctx">@@@ -35,11 -35,9 +35,12 @@@ TARGETS += fchmodat</span>
+  TARGETS += filesystems
+  TARGETS += filesystems/binderfs
+  TARGETS += filesystems/epoll
+ +TARGETS += filesystems/eventfd
+  TARGETS += filesystems/failfs
+  TARGETS += filesystems/fat
+<span class="add">+ TARGETS += filesystems/file_stressor</span>
+ +TARGETS += filesystems/openat2
+ +TARGETS += filesystems/open_tree_ns
+  TARGETS += filesystems/overlayfs
+  TARGETS += filesystems/statmount
+  TARGETS += filesystems/mount-notify
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>security <span class="category-count">1</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>security-next</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>include/linux/ns/ns_common_types.h, include/linux/sched.h</code></td>
+<td>22:18 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">106027097c9701dbc88b9df062a0aa7aea97d632
+<span class="hdr">diff --cc include/linux/ns/ns_common_types.h</span>
+<span class="ctx">index 6ed6b497831c7,5cfe0ce3c8818..47a5cfe2326a3</span>
+<span class="hdr">--- a/include/linux/ns/ns_common_types.h</span>
+<span class="hdr">+++ b/include/linux/ns/ns_common_types.h</span>
+<span class="ctx">@@@ -116,8 -116,13 +116,11 @@@ struct ns_common </span>
+  	struct dentry *stashed;
+  	const struct proc_ns_operations *ops;
+  	unsigned int inum;
+<span class="add">+ #ifdef CONFIG_SECURITY</span>
+<span class="add">+ 	void *ns_security;</span>
+<span class="add">+ #endif</span>
+ -	union {
+ -		struct ns_tree;
+ -		struct rcu_head ns_rcu;
+ -	};
+ +	struct ns_tree;
+ +	struct rcu_head ns_rcu;
+  };
+  
+  #define to_ns_common(__ns)                                    \
+</div>
+</details></td>
+</tr>
+</tbody></table>
+
+<script>
+function filterByType(type) {
+    var rows = document.querySelectorAll('#main-table tbody tr');
+    for (var i = 0; i < rows.length; i++) {
+        rows[i].style.display = (type === 'all' || rows[i].dataset.type === type) ? '' : 'none';
+    }
+}
+function toggleAll() {
+    var details = document.querySelectorAll('details');
+    var anyOpen = false;
+    for (var i = 0; i < details.length; i++) {
+        if (details[i].open) { anyOpen = true; break; }
+    }
+    for (var i = 0; i < details.length; i++) {
+        details[i].open = !anyOpen;
+    }
+}
+</script>
+</body></html>
