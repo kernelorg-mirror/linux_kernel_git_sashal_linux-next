@@ -6580,6 +6580,7 @@ M:	Vishal Verma <vishal.l.verma@intel.com>
 M:	Dan Williams <djbw@kernel.org>
 R:	Ira Weiny <iweiny@kernel.org>
 R:	Li Ming <ming.li@zohomail.com>
+R:	Richard Cheng <icheng@nvidia.com>
 L:	linux-cxl@vger.kernel.org
 S:	Maintained
 F:	Documentation/driver-api/cxl
@@ -9762,6 +9763,7 @@ M:	Jeff Layton <jlayton@kernel.org>
 S:	Maintained
 F:	include/linux/errseq.h
 F:	lib/errseq.c
+F:	lib/tests/errseq_kunit.c
 
 ESD CAN NETWORK DRIVERS
 M:	Stefan Mätje <stefan.maetje@esd.eu>
@@ -17357,8 +17359,10 @@ F:	Documentation/ABI/testing/sysfs-kernel-mm-cma
 F:	Documentation/ABI/testing/sysfs-kernel-mm-memory-tiers
 F:	Documentation/ABI/testing/sysfs-kernel-mm-numa
 F:	Documentation/admin-guide/mm/
+F:	Documentation/core-api/memory-allocation.rst
+F:	Documentation/core-api/mm-api.rst
 F:	Documentation/mm/
-F:	drivers/char/mem.c
+F:	mm/char-mem.c
 F:	include/linux/cma.h
 F:	include/linux/dmapool.h
 F:	include/linux/ioremap.h
@@ -17563,7 +17567,7 @@ L:	linux-mm@kvack.org
 S:	Maintained
 W:	http://www.linux-mm.org
 T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-F:	drivers/char/mem.c
+F:	mm/char-mem.c
 F:	include/trace/events/mmap.h
 F:	fs/proc/task_mmu.c
 F:	fs/proc/task_nommu.c
@@ -24072,6 +24076,7 @@ K:	\b(?i:rust)\b
 
 RUST [ALLOC]
 M:	Danilo Krummrich <dakr@kernel.org>
+M:	Alice Ryhl <aliceryhl@google.com>
 R:	Lorenzo Stoakes <ljs@kernel.org>
 R:	Vlastimil Babka <vbabka@kernel.org>
 R:	Liam R. Howlett <liam@infradead.org>
@@ -28721,7 +28726,6 @@ L:	iommu@lists.linux.dev
 S:	Maintained
 F:	Documentation/devicetree/bindings/iommu/verisilicon,iommu.yaml
 F:	drivers/iommu/vsi-iommu.c
-F:	include/linux/vsi-iommu.h
 
 VF610 NAND DRIVER
 M:	Stefan Agner <stefan@agner.ch>
