@@ -543,25 +543,24 @@ static int backtrack_insn(struct bpf_verifier_env *env, int idx, int subseq_idx,
 
 			/* Backtracking to a nested function call, 'idx' is a part of
 			 * the inner frame 'subseq_idx' is a part of the outer frame.
-			 * In case of a regular function call, instructions giving
-			 * precision to registers R1-R5 should have been found already.
+			 * In case of a regular function call, the callee defines the
+			 * return registers R0 and R2, so clear them before checking
+			 * that instructions giving precision to registers R1-R5 have
+			 * been found already. R2 is also an argument register, hence
+			 * it has to be cleared before that check.
 			 * In case of a callback from bpf_loop(), R{1,4} in the calling
-			 * frame would be set as precise and that is correct.
-			 *
-			 * R2 is a return register as well, so for a subprog call it
-			 * has to be cleared before the check below, as it is a part
-			 * of BPF_REGMASK_ARGS.
+			 * frame would be set as precise and that is correct, and R2
+			 * might be a precise helper argument as well, so leave it set.
 			 */
-			if (from_subprog_call) {
+			bt_clear_reg(bt, BPF_REG_0);
+			if (from_subprog_call)
 				bt_clear_reg(bt, BPF_REG_2);
-				if (bt_reg_mask(bt) & BPF_REGMASK_ARGS) {
-					verifier_bug(env, "backtracking exit unexpected regs %x",
-						     bt_reg_mask(bt));
-					return -EFAULT;
-				}
+			if (from_subprog_call && (bt_reg_mask(bt) & BPF_REGMASK_ARGS)) {
+				verifier_bug(env, "backtracking exit unexpected regs %x",
+					     bt_reg_mask(bt));
+				return -EFAULT;
 			}
 
-			bt_clear_reg(bt, BPF_REG_0);
 			if (bt_subprog_enter(bt))
 				return -EFAULT;
 
