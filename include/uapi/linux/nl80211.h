@@ -5900,6 +5900,9 @@ enum nl80211_key_attributes {
  *	see &struct nl80211_txrate_eht
  * @NL80211_TXRATE_EHT_GI: configure EHT GI, (u8, see &enum nl80211_eht_gi)
  * @NL80211_TXRATE_EHT_LTF: configure EHT LTF, (u8, see &enum nl80211_eht_ltf)
+ * @NL80211_TXRATE_6GHZ_NON_HT_DUP: configure 6 GHz non-HT duplicate Beacon
+ *	transmission. This flag is applicable only in Beacon TX rate setting
+ *	and must be accompanied by a non-HT (legacy) Beacon rate.
  * @__NL80211_TXRATE_AFTER_LAST: internal
  * @NL80211_TXRATE_MAX: highest TX rate attribute
  */
@@ -5915,6 +5918,7 @@ enum nl80211_tx_rate_attributes {
 	NL80211_TXRATE_EHT,
 	NL80211_TXRATE_EHT_GI,
 	NL80211_TXRATE_EHT_LTF,
+	NL80211_TXRATE_6GHZ_NON_HT_DUP,
 
 	/* keep last */
 	__NL80211_TXRATE_AFTER_LAST,
@@ -7110,6 +7114,10 @@ enum nl80211_feature_flags {
  * @NL80211_EXT_FEATURE_PROBE_AP: Driver supports probing the associated AP
  *	in STA mode using @NL80211_CMD_PROBE_PEER.
  *
+ * @NL80211_EXT_FEATURE_FAST_ROAM_OFFLOAD: Driver supports fast roaming
+ *	offload in station mode, including Fast Transition or Opportunistic
+ *	Key Caching.
+ *
  * @NUM_NL80211_EXT_FEATURES: number of extended features.
  * @MAX_NL80211_EXT_FEATURES: highest extended feature index.
  */
@@ -7192,6 +7200,7 @@ enum nl80211_ext_feature_index {
 	NL80211_EXT_FEATURE_ROC_ADDR_FILTER,
 	NL80211_EXT_FEATURE_SET_KEY_LTF_SEED,
 	NL80211_EXT_FEATURE_PROBE_AP,
+	NL80211_EXT_FEATURE_FAST_ROAM_OFFLOAD,
 
 	/* add new features before the definition below */
 	NUM_NL80211_EXT_FEATURES,
