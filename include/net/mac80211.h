@@ -1770,10 +1770,9 @@ enum mac80211_rx_encoding {
  * @ampdu_reference: A-MPDU reference number, must be a different value for
  *	each A-MPDU but the same for each subframe within one A-MPDU
  * @zero_length_psdu_type: radiotap type of the 0-length PSDU
- * @link_valid: if the link which is identified by @link_id is valid. This flag
- *	is set only when connection is MLO.
- * @link_id: id of the link used to receive the packet. This is used along with
- *	@link_valid.
+ * @link_id: id of the link used to receive the packet. Set and used by
+ *	mac80211 internally, it uses @freq set by the driver to identify the
+ *	correct link per vif.
  */
 struct ieee80211_rx_status {
 	u64 mactime;
@@ -1813,7 +1812,7 @@ struct ieee80211_rx_status {
 	u8 chains;
 	s8 chain_signal[IEEE80211_MAX_CHAINS];
 	u8 zero_length_psdu_type;
-	u8 link_valid:1, link_id:4;
+	u8 link_id:4;
 };
 
 static_assert(sizeof(struct ieee80211_rx_status) <= sizeof_field(struct sk_buff, cb));
@@ -5389,14 +5388,18 @@ void ieee80211_restart_hw(struct ieee80211_hw *hw);
  * mixed for a single hardware. Must not run concurrently with
  * ieee80211_tx_status_skb() or ieee80211_tx_status_ni().
  *
+ * For data frames, when hardware has done address translation, a link station
+ * has to be provided and the frequency information may be skipped.
+ *
  * This function must be called with BHs disabled and RCU read lock
  *
  * @hw: the hardware this frame came in on
- * @sta: the station the frame was received from, or %NULL
+ * @link_sta: the link station the data frame was received from, or %NULL
  * @skb: the buffer to receive, owned by mac80211 after this call
  * @list: the destination list
  */
-void ieee80211_rx_list(struct ieee80211_hw *hw, struct ieee80211_sta *sta,
+void ieee80211_rx_list(struct ieee80211_hw *hw,
+		       struct ieee80211_link_sta *link_sta,
 		       struct sk_buff *skb, struct list_head *list);
 
 /**
@@ -5414,14 +5417,18 @@ void ieee80211_rx_list(struct ieee80211_hw *hw, struct ieee80211_sta *sta,
  * mixed for a single hardware. Must not run concurrently with
  * ieee80211_tx_status_skb() or ieee80211_tx_status_ni().
  *
+ * For data frames, when hardware has done address translation, a link station
+ * has to be provided and the frequency information may be skipped.
+ *
  * This function must be called with BHs disabled.
  *
  * @hw: the hardware this frame came in on
- * @sta: the station the frame was received from, or %NULL
+ * @link_sta: the link station the data frame was received from, or %NULL
  * @skb: the buffer to receive, owned by mac80211 after this call
  * @napi: the NAPI context
  */
-void ieee80211_rx_napi(struct ieee80211_hw *hw, struct ieee80211_sta *sta,
+void ieee80211_rx_napi(struct ieee80211_hw *hw,
+		       struct ieee80211_link_sta *link_sta,
 		       struct sk_buff *skb, struct napi_struct *napi);
 
 /**
