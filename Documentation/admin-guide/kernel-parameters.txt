@@ -4300,7 +4300,11 @@ Kernel parameters
 			Note that if CONFIG_MODULE_SIG_FORCE is set, that
 			is always true, so this option does nothing.
 
-	module_blacklist=  [KNL] Do not load a comma-separated list of
+	module_blacklist=  [KNL] (deprecated)
+			This parameter has been renamed to module_denylist=.
+			Please use module_denylist= instead.
+
+	module_denylist=  [KNL] Do not load a comma-separated list of
 			modules.  Useful for debugging problem modules.
 
 	mousedev.tap_time=
@@ -6668,6 +6672,9 @@ Kernel parameters
 			12 megabytes of 4096 alignment for ramoops:
 
 			reserve_mem=12M:4096:oops ramoops.mem_name=oops
+
+			Both the size and the alignment must be multiples of
+			the page size.
 
 	reservetop=	[X86-32,EARLY]
 			Format: nn[KMG]
