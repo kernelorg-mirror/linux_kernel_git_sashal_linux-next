@@ -214,8 +214,12 @@ impl CommandToGsp for GetGspStaticInfo {
 /// The reply from the GSP to the [`GetGspStaticInfo`] command.
 pub(crate) struct GetGspStaticInfoReply {
     gpu_name: [u8; 64],
+    /// BAR1 Page Directory Entry base address.
+    pub(crate) bar1_pde_base: u64,
     /// Usable FB (VRAM) regions for driver memory allocation.
     pub(crate) usable_fb_regions: KVec<Range<u64>>,
+    /// Exclusive end of the FB physical address space.
+    pub(crate) total_fb_end: u64,
 }
 
 impl MessageFromGsp for GetGspStaticInfoReply {
@@ -231,10 +235,13 @@ impl MessageFromGsp for GetGspStaticInfoReply {
         for region in msg.usable_fb_regions() {
             usable_fb_regions.push(region, GFP_KERNEL)?;
         }
+        let total_fb_end = msg.total_fb_end().ok_or(EINVAL)?;
 
         Ok(GetGspStaticInfoReply {
             gpu_name: msg.gpu_name_str(),
+            bar1_pde_base: msg.bar1_pde_base(),
             usable_fb_regions,
+            total_fb_end,
         })
     }
 }
