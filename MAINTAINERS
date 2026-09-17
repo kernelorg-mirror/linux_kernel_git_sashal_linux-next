@@ -7494,6 +7494,7 @@ F:	rust/kernel/io.rs
 F:	rust/kernel/io/
 F:	rust/kernel/irq.rs
 F:	rust/kernel/irq/
+F:	rust/macros/io/
 
 DEVICE RESOURCE MANAGEMENT HELPERS
 M:	Hans de Goede <hansg@kernel.org>
@@ -26817,11 +26818,6 @@ L:	tech-board-discuss@lists.linux.dev
 S:	Maintained
 F:	Documentation/process/contribution-maturity-model.rst
 F:	Documentation/process/researcher-guidelines.rst
-
-TECHNOLOGIC SYSTEMS TS-5500 PLATFORM SUPPORT
-M:	"Savoir-faire Linux Inc." <kernel@savoirfairelinux.com>
-S:	Maintained
-F:	arch/x86/platform/ts5500/
 
 TECHNOTREND USB IR RECEIVER
 M:	Sean Young <sean@mess.org>
