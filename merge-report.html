@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>linux-next Merge Run Report</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+       line-height: 1.6; color: #333; max-width: 1400px; margin: 0 auto; padding: 20px; }
+h1 { margin-bottom: 10px; }
+h2 { margin: 30px 0 15px; border-bottom: 2px solid #ddd; padding-bottom: 8px; }
+h3 { margin: 20px 0 10px; }
+.timestamp { color: #666; margin-bottom: 5px; }
+.time-range { color: #888; font-size: 0.9em; margin-bottom: 20px; }
+.summary { display: flex; gap: 15px; flex-wrap: wrap; margin: 20px 0; }
+.stat { background: #f5f5f5; border-radius: 8px; padding: 15px 20px; min-width: 120px; }
+.stat .number { font-size: 2em; font-weight: bold; }
+.stat .label { color: #666; font-size: 0.9em; }
+.stat.conflict .number { color: #9a6700; }
+.stat.rerere .number { color: #0969da; }
+.stat.build-fix .number { color: #cf222e; }
+table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #eee; }
+th { background: #f5f5f5; font-weight: 600; }
+tr:hover { background: #f9f9f9; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.85em;
+          font-weight: 500; }
+.badge.conflict { background: #fff8c5; color: #9a6700; }
+.badge.build-fix { background: #ffebe9; color: #cf222e; }
+.badge.rerere { background: #ddf4ff; color: #0969da; }
+details { margin: 5px 0; }
+summary { cursor: pointer; padding: 5px; font-weight: 500; }
+summary:hover { background: #f5f5f5; }
+.diff { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 6px;
+         overflow-x: auto; font-family: 'SFMono-Regular', Consolas, monospace;
+         font-size: 0.85em; white-space: pre; margin: 10px 0; max-height: 600px;
+         overflow-y: auto; }
+.diff .add { color: #3fb950; }
+.diff .del { color: #f85149; }
+.diff .hdr { color: #79c0ff; }
+.diff .ctx { color: #8b949e; }
+nav { position: sticky; top: 0; background: white; padding: 10px 0; border-bottom: 1px solid #ddd;
+       margin-bottom: 20px; z-index: 100; }
+nav a { margin-right: 20px; text-decoration: none; color: #0969da; }
+nav a:hover { text-decoration: underline; }
+.controls { display: flex; gap: 15px; align-items: center; margin: 10px 0; }
+.controls select { padding: 5px 10px; border: 1px solid #ccc; border-radius: 4px; }
+.controls button { padding: 5px 12px; border: 1px solid #ccc; border-radius: 4px;
+                    background: #f5f5f5; cursor: pointer; }
+.controls button:hover { background: #e5e5e5; }
+.empty-state { text-align: center; padding: 60px 20px; color: #666; }
+.empty-state .icon { font-size: 3em; color: #2ea043; }
+.empty-state p { font-size: 1.1em; margin-top: 10px; }
+.category-count { background: #f5f5f5; border-radius: 12px; padding: 2px 10px;
+                   font-size: 0.85em; color: #666; display: inline-block; margin-left: 8px; }
+</style>
+</head>
+<body>
+<h1>linux-next Merge Run Report</h1>
+<p class="timestamp">Generated: 2026-09-17 19:55 UTC</p>
+<p class="time-range">Run window: 2026-09-17 15:21 UTC &mdash; 2026-09-17 19:45 UTC</p>
+
+<nav>
+    <a href="#summary">Summary</a>
+    <a href="#interventions">All Interventions</a>
+    <a href="#by-category">By Category</a>
+</nav>
+
+<h2 id="summary">Summary</h2>
+<div class="summary">
+    <div class="stat"><div class="number">18</div><div class="label">Total Interventions</div></div>
+    <div class="stat conflict"><div class="number">14</div><div class="label">Conflicts</div></div>
+    <div class="stat rerere"><div class="number">4</div><div class="label">Rerere</div></div>
+    <div class="stat build-fix"><div class="number">0</div><div class="label">Build Fixes</div></div>
+    <div class="stat"><div class="number">16</div><div class="label">Trees Affected</div></div>
+    <div class="stat"><div class="number">9</div><div class="label">Categories</div></div>
+</div>
+
+<h2 id="interventions">All Interventions</h2>
+<div class="controls">
+    <label>Filter: <select id="type-filter" onchange="filterByType(this.value)">
+        <option value="all">All types</option>
+        <option value="conflict">Conflicts</option>
+        <option value="rerere">Rerere</option>
+        <option value="build-fix">Build Fixes</option>
+    </select></label>
+    <button onclick="toggleAll()">Expand / Collapse All</button>
+</div>
+<table id="main-table">
+<thead>
+<tr><th>Tree</th><th>Category</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr data-type="rerere" data-category="bus">
+<td><code>i2c-rust</code></td>
+<td>bus</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>-</code></td>
+<td>15:21 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">7217d52f5957a79c465225ed69491280f4138087
+</div>
+</details></td>
+</tr>
+<tr data-type="rerere" data-category="crypto">
+<td><code>ipsec-next</code></td>
+<td>crypto</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>MAINTAINERS, drivers/net/ethernet/cortina/gemini.c, drivers/net/ethernet/meta/fbnic/fbnic_txrx.c (+8 more)</code></td>
+<td>15:35 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">8c77be600d54f592693798f73727e657679f1ae3
+<span class="hdr">diff --cc net/bridge/br_mst.c</span>
+<span class="ctx">index 1654efd3045b0,ecd8bba7430ee..63fc1dd0e9bc0</span>
+<span class="hdr">--- a/net/bridge/br_mst.c</span>
+<span class="hdr">+++ b/net/bridge/br_mst.c</span>
+<span class="ctx">@@@ -117,16 -119,11 +117,16 @@@ int br_mst_set_state(struct net_bridge_</span>
+  		err = switchdev_port_attr_set(p-&gt;dev, &amp;attr, extack);
+  		if (err &amp;&amp; err != -EOPNOTSUPP)
+  			goto out;
+ +		err = 0;
+  	}
+  
+ -	err = 0;
+ +	rcu_read_lock();
+ +	vg = nbp_vlan_group_rcu(p);
+ +	if (!vg)
+ +		goto out_rcu_unlock;
+ +
+  	list_for_each_entry_rcu(v, &amp;vg-&gt;vlan_list, vlist) {
+<span class="del">- 		if (v-&gt;brvlan-&gt;msti != msti)</span>
+<span class="add">+ 		if (READ_ONCE(v-&gt;brvlan-&gt;msti) != msti)</span>
+  			continue;
+  
+  		br_mst_vlan_set_state(vg, v, state);
+<span class="hdr">diff --cc net/core/neighbour.c</span>
+<span class="ctx">index 7448320f7ad52,27602bcbeb691..6ed8eb0751469</span>
+<span class="hdr">--- a/net/core/neighbour.c</span>
+<span class="hdr">+++ b/net/core/neighbour.c</span>
+<span class="ctx">@@@ -2620,15 -2659,9 +2669,12 @@@ static int neightbl_dump_info(struct sk</span>
+  				       NLM_F_MULTI) &lt; 0)
+  			break;
+  
+ -		nidx = 0;
+ -		p = list_next_entry(&amp;tbl-&gt;parms, list);
+ -		list_for_each_entry_from_rcu(p, &amp;tbl-&gt;parms_list, list) {
+ +		default_skip = 1;
+ +
+ +		list_for_each_entry_rcu(p, &amp;tbl-&gt;parms_list, list) {
+<span class="del">- 			if (!net_eq(neigh_parms_net(p), net))</span>
+<span class="del">- 				continue;</span>
+<span class="del">- </span>
+ +			if (!p-&gt;dev || p-&gt;dev == blackhole_netdev)
+ +				continue;
+ +
+  			if (nidx &lt; neigh_skip)
+  				goto next;
+  
+</div>
+</details></td>
+</tr>
+<tr data-type="rerere" data-category="crypto">
+<td><code>ipsec-next</code></td>
+<td>crypto</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>MAINTAINERS, drivers/net/ethernet/cortina/gemini.c, drivers/net/ethernet/meta/fbnic/fbnic_txrx.c (+13 more)</code></td>
+<td>15:36 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">d35b61f696893995f398a97b9dd023f2cb8e01ec
+<span class="hdr">diff --cc drivers/net/ethernet/stmicro/stmmac/hwif.h</span>
+<span class="ctx">index 9314bcb85c221,fe18f98fae451..8a45afacd15d9</span>
+<span class="hdr">--- a/drivers/net/ethernet/stmicro/stmmac/hwif.h</span>
+<span class="hdr">+++ b/drivers/net/ethernet/stmicro/stmmac/hwif.h</span>
+<span class="ctx">@@@ -491,10 -490,8 +490,8 @@@ struct stmmac_ops </span>
+  	stmmac_do_callback(__priv, mac, config_l3_filter, __args)
+  #define stmmac_config_l4_filter(__priv, __args...) \
+  	stmmac_do_callback(__priv, mac, config_l4_filter, __args)
+<span class="del">- #define stmmac_set_arp_offload(__priv, __args...) \</span>
+<span class="del">- 	stmmac_do_void_callback(__priv, mac, set_arp_offload, __args)</span>
+  #define stmmac_fpe_map_preemption_class(__priv, __args...) \
+ -	stmmac_do_void_callback(__priv, mac, fpe_map_preemption_class, __args)
+ +	stmmac_do_callback(__priv, mac, fpe_map_preemption_class, __args)
+  
+  /* PTP and HW Timer helpers */
+  struct stmmac_hwtimestamp {
+<span class="hdr">diff --cc net/bridge/br_mst.c</span>
+<span class="ctx">index 1654efd3045b0,ecd8bba7430ee..63fc1dd0e9bc0</span>
+<span class="hdr">--- a/net/bridge/br_mst.c</span>
+<span class="hdr">+++ b/net/bridge/br_mst.c</span>
+<span class="ctx">@@@ -117,16 -119,11 +117,16 @@@ int br_mst_set_state(struct net_bridge_</span>
+  		err = switchdev_port_attr_set(p-&gt;dev, &amp;attr, extack);
+  		if (err &amp;&amp; err != -EOPNOTSUPP)
+  			goto out;
+ +		err = 0;
+  	}
+  
+ -	err = 0;
+ +	rcu_read_lock();
+ +	vg = nbp_vlan_group_rcu(p);
+ +	if (!vg)
+ +		goto out_rcu_unlock;
+ +
+  	list_for_each_entry_rcu(v, &amp;vg-&gt;vlan_list, vlist) {
+<span class="del">- 		if (v-&gt;brvlan-&gt;msti != msti)</span>
+<span class="add">+ 		if (READ_ONCE(v-&gt;brvlan-&gt;msti) != msti)</span>
+  			continue;
+  
+  		br_mst_vlan_set_state(vg, v, state);
+<span class="hdr">diff --cc net/core/neighbour.c</span>
+<span class="ctx">index 7448320f7ad52,27602bcbeb691..6ed8eb0751469</span>
+<span class="hdr">--- a/net/core/neighbour.c</span>
+<span class="hdr">+++ b/net/core/neighbour.c</span>
+<span class="ctx">@@@ -2620,15 -2659,9 +2669,12 @@@ static int neightbl_dump_info(struct sk</span>
+  				       NLM_F_MULTI) &lt; 0)
+  			break;
+  
+ -		nidx = 0;
+ -		p = list_next_entry(&amp;tbl-&gt;parms, list);
+ -		list_for_each_entry_from_rcu(p, &amp;tbl-&gt;parms_list, list) {
+ +		default_skip = 1;
+ +
+ +		list_for_each_entry_rcu(p, &amp;tbl-&gt;parms_list, list) {
+<span class="del">- 			if (!net_eq(neigh_parms_net(p), net))</span>
+<span class="del">- 				continue;</span>
+<span class="del">- </span>
+ +			if (!p-&gt;dev || p-&gt;dev == blackhole_netdev)
+ +				continue;
+ +
+  			if (nidx &lt; neigh_skip)
+  				goto next;
+  
+<span class="hdr">diff --cc net/netlink/af_netlink.c</span>
+<span class="ctx">index 9fdf964224ab4,537562aacb7ef..1e594baf7adf2</span>
+<span class="hdr">--- a/net/netlink/af_netlink.c</span>
+<span class="hdr">+++ b/net/netlink/af_netlink.c</span>
+<span class="ctx">@@@ -2724,19 -2705,11 +2724,18 @@@ static int netlink_native_seq_show(stru</span>
+  	} else {
+  		struct sock *s = v;
+  		struct netlink_sock *nlk = nlk_sk(s);
+ +		const unsigned long *groups;
+ +
+ +		/* Lockless read : netlink_realloc_groups() can change
+ +		 * nlk-&gt;groups under us. The old buffer is freed after an
+ +		 * RCU grace period, and this walk is RCU protected.
+ +		 */
+ +		groups = READ_ONCE(nlk-&gt;groups);
+  
+<span class="del">- 		seq_printf(seq, &quot;%pK %-3d %-10u %08x %-8d %-8d %-5d %-8d %-8u %-8llu\n&quot;,</span>
+<span class="del">- 			   s,</span>
+<span class="add">+ 		seq_printf(seq, &quot;0  %-3d %-10u %08x %-8d %-8d %-5d %-8d %-8u %-8llu\n&quot;,</span>
+  			   s-&gt;sk_protocol,
+  			   nlk-&gt;portid,
+ -			   nlk-&gt;groups ? (u32)nlk-&gt;groups[0] : 0,
+ +			   groups ? (u32)groups[0] : 0,
+  			   sk_rmem_alloc_get(s),
+  			   sk_wmem_alloc_get(s),
+  			   READ_ONCE(nlk-&gt;cb_running),
+</div>
+</details></td>
+</tr>
+<tr data-type="rerere" data-category="fs">
+<td><code>ksmbd</code></td>
+<td>fs</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>-</code></td>
+<td>15:50 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">09f0857936e2cba87b7b6886483eb2e53ab470ce
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="graphics">
+<td><code>drm-intel-fixes</code></td>
+<td>graphics</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>-</code></td>
+<td>16:34 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="mm">
+<td><code>mm-unstable</code></td>
+<td>mm</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>MAINTAINERS, arch/loongarch/Kconfig, arch/riscv/Kconfig (+18 more)</code></td>
+<td>16:58 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">04d04ccbaa25ca0fa022fd47c9923a13368afcfb
+<span class="hdr">diff --cc drivers/infiniband/hw/hfi1/file_ops.c</span>
+<span class="ctx">index 1a36f995c4f6d,b02d1f1dbb27b..680364fda856f</span>
+<span class="hdr">--- a/drivers/infiniband/hw/hfi1/file_ops.c</span>
+<span class="hdr">+++ b/drivers/infiniband/hw/hfi1/file_ops.c</span>
+<span class="ctx">@@@ -325,8 -320,7 +320,8 @@@ static int hfi1_file_mmap(struct file *</span>
+  		memaddr = 0;
+  	void *memvirt = NULL;
+  	dma_addr_t memdma = 0;
+<span class="del">- 	u8 subctxt, mapio = 0, vmf = 0, type;</span>
+<span class="add">+ 	u8 subctxt, mapio = 0, is_vmalloc = 0, type;</span>
+ +	size_t memdmalen = 0;
+  	ssize_t memlen = 0;
+  	int ret = 0;
+  	u16 ctxt;
+<span class="ctx">@@@ -569,16 -546,13 +556,14 @@@</span>
+  	}
+  
+  	vm_flags_reset(vma, flags);
+<span class="del">- 	mmap_cdbg(ctxt, subctxt, type, mapio, vmf, memaddr, memvirt, memdma, </span>
+<span class="add">+ 	mmap_cdbg(ctxt, subctxt, type, mapio, is_vmalloc, memaddr, memvirt, memdma,</span>
+  		  memlen, vma);
+<span class="del">- 	if (vmf) {</span>
+<span class="del">- 		vma-&gt;vm_pgoff = PFN_DOWN(memaddr);</span>
+<span class="del">- 		vma-&gt;vm_ops = &amp;vm_ops;</span>
+<span class="del">- 		ret = 0;</span>
+<span class="add">+ 	if (is_vmalloc) {</span>
+<span class="add">+ 		ret = remap_vmalloc_range(vma, memvirt, 0);</span>
+  	} else if (memdma) {
+  		ret = dma_mmap_coherent(&amp;dd-&gt;pcidev-&gt;dev, vma,
+ -					memvirt, memdma, memlen);
+ +					memvirt, memdma,
+ +					memdmalen ? memdmalen : memlen);
+  	} else if (mapio) {
+  		ret = io_remap_pfn_range(vma, vma-&gt;vm_start,
+  					 PFN_DOWN(memaddr),
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="graphics">
+<td><code>drm</code></td>
+<td>graphics</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>-</code></td>
+<td>17:04 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">097676dac69f559221b3ee01a2013a9cc6e56821
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="graphics">
+<td><code>amdgpu</code></td>
+<td>graphics</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>MAINTAINERS, drivers/gpu/drm/amd/amdgpu/amdgpu_device.c, drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_connector.c (+4 more)</code></td>
+<td>17:28 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">e53f6e9fd3f284f5f0c80f48313aaf16fa504266
+<span class="hdr">diff --cc drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c</span>
+<span class="ctx">index 686da9c477db3,fa6a481c87659..a365b6d9433f4</span>
+<span class="hdr">--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c</span>
+<span class="hdr">+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c</span>
+<span class="ctx">@@@ -797,18 -799,9 +798,18 @@@ int amdgpu_dm_crtc_init(struct amdgpu_d</span>
+  
+  	drm_crtc_helper_add(&amp;acrtc-&gt;base, &amp;amdgpu_dm_crtc_helper_funcs);
+  
+ -	/* Create (reset) the plane state */
+ -	if (acrtc-&gt;base.funcs-&gt;reset)
+ -		acrtc-&gt;base.funcs-&gt;reset(&amp;acrtc-&gt;base);
+ +	/* Create the plane state */
+ +	if (acrtc-&gt;base.funcs-&gt;atomic_create_state) {
+ +		struct drm_crtc_state *crtc_state;
+ +
+ +		crtc_state = acrtc-&gt;base.funcs-&gt;atomic_create_state(&amp;acrtc-&gt;base);
+ +		if (IS_ERR(crtc_state)) {
+ +			res = PTR_ERR(crtc_state);
+<span class="del">- 			goto error_ism_fini;</span>
+<span class="add">++			goto error_ism_flush;</span>
+ +		}
+ +
+ +		acrtc-&gt;base.state = crtc_state;
+ +	}
+  
+  	acrtc-&gt;max_cursor_width = dm-&gt;adev-&gt;dm.dc-&gt;caps.max_cursor_size;
+  	acrtc-&gt;max_cursor_height = dm-&gt;adev-&gt;dm.dc-&gt;caps.max_cursor_size;
+<span class="ctx">@@@ -840,9 -833,6 +841,9 @@@</span>
+  #endif
+  	return 0;
+  
+<span class="del">- error_ism_fini:</span>
+<span class="del">- 	amdgpu_dm_ism_fini(&amp;acrtc-&gt;ism);</span>
+<span class="add">++error_ism_flush:</span>
+<span class="add">++	amdgpu_dm_ism_flush(&amp;acrtc-&gt;ism);</span>
+ +	drm_crtc_cleanup(&amp;acrtc-&gt;base);
+  fail:
+  	kfree(acrtc);
+  	kfree(cursor_plane);
+<span class="hdr">diff --cc drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c</span>
+<span class="ctx">index d357afcb0e93a,ab674a32279f3..779dabb7fc519</span>
+<span class="hdr">--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c</span>
+<span class="hdr">+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c</span>
+<span class="ctx">@@@ -1805,9 -1805,24 +1806,21 @@@ STATIC_IFN_KUNIT struct drm_plane_stat</span>
+  
+  	amdgpu_state = kzalloc_obj(*amdgpu_state);
+  	if (!amdgpu_state)
+ -		return;
+ +		return ERR_PTR(-ENOMEM);
+  
+<span class="add">+ 	amdgpu_state-&gt;flip_addr = kzalloc_obj(*amdgpu_state-&gt;flip_addr);</span>
+<span class="add">+ 	amdgpu_state-&gt;scaling_info = kzalloc_obj(*amdgpu_state-&gt;scaling_info);</span>
+<span class="add">+ 	amdgpu_state-&gt;plane_info = kzalloc_obj(*amdgpu_state-&gt;plane_info);</span>
+<span class="add">+ 	if (!amdgpu_state-&gt;flip_addr || !amdgpu_state-&gt;scaling_info ||</span>
+<span class="add">+ 	    !amdgpu_state-&gt;plane_info) {</span>
+<span class="add">+ 		kfree(amdgpu_state-&gt;flip_addr);</span>
+<span class="add">+ 		kfree(amdgpu_state-&gt;scaling_info);</span>
+<span class="add">+ 		kfree(amdgpu_state-&gt;plane_info);</span>
+<span class="add">+ 		kfree(amdgpu_state);</span>
+ -		return;
+<span class="add">++		return ERR_PTR(-ENOMEM);</span>
+<span class="add">+ 	}</span>
+<span class="add">+ </span>
+ -	if (plane-&gt;state)
+ -		plane-&gt;funcs-&gt;atomic_destroy_state(plane, plane-&gt;state);
+ -
+ -	__drm_atomic_helper_plane_reset(plane, &amp;amdgpu_state-&gt;base);
+ +	__drm_atomic_helper_plane_state_init(&amp;amdgpu_state-&gt;base, plane);
+  	amdgpu_state-&gt;degamma_tf = AMDGPU_TRANSFER_FUNCTION_DEFAULT;
+  	amdgpu_state-&gt;hdr_mult = AMDGPU_HDR_MULT_DEFAULT;
+  	amdgpu_state-&gt;shaper_tf = AMDGPU_TRANSFER_FUNCTION_DEFAULT;
+<span class="hdr">diff --cc drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_plane_test.c</span>
+<span class="ctx">index 1b0d3f16ef1a9,1001cbc334b09..a18b1d99ae858</span>
+<span class="hdr">--- a/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_plane_test.c</span>
+<span class="hdr">+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_plane_test.c</span>
+<span class="ctx">@@@ -3755,10 -4110,12 +4102,12 @@@ static struct kunit_case amdgpu_dm_plan</span>
+  	KUNIT_CASE(dm_test_atomic_check_helper_failure),
+  	KUNIT_CASE(dm_test_atomic_check_color_pipeline_conflict),
+  	KUNIT_CASE(dm_test_atomic_check_scaling_failure),
+<span class="add">+ 	KUNIT_CASE(dm_test_atomic_check_success),</span>
+  	/* amdgpu_dm_plane_panic_flush() */
+  	KUNIT_CASE(dm_test_panic_flush_no_dc_state),
+<span class="add">+ 	KUNIT_CASE(dm_test_panic_flush_disables_dcc),</span>
+ -	/* amdgpu_dm_plane_drm_plane_reset() */
+ -	KUNIT_CASE(dm_test_plane_reset_initializes_state),
+ +	/* amdgpu_dm_plane_drm_plane_create_state() */
+ +	KUNIT_CASE(dm_test_plane_create_state_initializes_state),
+  	/* amdgpu_dm_plane_drm_plane_duplicate_state() */
+  	KUNIT_CASE(dm_test_plane_duplicate_state_copies_fields),
+  	KUNIT_CASE(dm_test_plane_duplicate_state_copies_resources),
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="security">
+<td><code>ipsec</code></td>
+<td>security</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>drivers/net/ethernet/meta/fbnic/fbnic_txrx.c, drivers/net/ethernet/meta/fbnic/fbnic_txrx.h, drivers/net/ethernet/stmicro/stmmac/hwif.h (+10 more)</code></td>
+<td>17:42 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">0c9cc868dfd02fe0517306ce3ea9b27dba681e4c
+<span class="hdr">diff --cc drivers/net/ethernet/stmicro/stmmac/hwif.h</span>
+<span class="ctx">index fe18f98fae451,9314bcb85c221..8a45afacd15d9</span>
+<span class="hdr">--- a/drivers/net/ethernet/stmicro/stmmac/hwif.h</span>
+<span class="hdr">+++ b/drivers/net/ethernet/stmicro/stmmac/hwif.h</span>
+<span class="ctx">@@@ -490,8 -491,10 +490,8 @@@ struct stmmac_ops </span>
+  	stmmac_do_callback(__priv, mac, config_l3_filter, __args)
+  #define stmmac_config_l4_filter(__priv, __args...) \
+  	stmmac_do_callback(__priv, mac, config_l4_filter, __args)
+ -#define stmmac_set_arp_offload(__priv, __args...) \
+ -	stmmac_do_void_callback(__priv, mac, set_arp_offload, __args)
+  #define stmmac_fpe_map_preemption_class(__priv, __args...) \
+<span class="del">- 	stmmac_do_void_callback(__priv, mac, fpe_map_preemption_class, __args)</span>
+<span class="add">+ 	stmmac_do_callback(__priv, mac, fpe_map_preemption_class, __args)</span>
+  
+  /* PTP and HW Timer helpers */
+  struct stmmac_hwtimestamp {
+<span class="hdr">diff --cc net/bridge/br_mst.c</span>
+<span class="ctx">index ecd8bba7430ee,1654efd3045b0..63fc1dd0e9bc0</span>
+<span class="hdr">--- a/net/bridge/br_mst.c</span>
+<span class="hdr">+++ b/net/bridge/br_mst.c</span>
+<span class="ctx">@@@ -119,11 -117,16 +117,16 @@@ int br_mst_set_state(struct net_bridge_</span>
+  		err = switchdev_port_attr_set(p-&gt;dev, &amp;attr, extack);
+  		if (err &amp;&amp; err != -EOPNOTSUPP)
+  			goto out;
+<span class="add">+ 		err = 0;</span>
+  	}
+  
+<span class="del">- 	err = 0;</span>
+<span class="add">+ 	rcu_read_lock();</span>
+<span class="add">+ 	vg = nbp_vlan_group_rcu(p);</span>
+<span class="add">+ 	if (!vg)</span>
+<span class="add">+ 		goto out_rcu_unlock;</span>
+<span class="add">+ </span>
+  	list_for_each_entry_rcu(v, &amp;vg-&gt;vlan_list, vlist) {
+ -		if (v-&gt;brvlan-&gt;msti != msti)
+ +		if (READ_ONCE(v-&gt;brvlan-&gt;msti) != msti)
+  			continue;
+  
+  		br_mst_vlan_set_state(vg, v, state);
+<span class="hdr">diff --cc net/core/neighbour.c</span>
+<span class="ctx">index 27602bcbeb691,7448320f7ad52..6ed8eb0751469</span>
+<span class="hdr">--- a/net/core/neighbour.c</span>
+<span class="hdr">+++ b/net/core/neighbour.c</span>
+<span class="ctx">@@@ -2659,9 -2620,15 +2669,12 @@@ static int neightbl_dump_info(struct sk</span>
+  				       NLM_F_MULTI) &lt; 0)
+  			break;
+  
+<span class="del">- 		nidx = 0;</span>
+<span class="del">- 		p = list_next_entry(&amp;tbl-&gt;parms, list);</span>
+<span class="del">- 		list_for_each_entry_from_rcu(p, &amp;tbl-&gt;parms_list, list) {</span>
+<span class="add">+ 		default_skip = 1;</span>
+<span class="add">+ </span>
+<span class="add">+ 		list_for_each_entry_rcu(p, &amp;tbl-&gt;parms_list, list) {</span>
+ -			if (!net_eq(neigh_parms_net(p), net))
+ -				continue;
+ -
+<span class="add">+ 			if (!p-&gt;dev || p-&gt;dev == blackhole_netdev)</span>
+<span class="add">+ 				continue;</span>
+<span class="add">+ </span>
+  			if (nidx &lt; neigh_skip)
+  				goto next;
+  
+<span class="hdr">diff --cc net/netlink/af_netlink.c</span>
+<span class="ctx">index 537562aacb7ef,9fdf964224ab4..1e594baf7adf2</span>
+<span class="hdr">--- a/net/netlink/af_netlink.c</span>
+<span class="hdr">+++ b/net/netlink/af_netlink.c</span>
+<span class="ctx">@@@ -2705,11 -2724,19 +2724,18 @@@ static int netlink_native_seq_show(stru</span>
+  	} else {
+  		struct sock *s = v;
+  		struct netlink_sock *nlk = nlk_sk(s);
+<span class="add">+ 		const unsigned long *groups;</span>
+<span class="add">+ </span>
+<span class="add">+ 		/* Lockless read : netlink_realloc_groups() can change</span>
+<span class="add">+ 		 * nlk-&gt;groups under us. The old buffer is freed after an</span>
+<span class="add">+ 		 * RCU grace period, and this walk is RCU protected.</span>
+<span class="add">+ 		 */</span>
+<span class="add">+ 		groups = READ_ONCE(nlk-&gt;groups);</span>
+  
+ -		seq_printf(seq, &quot;%pK %-3d %-10u %08x %-8d %-8d %-5d %-8d %-8u %-8llu\n&quot;,
+ -			   s,
+ +		seq_printf(seq, &quot;0  %-3d %-10u %08x %-8d %-8d %-5d %-8d %-8u %-8llu\n&quot;,
+  			   s-&gt;sk_protocol,
+  			   nlk-&gt;portid,
+<span class="del">- 			   nlk-&gt;groups ? (u32)nlk-&gt;groups[0] : 0,</span>
+<span class="add">+ 			   groups ? (u32)groups[0] : 0,</span>
+  			   sk_rmem_alloc_get(s),
+  			   sk_wmem_alloc_get(s),
+  			   READ_ONCE(nlk-&gt;cb_running),
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="subsystem">
+<td><code>char-misc</code></td>
+<td>subsystem</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>drivers/android/binder/node.rs, drivers/android/binder/node/wrapper.rs, drivers/android/binder/rust_binderfs.c (+1 more)</code></td>
+<td>17:53 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">4aec2a4b5d1906c4d9ddb9ab0f7435136ac19946
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="storage">
+<td><code>scsi-mkp</code></td>
+<td>storage</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>drivers/ata/libata-scsi.c, drivers/scsi/leapraid/leapraid_func.h, drivers/scsi/leapraid/leapraid_os.c (+5 more)</code></td>
+<td>17:56 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">f0e48da3d3f402fd3802dadf55dfe818238fc12f
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="security">
+<td><code>ipsec-next</code></td>
+<td>security</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>MAINTAINERS, drivers/net/ethernet/cortina/gemini.c, drivers/net/ethernet/meta/fbnic/fbnic_txrx.c (+13 more)</code></td>
+<td>18:01 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">fdf60b4f9f62b8a9ee3cc0de7f1903d6269ec5c9
+<span class="hdr">diff --cc drivers/net/ethernet/stmicro/stmmac/hwif.h</span>
+<span class="ctx">index 9314bcb85c221,fe18f98fae451..8a45afacd15d9</span>
+<span class="hdr">--- a/drivers/net/ethernet/stmicro/stmmac/hwif.h</span>
+<span class="hdr">+++ b/drivers/net/ethernet/stmicro/stmmac/hwif.h</span>
+<span class="ctx">@@@ -491,10 -490,8 +490,8 @@@ struct stmmac_ops </span>
+  	stmmac_do_callback(__priv, mac, config_l3_filter, __args)
+  #define stmmac_config_l4_filter(__priv, __args...) \
+  	stmmac_do_callback(__priv, mac, config_l4_filter, __args)
+<span class="del">- #define stmmac_set_arp_offload(__priv, __args...) \</span>
+<span class="del">- 	stmmac_do_void_callback(__priv, mac, set_arp_offload, __args)</span>
+  #define stmmac_fpe_map_preemption_class(__priv, __args...) \
+ -	stmmac_do_void_callback(__priv, mac, fpe_map_preemption_class, __args)
+ +	stmmac_do_callback(__priv, mac, fpe_map_preemption_class, __args)
+  
+  /* PTP and HW Timer helpers */
+  struct stmmac_hwtimestamp {
+<span class="hdr">diff --cc net/bridge/br_mst.c</span>
+<span class="ctx">index 1654efd3045b0,ecd8bba7430ee..63fc1dd0e9bc0</span>
+<span class="hdr">--- a/net/bridge/br_mst.c</span>
+<span class="hdr">+++ b/net/bridge/br_mst.c</span>
+<span class="ctx">@@@ -117,16 -119,11 +117,16 @@@ int br_mst_set_state(struct net_bridge_</span>
+  		err = switchdev_port_attr_set(p-&gt;dev, &amp;attr, extack);
+  		if (err &amp;&amp; err != -EOPNOTSUPP)
+  			goto out;
+ +		err = 0;
+  	}
+  
+ -	err = 0;
+ +	rcu_read_lock();
+ +	vg = nbp_vlan_group_rcu(p);
+ +	if (!vg)
+ +		goto out_rcu_unlock;
+ +
+  	list_for_each_entry_rcu(v, &amp;vg-&gt;vlan_list, vlist) {
+<span class="del">- 		if (v-&gt;brvlan-&gt;msti != msti)</span>
+<span class="add">+ 		if (READ_ONCE(v-&gt;brvlan-&gt;msti) != msti)</span>
+  			continue;
+  
+  		br_mst_vlan_set_state(vg, v, state);
+<span class="hdr">diff --cc net/core/neighbour.c</span>
+<span class="ctx">index 7448320f7ad52,27602bcbeb691..6ed8eb0751469</span>
+<span class="hdr">--- a/net/core/neighbour.c</span>
+<span class="hdr">+++ b/net/core/neighbour.c</span>
+<span class="ctx">@@@ -2620,15 -2659,9 +2669,12 @@@ static int neightbl_dump_info(struct sk</span>
+  				       NLM_F_MULTI) &lt; 0)
+  			break;
+  
+ -		nidx = 0;
+ -		p = list_next_entry(&amp;tbl-&gt;parms, list);
+ -		list_for_each_entry_from_rcu(p, &amp;tbl-&gt;parms_list, list) {
+ +		default_skip = 1;
+ +
+ +		list_for_each_entry_rcu(p, &amp;tbl-&gt;parms_list, list) {
+<span class="del">- 			if (!net_eq(neigh_parms_net(p), net))</span>
+<span class="del">- 				continue;</span>
+<span class="del">- </span>
+ +			if (!p-&gt;dev || p-&gt;dev == blackhole_netdev)
+ +				continue;
+ +
+  			if (nidx &lt; neigh_skip)
+  				goto next;
+  
+<span class="hdr">diff --cc net/netlink/af_netlink.c</span>
+<span class="ctx">index 9fdf964224ab4,537562aacb7ef..1e594baf7adf2</span>
+<span class="hdr">--- a/net/netlink/af_netlink.c</span>
+<span class="hdr">+++ b/net/netlink/af_netlink.c</span>
+<span class="ctx">@@@ -2724,19 -2705,11 +2724,18 @@@ static int netlink_native_seq_show(stru</span>
+  	} else {
+  		struct sock *s = v;
+  		struct netlink_sock *nlk = nlk_sk(s);
+ +		const unsigned long *groups;
+ +
+ +		/* Lockless read : netlink_realloc_groups() can change
+ +		 * nlk-&gt;groups under us. The old buffer is freed after an
+ +		 * RCU grace period, and this walk is RCU protected.
+ +		 */
+ +		groups = READ_ONCE(nlk-&gt;groups);
+  
+<span class="del">- 		seq_printf(seq, &quot;%pK %-3d %-10u %08x %-8d %-8d %-5d %-8d %-8u %-8llu\n&quot;,</span>
+<span class="del">- 			   s,</span>
+<span class="add">+ 		seq_printf(seq, &quot;0  %-3d %-10u %08x %-8d %-8d %-5d %-8d %-8u %-8llu\n&quot;,</span>
+  			   s-&gt;sk_protocol,
+  			   nlk-&gt;portid,
+ -			   nlk-&gt;groups ? (u32)nlk-&gt;groups[0] : 0,
+ +			   groups ? (u32)groups[0] : 0,
+  			   sk_rmem_alloc_get(s),
+  			   sk_wmem_alloc_get(s),
+  			   READ_ONCE(nlk-&gt;cb_running),
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="security">
+<td><code>security</code></td>
+<td>security</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>fs/namespace.c, include/linux/ns/ns_common_types.h, include/linux/sched.h (+1 more)</code></td>
+<td>18:17 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">1114f2acf212dfb0431bd72a5e9e44a014a6d73b
+<span class="hdr">diff --cc include/linux/ns/ns_common_types.h</span>
+<span class="ctx">index 6ed6b497831c7,5cfe0ce3c8818..47a5cfe2326a3</span>
+<span class="hdr">--- a/include/linux/ns/ns_common_types.h</span>
+<span class="hdr">+++ b/include/linux/ns/ns_common_types.h</span>
+<span class="ctx">@@@ -116,8 -116,13 +116,11 @@@ struct ns_common </span>
+  	struct dentry *stashed;
+  	const struct proc_ns_operations *ops;
+  	unsigned int inum;
+<span class="add">+ #ifdef CONFIG_SECURITY</span>
+<span class="add">+ 	void *ns_security;</span>
+<span class="add">+ #endif</span>
+ -	union {
+ -		struct ns_tree;
+ -		struct rcu_head ns_rcu;
+ -	};
+ +	struct ns_tree;
+ +	struct rcu_head ns_rcu;
+  };
+  
+  #define to_ns_common(__ns)                                    \
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="security">
+<td><code>landlock</code></td>
+<td>security</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>-</code></td>
+<td>18:28 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">4ecae95d758f37f8b570ed1715ceb0b0fc71ae27
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="fixes">
+<td><code>fixes-next</code></td>
+<td>fixes</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>MAINTAINERS, block/blk-zoned.c, drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c (+1 more)</code></td>
+<td>18:53 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">f061115825ca32c091f4f030f1fbbff3ab6c7d17
+<span class="hdr">diff --cc block/blk-zoned.c</span>
+<span class="ctx">index ec510d66dfe2b,475aa16bc41a5..0b6292f4606a4</span>
+<span class="hdr">--- a/block/blk-zoned.c</span>
+<span class="hdr">+++ b/block/blk-zoned.c</span>
+<span class="ctx">@@@ -2028,16 -1860,6 +2028,23 @@@ void disk_init_zone_resources(struct ge</span>
+  	init_completion(&amp;disk-&gt;zone_wplugs_worker_bio_done);
+  }
+  
+ +static unsigned int disk_get_nr_zones(struct gendisk *disk, sector_t capacity)
+ +{
+ +	struct queue_limits *lim = &amp;disk-&gt;queue-&gt;limits;
+<span class="add">++	unsigned long long nr_zones;</span>
+ +
+ +	if (!capacity || !lim-&gt;chunk_sectors)
+ +		return 0;
+ +
+<span class="del">- 	return DIV_ROUND_UP_ULL(capacity, lim-&gt;chunk_sectors);</span>
+<span class="add">++	nr_zones = DIV_ROUND_UP_ULL(capacity, lim-&gt;chunk_sectors);</span>
+<span class="add">++	if (nr_zones &gt; UINT_MAX) {</span>
+<span class="add">++		pr_warn(&quot;%s: Too many zones (%llu)\n&quot;, disk-&gt;disk_name, nr_zones);</span>
+<span class="add">++		return 0;</span>
+<span class="add">++	}</span>
+<span class="add">++</span>
+<span class="add">++	return nr_zones;</span>
+ +}
+ +
+  /*
+   * For the size of a disk zone write plug hash table, use the size of the
+   * zone write plug mempool, which is the maximum of the disk open zones and
+<span class="ctx">@@@ -2498,6 -2283,11 +2505,12 @@@ static int blk_revalidate_zone_cb(struc</span>
+  		return -ENODEV;
+  	}
+  
+ -	/* Check zone condition */
+ -	ret = blk_revalidate_zone_cond(zone, idx, args);
+ -	if (ret)
+ -		return ret;
+<span class="add">++	if (idx &gt;= args-&gt;nr_zones) {</span>
+<span class="add">++		pr_warn(&quot;%s: Zone report index %u exceeds zone count %u\n&quot;,</span>
+<span class="add">++			disk-&gt;disk_name, idx, args-&gt;nr_zones);</span>
+<span class="add">++		return -ENODEV;</span>
+<span class="add">++	}</span>
+<span class="add">+ </span>
+  	/* Check zone type */
+  	switch (zone-&gt;type) {
+  	case BLK_ZONE_TYPE_CONVENTIONAL:
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="mm">
+<td><code>mm-next</code></td>
+<td>mm</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>CREDITS, Documentation/admin-guide/kernel-parameters.txt, Documentation/admin-guide/sysctl/kernel.rst (+39 more)</code></td>
+<td>19:12 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">3a1a656d6b6b103816104dbeacdfac46c0219890
+<span class="hdr">diff --cc fs/coredump.c</span>
+<span class="ctx">index 668debe0cb97f,4d03826dd2498..f809e3fb4ba21</span>
+<span class="hdr">--- a/fs/coredump.c</span>
+<span class="hdr">+++ b/fs/coredump.c</span>
+<span class="ctx">@@@ -1831,12 -1608,10 +1831,12 @@@ static unsigned long vma_dump_size(stru</span>
+  	}
+  
+  	/* Hugetlb memory check */
+<span class="del">- 	if (is_vm_hugetlb_page(vma)) {</span>
+<span class="add">+ 	if (vma_is_hugetlb(vma)) {</span>
+ -		if ((vma-&gt;vm_flags &amp; VM_SHARED) &amp;&amp; FILTER(HUGETLB_SHARED))
+ +		if ((vma-&gt;vm_flags &amp; VM_SHARED) &amp;&amp;
+ +		    COREDUMP_MEMORY_TYPE_INCLUDE(memory_types, HUGETLB_SHARED))
+  			goto whole;
+ -		if (!(vma-&gt;vm_flags &amp; VM_SHARED) &amp;&amp; FILTER(HUGETLB_PRIVATE))
+ +		if (!(vma-&gt;vm_flags &amp; VM_SHARED) &amp;&amp;
+ +		    COREDUMP_MEMORY_TYPE_INCLUDE(memory_types, HUGETLB_PRIVATE))
+  			goto whole;
+  		return 0;
+  	}
+<span class="hdr">diff --cc fs/fuse/dax.c</span>
+<span class="ctx">index 32c88ef814340,a5994f1c637d9..761e6b153db44</span>
+<span class="hdr">--- a/fs/fuse/dax.c</span>
+<span class="hdr">+++ b/fs/fuse/dax.c</span>
+<span class="ctx">@@@ -826,8 -826,7 +826,8 @@@ int fuse_dax_mmap(struct file *file, st</span>
+  {
+  	file_accessed(file);
+  	vma-&gt;vm_ops = &amp;fuse_dax_vm_ops;
+<span class="del">- 	vm_flags_set(vma, VM_MIXEDMAP | VM_HUGEPAGE);</span>
+<span class="add">+ 	vma_set_flags(vma, VMA_HUGEPAGE_BIT);</span>
+ +	vma-&gt;vm_page_prot = pgprot_decrypted(vma-&gt;vm_page_prot);
+  	return 0;
+  }
+  
+<span class="hdr">diff --cc include/linux/buffer_head.h</span>
+<span class="ctx">index e7a701ce029d1,e47fbd0387b69..1e9243520479b</span>
+<span class="hdr">--- a/include/linux/buffer_head.h</span>
+<span class="hdr">+++ b/include/linux/buffer_head.h</span>
+<span class="ctx">@@@ -169,44 -172,9 +169,38 @@@ static __always_inline int buffer_uptod</span>
+  
+  static inline unsigned long bh_offset(const struct buffer_head *bh)
+  {
+ -	return (unsigned long)(bh)-&gt;b_data &amp; (page_size(bh-&gt;b_page) - 1);
+ +	return (unsigned long)(bh)-&gt;b_data &amp; (folio_size(bh-&gt;b_folio) - 1);
+ +}
+ +
+ +/**
+ + * kmap_local_bh - Map the data of a buffer.
+ + * @bh: The buffer.
+ + *
+ + * Buffers usually live in the page cache, but a few are built over memory
+ + * which is not.  Those carry no folio and b_data is already a kernel address
+ + * which is always mapped, so there is nothing to do for them.  Pair with
+ + * kunmap_local_bh().
+ + *
+ + * Return: A pointer to the buffer&#x27;s data.
+ + */
+ +static inline void *kmap_local_bh(const struct buffer_head *bh)
+ +{
+ +	if (!bh-&gt;b_folio)
+ +		return bh-&gt;b_data;
+ +	return kmap_local_folio(bh-&gt;b_folio, bh_offset(bh));
+ +}
+ +
+ +/**
+ + * kunmap_local_bh - Unmap the data of a buffer.
+ + * @bh: The buffer.
+ + * @addr: The address returned by kmap_local_bh().
+ + */
+ +static inline void kunmap_local_bh(const struct buffer_head *bh, void *addr)
+ +{
+ +	if (bh-&gt;b_folio)
+ +		kunmap_local(addr);
+  }
+  
+<span class="del">- /* If we *know* page-&gt;private refers to buffer_heads */</span>
+<span class="del">- #define page_buffers(page)					\</span>
+<span class="del">- 	({							\</span>
+<span class="del">- 		BUG_ON(!PagePrivate(page));			\</span>
+<span class="del">- 		((struct buffer_head *)page_private(page));	\</span>
+<span class="del">- 	})</span>
+  #define folio_buffers(folio)		folio_get_private(folio)
+  
+  void buffer_check_dirty_writeback(struct folio *folio,
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="security">
+<td><code>security-next</code></td>
+<td>security</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>fs/namei.c, fs/namespace.c, include/linux/lsm_hook_defs.h (+5 more)</code></td>
+<td>19:27 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">f4d632a09185ac2bc4ee3c9fb6efe2008fa3856f
+<span class="hdr">diff --cc fs/namei.c</span>
+<span class="ctx">index ca4f5e3be99ac,99f894f3f7e13..1dd4ec7d0e62f</span>
+<span class="hdr">--- a/fs/namei.c</span>
+<span class="hdr">+++ b/fs/namei.c</span>
+<span class="ctx">@@@ -4227,11 -4188,16 +4227,11 @@@ int vfs_create(struct mnt_idmap *idmap</span>
+  		return -EACCES;	/* shouldn&#x27;t it be ENOSYS? */
+  
+  	mode = vfs_prepare_mode(idmap, dir, mode, S_IALLUGO, S_IFREG);
+<span class="del">- 	error = security_inode_create(dir, dentry, mode);</span>
+<span class="add">+ 	error = security_inode_create(idmap, dir, dentry, mode);</span>
+  	if (error)
+  		return error;
+ -	error = try_break_deleg(dir, LEASE_BREAK_DIR_CREATE, di);
+ -	if (error)
+ -		return error;
+ -	error = dir-&gt;i_op-&gt;create(idmap, dir, dentry, mode);
+ -	if (!error)
+ -		fsnotify_create(dir, dentry);
+ -	return error;
+ +
+ +	return vfs_create_no_perm(idmap, dentry, mode, di);
+  }
+  EXPORT_SYMBOL(vfs_create);
+  
+<span class="ctx">@@@ -4368,21 -4328,7 +4368,21 @@@ static int may_o_create(struct mnt_idma</span>
+  	if (error)
+  		return error;
+  
+ -	return security_inode_create(idmap, dir-&gt;dentry-&gt;d_inode, dentry, mode);
+ +	if (create_dir)
+<span class="del">- 		error = security_inode_mkdir(dir_inode, dentry, mode);</span>
+<span class="add">++		error = security_inode_mkdir(idmap, dir_inode, dentry, mode);</span>
+ +	else
+<span class="del">- 		error = security_inode_create(dir_inode, dentry, mode);</span>
+<span class="add">++		error = security_inode_create(idmap, dir_inode, dentry, mode);</span>
+ +
+ +	return error;
+ +}
+ +
+ +static inline umode_t o_create_mode(struct mnt_idmap *idmap,
+ +		const struct inode *dir, int open_flag, umode_t mode)
+ +{
+ +	if (O_IS_MKDIR(open_flag))
+ +		return vfs_prepare_mode(idmap, dir, mode, S_IRWXUGO | S_ISVTX, S_IFDIR);
+ +	else
+ +		return vfs_prepare_mode(idmap, dir, mode, S_IALLUGO, S_IFREG);
+  }
+  
+  /**
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="subsystem">
+<td><code>subsystem-next</code></td>
+<td>subsystem</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>MAINTAINERS, drivers/android/binder/page_range.rs, drivers/iio/light/lm3533-als.c</code></td>
+<td>19:45 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">8d90302ddf10ae5f9f145c15664d2ef7e48d6a95
+<span class="hdr">diff --cc MAINTAINERS</span>
+<span class="ctx">index 4ce83d0148167,614b35218b251..26e97b7784c2d</span>
+<span class="hdr">--- a/MAINTAINERS</span>
+<span class="hdr">+++ b/MAINTAINERS</span>
+<span class="ctx">@@@ -18597,10 -18417,10 +18597,10 @@@ M:	David Yang &lt;mmyangfl@gmail.com</span>
+  L:	netdev@vger.kernel.org
+  S:	Maintained
+  F:	Documentation/devicetree/bindings/net/dsa/motorcomm,yt921x.yaml
+ -F:	drivers/net/dsa/yt921x.*
+ +F:	drivers/net/dsa/motorcomm/
+  F:	net/dsa/tag_yt921x.c
+  
+<span class="del">- MOXA SMARTIO/INDUSTIO/INTELLIO SERIAL CARD</span>
+<span class="add">+ MOXA SMARTIO/INDUSTIO SERIAL CARD</span>
+  M:	Jiri Slaby &lt;jirislaby@kernel.org&gt;
+  S:	Maintained
+  F:	Documentation/driver-api/tty/moxa-smartio.rst
+<span class="hdr">diff --cc drivers/iio/light/lm3533-als.c</span>
+<span class="ctx">index 5db9591a85b93,4870e8050088b..218cb93b4cf99</span>
+<span class="hdr">--- a/drivers/iio/light/lm3533-als.c</span>
+<span class="hdr">+++ b/drivers/iio/light/lm3533-als.c</span>
+<span class="ctx">@@@ -432,12 -430,11 +431,12 @@@ static ssize_t store_thresh_either_en(s</span>
+  	u8 zone;
+  	int ret;
+  
+<span class="del">- 	if (!als-&gt;irq)</span>
+<span class="add">+ 	if (als-&gt;irq &lt;= 0)</span>
+  		return -EBUSY;
+  
+ -	if (kstrtoul(buf, 0, &amp;enable))
+ -		return -EINVAL;
+ +	ret = kstrtoul(buf, 0, &amp;enable);
+ +	if (ret)
+ +		return ret;
+  
+  	int_enabled = test_bit(LM3533_ALS_FLAG_INT_ENABLED, &amp;als-&gt;flags);
+  
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h2 id="by-category">By Category</h2>
+<h3>bus <span class="category-count">1</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>i2c-rust</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>-</code></td>
+<td>15:21 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">7217d52f5957a79c465225ed69491280f4138087
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>crypto <span class="category-count">2</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ipsec-next</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>MAINTAINERS, drivers/net/ethernet/cortina/gemini.c, drivers/net/ethernet/meta/fbnic/fbnic_txrx.c (+8 more)</code></td>
+<td>15:35 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">8c77be600d54f592693798f73727e657679f1ae3
+<span class="hdr">diff --cc net/bridge/br_mst.c</span>
+<span class="ctx">index 1654efd3045b0,ecd8bba7430ee..63fc1dd0e9bc0</span>
+<span class="hdr">--- a/net/bridge/br_mst.c</span>
+<span class="hdr">+++ b/net/bridge/br_mst.c</span>
+<span class="ctx">@@@ -117,16 -119,11 +117,16 @@@ int br_mst_set_state(struct net_bridge_</span>
+  		err = switchdev_port_attr_set(p-&gt;dev, &amp;attr, extack);
+  		if (err &amp;&amp; err != -EOPNOTSUPP)
+  			goto out;
+ +		err = 0;
+  	}
+  
+ -	err = 0;
+ +	rcu_read_lock();
+ +	vg = nbp_vlan_group_rcu(p);
+ +	if (!vg)
+ +		goto out_rcu_unlock;
+ +
+  	list_for_each_entry_rcu(v, &amp;vg-&gt;vlan_list, vlist) {
+<span class="del">- 		if (v-&gt;brvlan-&gt;msti != msti)</span>
+<span class="add">+ 		if (READ_ONCE(v-&gt;brvlan-&gt;msti) != msti)</span>
+  			continue;
+  
+  		br_mst_vlan_set_state(vg, v, state);
+<span class="hdr">diff --cc net/core/neighbour.c</span>
+<span class="ctx">index 7448320f7ad52,27602bcbeb691..6ed8eb0751469</span>
+<span class="hdr">--- a/net/core/neighbour.c</span>
+<span class="hdr">+++ b/net/core/neighbour.c</span>
+<span class="ctx">@@@ -2620,15 -2659,9 +2669,12 @@@ static int neightbl_dump_info(struct sk</span>
+  				       NLM_F_MULTI) &lt; 0)
+  			break;
+  
+ -		nidx = 0;
+ -		p = list_next_entry(&amp;tbl-&gt;parms, list);
+ -		list_for_each_entry_from_rcu(p, &amp;tbl-&gt;parms_list, list) {
+ +		default_skip = 1;
+ +
+ +		list_for_each_entry_rcu(p, &amp;tbl-&gt;parms_list, list) {
+<span class="del">- 			if (!net_eq(neigh_parms_net(p), net))</span>
+<span class="del">- 				continue;</span>
+<span class="del">- </span>
+ +			if (!p-&gt;dev || p-&gt;dev == blackhole_netdev)
+ +				continue;
+ +
+  			if (nidx &lt; neigh_skip)
+  				goto next;
+  
+</div>
+</details></td>
+</tr>
+<tr>
+<td><code>ipsec-next</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>MAINTAINERS, drivers/net/ethernet/cortina/gemini.c, drivers/net/ethernet/meta/fbnic/fbnic_txrx.c (+13 more)</code></td>
+<td>15:36 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">d35b61f696893995f398a97b9dd023f2cb8e01ec
+<span class="hdr">diff --cc drivers/net/ethernet/stmicro/stmmac/hwif.h</span>
+<span class="ctx">index 9314bcb85c221,fe18f98fae451..8a45afacd15d9</span>
+<span class="hdr">--- a/drivers/net/ethernet/stmicro/stmmac/hwif.h</span>
+<span class="hdr">+++ b/drivers/net/ethernet/stmicro/stmmac/hwif.h</span>
+<span class="ctx">@@@ -491,10 -490,8 +490,8 @@@ struct stmmac_ops </span>
+  	stmmac_do_callback(__priv, mac, config_l3_filter, __args)
+  #define stmmac_config_l4_filter(__priv, __args...) \
+  	stmmac_do_callback(__priv, mac, config_l4_filter, __args)
+<span class="del">- #define stmmac_set_arp_offload(__priv, __args...) \</span>
+<span class="del">- 	stmmac_do_void_callback(__priv, mac, set_arp_offload, __args)</span>
+  #define stmmac_fpe_map_preemption_class(__priv, __args...) \
+ -	stmmac_do_void_callback(__priv, mac, fpe_map_preemption_class, __args)
+ +	stmmac_do_callback(__priv, mac, fpe_map_preemption_class, __args)
+  
+  /* PTP and HW Timer helpers */
+  struct stmmac_hwtimestamp {
+<span class="hdr">diff --cc net/bridge/br_mst.c</span>
+<span class="ctx">index 1654efd3045b0,ecd8bba7430ee..63fc1dd0e9bc0</span>
+<span class="hdr">--- a/net/bridge/br_mst.c</span>
+<span class="hdr">+++ b/net/bridge/br_mst.c</span>
+<span class="ctx">@@@ -117,16 -119,11 +117,16 @@@ int br_mst_set_state(struct net_bridge_</span>
+  		err = switchdev_port_attr_set(p-&gt;dev, &amp;attr, extack);
+  		if (err &amp;&amp; err != -EOPNOTSUPP)
+  			goto out;
+ +		err = 0;
+  	}
+  
+ -	err = 0;
+ +	rcu_read_lock();
+ +	vg = nbp_vlan_group_rcu(p);
+ +	if (!vg)
+ +		goto out_rcu_unlock;
+ +
+  	list_for_each_entry_rcu(v, &amp;vg-&gt;vlan_list, vlist) {
+<span class="del">- 		if (v-&gt;brvlan-&gt;msti != msti)</span>
+<span class="add">+ 		if (READ_ONCE(v-&gt;brvlan-&gt;msti) != msti)</span>
+  			continue;
+  
+  		br_mst_vlan_set_state(vg, v, state);
+<span class="hdr">diff --cc net/core/neighbour.c</span>
+<span class="ctx">index 7448320f7ad52,27602bcbeb691..6ed8eb0751469</span>
+<span class="hdr">--- a/net/core/neighbour.c</span>
+<span class="hdr">+++ b/net/core/neighbour.c</span>
+<span class="ctx">@@@ -2620,15 -2659,9 +2669,12 @@@ static int neightbl_dump_info(struct sk</span>
+  				       NLM_F_MULTI) &lt; 0)
+  			break;
+  
+ -		nidx = 0;
+ -		p = list_next_entry(&amp;tbl-&gt;parms, list);
+ -		list_for_each_entry_from_rcu(p, &amp;tbl-&gt;parms_list, list) {
+ +		default_skip = 1;
+ +
+ +		list_for_each_entry_rcu(p, &amp;tbl-&gt;parms_list, list) {
+<span class="del">- 			if (!net_eq(neigh_parms_net(p), net))</span>
+<span class="del">- 				continue;</span>
+<span class="del">- </span>
+ +			if (!p-&gt;dev || p-&gt;dev == blackhole_netdev)
+ +				continue;
+ +
+  			if (nidx &lt; neigh_skip)
+  				goto next;
+  
+<span class="hdr">diff --cc net/netlink/af_netlink.c</span>
+<span class="ctx">index 9fdf964224ab4,537562aacb7ef..1e594baf7adf2</span>
+<span class="hdr">--- a/net/netlink/af_netlink.c</span>
+<span class="hdr">+++ b/net/netlink/af_netlink.c</span>
+<span class="ctx">@@@ -2724,19 -2705,11 +2724,18 @@@ static int netlink_native_seq_show(stru</span>
+  	} else {
+  		struct sock *s = v;
+  		struct netlink_sock *nlk = nlk_sk(s);
+ +		const unsigned long *groups;
+ +
+ +		/* Lockless read : netlink_realloc_groups() can change
+ +		 * nlk-&gt;groups under us. The old buffer is freed after an
+ +		 * RCU grace period, and this walk is RCU protected.
+ +		 */
+ +		groups = READ_ONCE(nlk-&gt;groups);
+  
+<span class="del">- 		seq_printf(seq, &quot;%pK %-3d %-10u %08x %-8d %-8d %-5d %-8d %-8u %-8llu\n&quot;,</span>
+<span class="del">- 			   s,</span>
+<span class="add">+ 		seq_printf(seq, &quot;0  %-3d %-10u %08x %-8d %-8d %-5d %-8d %-8u %-8llu\n&quot;,</span>
+  			   s-&gt;sk_protocol,
+  			   nlk-&gt;portid,
+ -			   nlk-&gt;groups ? (u32)nlk-&gt;groups[0] : 0,
+ +			   groups ? (u32)groups[0] : 0,
+  			   sk_rmem_alloc_get(s),
+  			   sk_wmem_alloc_get(s),
+  			   READ_ONCE(nlk-&gt;cb_running),
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>fixes <span class="category-count">1</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fixes-next</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>MAINTAINERS, block/blk-zoned.c, drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c (+1 more)</code></td>
+<td>18:53 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">f061115825ca32c091f4f030f1fbbff3ab6c7d17
+<span class="hdr">diff --cc block/blk-zoned.c</span>
+<span class="ctx">index ec510d66dfe2b,475aa16bc41a5..0b6292f4606a4</span>
+<span class="hdr">--- a/block/blk-zoned.c</span>
+<span class="hdr">+++ b/block/blk-zoned.c</span>
+<span class="ctx">@@@ -2028,16 -1860,6 +2028,23 @@@ void disk_init_zone_resources(struct ge</span>
+  	init_completion(&amp;disk-&gt;zone_wplugs_worker_bio_done);
+  }
+  
+ +static unsigned int disk_get_nr_zones(struct gendisk *disk, sector_t capacity)
+ +{
+ +	struct queue_limits *lim = &amp;disk-&gt;queue-&gt;limits;
+<span class="add">++	unsigned long long nr_zones;</span>
+ +
+ +	if (!capacity || !lim-&gt;chunk_sectors)
+ +		return 0;
+ +
+<span class="del">- 	return DIV_ROUND_UP_ULL(capacity, lim-&gt;chunk_sectors);</span>
+<span class="add">++	nr_zones = DIV_ROUND_UP_ULL(capacity, lim-&gt;chunk_sectors);</span>
+<span class="add">++	if (nr_zones &gt; UINT_MAX) {</span>
+<span class="add">++		pr_warn(&quot;%s: Too many zones (%llu)\n&quot;, disk-&gt;disk_name, nr_zones);</span>
+<span class="add">++		return 0;</span>
+<span class="add">++	}</span>
+<span class="add">++</span>
+<span class="add">++	return nr_zones;</span>
+ +}
+ +
+  /*
+   * For the size of a disk zone write plug hash table, use the size of the
+   * zone write plug mempool, which is the maximum of the disk open zones and
+<span class="ctx">@@@ -2498,6 -2283,11 +2505,12 @@@ static int blk_revalidate_zone_cb(struc</span>
+  		return -ENODEV;
+  	}
+  
+ -	/* Check zone condition */
+ -	ret = blk_revalidate_zone_cond(zone, idx, args);
+ -	if (ret)
+ -		return ret;
+<span class="add">++	if (idx &gt;= args-&gt;nr_zones) {</span>
+<span class="add">++		pr_warn(&quot;%s: Zone report index %u exceeds zone count %u\n&quot;,</span>
+<span class="add">++			disk-&gt;disk_name, idx, args-&gt;nr_zones);</span>
+<span class="add">++		return -ENODEV;</span>
+<span class="add">++	}</span>
+<span class="add">+ </span>
+  	/* Check zone type */
+  	switch (zone-&gt;type) {
+  	case BLK_ZONE_TYPE_CONVENTIONAL:
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>fs <span class="category-count">1</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ksmbd</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>-</code></td>
+<td>15:50 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">09f0857936e2cba87b7b6886483eb2e53ab470ce
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>graphics <span class="category-count">3</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>drm-intel-fixes</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>-</code></td>
+<td>16:34 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">
+</div>
+</details></td>
+</tr>
+<tr>
+<td><code>drm</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>-</code></td>
+<td>17:04 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">097676dac69f559221b3ee01a2013a9cc6e56821
+</div>
+</details></td>
+</tr>
+<tr>
+<td><code>amdgpu</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>MAINTAINERS, drivers/gpu/drm/amd/amdgpu/amdgpu_device.c, drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_connector.c (+4 more)</code></td>
+<td>17:28 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">e53f6e9fd3f284f5f0c80f48313aaf16fa504266
+<span class="hdr">diff --cc drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c</span>
+<span class="ctx">index 686da9c477db3,fa6a481c87659..a365b6d9433f4</span>
+<span class="hdr">--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c</span>
+<span class="hdr">+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c</span>
+<span class="ctx">@@@ -797,18 -799,9 +798,18 @@@ int amdgpu_dm_crtc_init(struct amdgpu_d</span>
+  
+  	drm_crtc_helper_add(&amp;acrtc-&gt;base, &amp;amdgpu_dm_crtc_helper_funcs);
+  
+ -	/* Create (reset) the plane state */
+ -	if (acrtc-&gt;base.funcs-&gt;reset)
+ -		acrtc-&gt;base.funcs-&gt;reset(&amp;acrtc-&gt;base);
+ +	/* Create the plane state */
+ +	if (acrtc-&gt;base.funcs-&gt;atomic_create_state) {
+ +		struct drm_crtc_state *crtc_state;
+ +
+ +		crtc_state = acrtc-&gt;base.funcs-&gt;atomic_create_state(&amp;acrtc-&gt;base);
+ +		if (IS_ERR(crtc_state)) {
+ +			res = PTR_ERR(crtc_state);
+<span class="del">- 			goto error_ism_fini;</span>
+<span class="add">++			goto error_ism_flush;</span>
+ +		}
+ +
+ +		acrtc-&gt;base.state = crtc_state;
+ +	}
+  
+  	acrtc-&gt;max_cursor_width = dm-&gt;adev-&gt;dm.dc-&gt;caps.max_cursor_size;
+  	acrtc-&gt;max_cursor_height = dm-&gt;adev-&gt;dm.dc-&gt;caps.max_cursor_size;
+<span class="ctx">@@@ -840,9 -833,6 +841,9 @@@</span>
+  #endif
+  	return 0;
+  
+<span class="del">- error_ism_fini:</span>
+<span class="del">- 	amdgpu_dm_ism_fini(&amp;acrtc-&gt;ism);</span>
+<span class="add">++error_ism_flush:</span>
+<span class="add">++	amdgpu_dm_ism_flush(&amp;acrtc-&gt;ism);</span>
+ +	drm_crtc_cleanup(&amp;acrtc-&gt;base);
+  fail:
+  	kfree(acrtc);
+  	kfree(cursor_plane);
+<span class="hdr">diff --cc drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c</span>
+<span class="ctx">index d357afcb0e93a,ab674a32279f3..779dabb7fc519</span>
+<span class="hdr">--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c</span>
+<span class="hdr">+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c</span>
+<span class="ctx">@@@ -1805,9 -1805,24 +1806,21 @@@ STATIC_IFN_KUNIT struct drm_plane_stat</span>
+  
+  	amdgpu_state = kzalloc_obj(*amdgpu_state);
+  	if (!amdgpu_state)
+ -		return;
+ +		return ERR_PTR(-ENOMEM);
+  
+<span class="add">+ 	amdgpu_state-&gt;flip_addr = kzalloc_obj(*amdgpu_state-&gt;flip_addr);</span>
+<span class="add">+ 	amdgpu_state-&gt;scaling_info = kzalloc_obj(*amdgpu_state-&gt;scaling_info);</span>
+<span class="add">+ 	amdgpu_state-&gt;plane_info = kzalloc_obj(*amdgpu_state-&gt;plane_info);</span>
+<span class="add">+ 	if (!amdgpu_state-&gt;flip_addr || !amdgpu_state-&gt;scaling_info ||</span>
+<span class="add">+ 	    !amdgpu_state-&gt;plane_info) {</span>
+<span class="add">+ 		kfree(amdgpu_state-&gt;flip_addr);</span>
+<span class="add">+ 		kfree(amdgpu_state-&gt;scaling_info);</span>
+<span class="add">+ 		kfree(amdgpu_state-&gt;plane_info);</span>
+<span class="add">+ 		kfree(amdgpu_state);</span>
+ -		return;
+<span class="add">++		return ERR_PTR(-ENOMEM);</span>
+<span class="add">+ 	}</span>
+<span class="add">+ </span>
+ -	if (plane-&gt;state)
+ -		plane-&gt;funcs-&gt;atomic_destroy_state(plane, plane-&gt;state);
+ -
+ -	__drm_atomic_helper_plane_reset(plane, &amp;amdgpu_state-&gt;base);
+ +	__drm_atomic_helper_plane_state_init(&amp;amdgpu_state-&gt;base, plane);
+  	amdgpu_state-&gt;degamma_tf = AMDGPU_TRANSFER_FUNCTION_DEFAULT;
+  	amdgpu_state-&gt;hdr_mult = AMDGPU_HDR_MULT_DEFAULT;
+  	amdgpu_state-&gt;shaper_tf = AMDGPU_TRANSFER_FUNCTION_DEFAULT;
+<span class="hdr">diff --cc drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_plane_test.c</span>
+<span class="ctx">index 1b0d3f16ef1a9,1001cbc334b09..a18b1d99ae858</span>
+<span class="hdr">--- a/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_plane_test.c</span>
+<span class="hdr">+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/tests/amdgpu_dm_plane_test.c</span>
+<span class="ctx">@@@ -3755,10 -4110,12 +4102,12 @@@ static struct kunit_case amdgpu_dm_plan</span>
+  	KUNIT_CASE(dm_test_atomic_check_helper_failure),
+  	KUNIT_CASE(dm_test_atomic_check_color_pipeline_conflict),
+  	KUNIT_CASE(dm_test_atomic_check_scaling_failure),
+<span class="add">+ 	KUNIT_CASE(dm_test_atomic_check_success),</span>
+  	/* amdgpu_dm_plane_panic_flush() */
+  	KUNIT_CASE(dm_test_panic_flush_no_dc_state),
+<span class="add">+ 	KUNIT_CASE(dm_test_panic_flush_disables_dcc),</span>
+ -	/* amdgpu_dm_plane_drm_plane_reset() */
+ -	KUNIT_CASE(dm_test_plane_reset_initializes_state),
+ +	/* amdgpu_dm_plane_drm_plane_create_state() */
+ +	KUNIT_CASE(dm_test_plane_create_state_initializes_state),
+  	/* amdgpu_dm_plane_drm_plane_duplicate_state() */
+  	KUNIT_CASE(dm_test_plane_duplicate_state_copies_fields),
+  	KUNIT_CASE(dm_test_plane_duplicate_state_copies_resources),
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>mm <span class="category-count">2</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mm-unstable</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>MAINTAINERS, arch/loongarch/Kconfig, arch/riscv/Kconfig (+18 more)</code></td>
+<td>16:58 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">04d04ccbaa25ca0fa022fd47c9923a13368afcfb
+<span class="hdr">diff --cc drivers/infiniband/hw/hfi1/file_ops.c</span>
+<span class="ctx">index 1a36f995c4f6d,b02d1f1dbb27b..680364fda856f</span>
+<span class="hdr">--- a/drivers/infiniband/hw/hfi1/file_ops.c</span>
+<span class="hdr">+++ b/drivers/infiniband/hw/hfi1/file_ops.c</span>
+<span class="ctx">@@@ -325,8 -320,7 +320,8 @@@ static int hfi1_file_mmap(struct file *</span>
+  		memaddr = 0;
+  	void *memvirt = NULL;
+  	dma_addr_t memdma = 0;
+<span class="del">- 	u8 subctxt, mapio = 0, vmf = 0, type;</span>
+<span class="add">+ 	u8 subctxt, mapio = 0, is_vmalloc = 0, type;</span>
+ +	size_t memdmalen = 0;
+  	ssize_t memlen = 0;
+  	int ret = 0;
+  	u16 ctxt;
+<span class="ctx">@@@ -569,16 -546,13 +556,14 @@@</span>
+  	}
+  
+  	vm_flags_reset(vma, flags);
+<span class="del">- 	mmap_cdbg(ctxt, subctxt, type, mapio, vmf, memaddr, memvirt, memdma, </span>
+<span class="add">+ 	mmap_cdbg(ctxt, subctxt, type, mapio, is_vmalloc, memaddr, memvirt, memdma,</span>
+  		  memlen, vma);
+<span class="del">- 	if (vmf) {</span>
+<span class="del">- 		vma-&gt;vm_pgoff = PFN_DOWN(memaddr);</span>
+<span class="del">- 		vma-&gt;vm_ops = &amp;vm_ops;</span>
+<span class="del">- 		ret = 0;</span>
+<span class="add">+ 	if (is_vmalloc) {</span>
+<span class="add">+ 		ret = remap_vmalloc_range(vma, memvirt, 0);</span>
+  	} else if (memdma) {
+  		ret = dma_mmap_coherent(&amp;dd-&gt;pcidev-&gt;dev, vma,
+ -					memvirt, memdma, memlen);
+ +					memvirt, memdma,
+ +					memdmalen ? memdmalen : memlen);
+  	} else if (mapio) {
+  		ret = io_remap_pfn_range(vma, vma-&gt;vm_start,
+  					 PFN_DOWN(memaddr),
+</div>
+</details></td>
+</tr>
+<tr>
+<td><code>mm-next</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>CREDITS, Documentation/admin-guide/kernel-parameters.txt, Documentation/admin-guide/sysctl/kernel.rst (+39 more)</code></td>
+<td>19:12 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">3a1a656d6b6b103816104dbeacdfac46c0219890
+<span class="hdr">diff --cc fs/coredump.c</span>
+<span class="ctx">index 668debe0cb97f,4d03826dd2498..f809e3fb4ba21</span>
+<span class="hdr">--- a/fs/coredump.c</span>
+<span class="hdr">+++ b/fs/coredump.c</span>
+<span class="ctx">@@@ -1831,12 -1608,10 +1831,12 @@@ static unsigned long vma_dump_size(stru</span>
+  	}
+  
+  	/* Hugetlb memory check */
+<span class="del">- 	if (is_vm_hugetlb_page(vma)) {</span>
+<span class="add">+ 	if (vma_is_hugetlb(vma)) {</span>
+ -		if ((vma-&gt;vm_flags &amp; VM_SHARED) &amp;&amp; FILTER(HUGETLB_SHARED))
+ +		if ((vma-&gt;vm_flags &amp; VM_SHARED) &amp;&amp;
+ +		    COREDUMP_MEMORY_TYPE_INCLUDE(memory_types, HUGETLB_SHARED))
+  			goto whole;
+ -		if (!(vma-&gt;vm_flags &amp; VM_SHARED) &amp;&amp; FILTER(HUGETLB_PRIVATE))
+ +		if (!(vma-&gt;vm_flags &amp; VM_SHARED) &amp;&amp;
+ +		    COREDUMP_MEMORY_TYPE_INCLUDE(memory_types, HUGETLB_PRIVATE))
+  			goto whole;
+  		return 0;
+  	}
+<span class="hdr">diff --cc fs/fuse/dax.c</span>
+<span class="ctx">index 32c88ef814340,a5994f1c637d9..761e6b153db44</span>
+<span class="hdr">--- a/fs/fuse/dax.c</span>
+<span class="hdr">+++ b/fs/fuse/dax.c</span>
+<span class="ctx">@@@ -826,8 -826,7 +826,8 @@@ int fuse_dax_mmap(struct file *file, st</span>
+  {
+  	file_accessed(file);
+  	vma-&gt;vm_ops = &amp;fuse_dax_vm_ops;
+<span class="del">- 	vm_flags_set(vma, VM_MIXEDMAP | VM_HUGEPAGE);</span>
+<span class="add">+ 	vma_set_flags(vma, VMA_HUGEPAGE_BIT);</span>
+ +	vma-&gt;vm_page_prot = pgprot_decrypted(vma-&gt;vm_page_prot);
+  	return 0;
+  }
+  
+<span class="hdr">diff --cc include/linux/buffer_head.h</span>
+<span class="ctx">index e7a701ce029d1,e47fbd0387b69..1e9243520479b</span>
+<span class="hdr">--- a/include/linux/buffer_head.h</span>
+<span class="hdr">+++ b/include/linux/buffer_head.h</span>
+<span class="ctx">@@@ -169,44 -172,9 +169,38 @@@ static __always_inline int buffer_uptod</span>
+  
+  static inline unsigned long bh_offset(const struct buffer_head *bh)
+  {
+ -	return (unsigned long)(bh)-&gt;b_data &amp; (page_size(bh-&gt;b_page) - 1);
+ +	return (unsigned long)(bh)-&gt;b_data &amp; (folio_size(bh-&gt;b_folio) - 1);
+ +}
+ +
+ +/**
+ + * kmap_local_bh - Map the data of a buffer.
+ + * @bh: The buffer.
+ + *
+ + * Buffers usually live in the page cache, but a few are built over memory
+ + * which is not.  Those carry no folio and b_data is already a kernel address
+ + * which is always mapped, so there is nothing to do for them.  Pair with
+ + * kunmap_local_bh().
+ + *
+ + * Return: A pointer to the buffer&#x27;s data.
+ + */
+ +static inline void *kmap_local_bh(const struct buffer_head *bh)
+ +{
+ +	if (!bh-&gt;b_folio)
+ +		return bh-&gt;b_data;
+ +	return kmap_local_folio(bh-&gt;b_folio, bh_offset(bh));
+ +}
+ +
+ +/**
+ + * kunmap_local_bh - Unmap the data of a buffer.
+ + * @bh: The buffer.
+ + * @addr: The address returned by kmap_local_bh().
+ + */
+ +static inline void kunmap_local_bh(const struct buffer_head *bh, void *addr)
+ +{
+ +	if (bh-&gt;b_folio)
+ +		kunmap_local(addr);
+  }
+  
+<span class="del">- /* If we *know* page-&gt;private refers to buffer_heads */</span>
+<span class="del">- #define page_buffers(page)					\</span>
+<span class="del">- 	({							\</span>
+<span class="del">- 		BUG_ON(!PagePrivate(page));			\</span>
+<span class="del">- 		((struct buffer_head *)page_private(page));	\</span>
+<span class="del">- 	})</span>
+  #define folio_buffers(folio)		folio_get_private(folio)
+  
+  void buffer_check_dirty_writeback(struct folio *folio,
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>security <span class="category-count">5</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ipsec</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>drivers/net/ethernet/meta/fbnic/fbnic_txrx.c, drivers/net/ethernet/meta/fbnic/fbnic_txrx.h, drivers/net/ethernet/stmicro/stmmac/hwif.h (+10 more)</code></td>
+<td>17:42 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">0c9cc868dfd02fe0517306ce3ea9b27dba681e4c
+<span class="hdr">diff --cc drivers/net/ethernet/stmicro/stmmac/hwif.h</span>
+<span class="ctx">index fe18f98fae451,9314bcb85c221..8a45afacd15d9</span>
+<span class="hdr">--- a/drivers/net/ethernet/stmicro/stmmac/hwif.h</span>
+<span class="hdr">+++ b/drivers/net/ethernet/stmicro/stmmac/hwif.h</span>
+<span class="ctx">@@@ -490,8 -491,10 +490,8 @@@ struct stmmac_ops </span>
+  	stmmac_do_callback(__priv, mac, config_l3_filter, __args)
+  #define stmmac_config_l4_filter(__priv, __args...) \
+  	stmmac_do_callback(__priv, mac, config_l4_filter, __args)
+ -#define stmmac_set_arp_offload(__priv, __args...) \
+ -	stmmac_do_void_callback(__priv, mac, set_arp_offload, __args)
+  #define stmmac_fpe_map_preemption_class(__priv, __args...) \
+<span class="del">- 	stmmac_do_void_callback(__priv, mac, fpe_map_preemption_class, __args)</span>
+<span class="add">+ 	stmmac_do_callback(__priv, mac, fpe_map_preemption_class, __args)</span>
+  
+  /* PTP and HW Timer helpers */
+  struct stmmac_hwtimestamp {
+<span class="hdr">diff --cc net/bridge/br_mst.c</span>
+<span class="ctx">index ecd8bba7430ee,1654efd3045b0..63fc1dd0e9bc0</span>
+<span class="hdr">--- a/net/bridge/br_mst.c</span>
+<span class="hdr">+++ b/net/bridge/br_mst.c</span>
+<span class="ctx">@@@ -119,11 -117,16 +117,16 @@@ int br_mst_set_state(struct net_bridge_</span>
+  		err = switchdev_port_attr_set(p-&gt;dev, &amp;attr, extack);
+  		if (err &amp;&amp; err != -EOPNOTSUPP)
+  			goto out;
+<span class="add">+ 		err = 0;</span>
+  	}
+  
+<span class="del">- 	err = 0;</span>
+<span class="add">+ 	rcu_read_lock();</span>
+<span class="add">+ 	vg = nbp_vlan_group_rcu(p);</span>
+<span class="add">+ 	if (!vg)</span>
+<span class="add">+ 		goto out_rcu_unlock;</span>
+<span class="add">+ </span>
+  	list_for_each_entry_rcu(v, &amp;vg-&gt;vlan_list, vlist) {
+ -		if (v-&gt;brvlan-&gt;msti != msti)
+ +		if (READ_ONCE(v-&gt;brvlan-&gt;msti) != msti)
+  			continue;
+  
+  		br_mst_vlan_set_state(vg, v, state);
+<span class="hdr">diff --cc net/core/neighbour.c</span>
+<span class="ctx">index 27602bcbeb691,7448320f7ad52..6ed8eb0751469</span>
+<span class="hdr">--- a/net/core/neighbour.c</span>
+<span class="hdr">+++ b/net/core/neighbour.c</span>
+<span class="ctx">@@@ -2659,9 -2620,15 +2669,12 @@@ static int neightbl_dump_info(struct sk</span>
+  				       NLM_F_MULTI) &lt; 0)
+  			break;
+  
+<span class="del">- 		nidx = 0;</span>
+<span class="del">- 		p = list_next_entry(&amp;tbl-&gt;parms, list);</span>
+<span class="del">- 		list_for_each_entry_from_rcu(p, &amp;tbl-&gt;parms_list, list) {</span>
+<span class="add">+ 		default_skip = 1;</span>
+<span class="add">+ </span>
+<span class="add">+ 		list_for_each_entry_rcu(p, &amp;tbl-&gt;parms_list, list) {</span>
+ -			if (!net_eq(neigh_parms_net(p), net))
+ -				continue;
+ -
+<span class="add">+ 			if (!p-&gt;dev || p-&gt;dev == blackhole_netdev)</span>
+<span class="add">+ 				continue;</span>
+<span class="add">+ </span>
+  			if (nidx &lt; neigh_skip)
+  				goto next;
+  
+<span class="hdr">diff --cc net/netlink/af_netlink.c</span>
+<span class="ctx">index 537562aacb7ef,9fdf964224ab4..1e594baf7adf2</span>
+<span class="hdr">--- a/net/netlink/af_netlink.c</span>
+<span class="hdr">+++ b/net/netlink/af_netlink.c</span>
+<span class="ctx">@@@ -2705,11 -2724,19 +2724,18 @@@ static int netlink_native_seq_show(stru</span>
+  	} else {
+  		struct sock *s = v;
+  		struct netlink_sock *nlk = nlk_sk(s);
+<span class="add">+ 		const unsigned long *groups;</span>
+<span class="add">+ </span>
+<span class="add">+ 		/* Lockless read : netlink_realloc_groups() can change</span>
+<span class="add">+ 		 * nlk-&gt;groups under us. The old buffer is freed after an</span>
+<span class="add">+ 		 * RCU grace period, and this walk is RCU protected.</span>
+<span class="add">+ 		 */</span>
+<span class="add">+ 		groups = READ_ONCE(nlk-&gt;groups);</span>
+  
+ -		seq_printf(seq, &quot;%pK %-3d %-10u %08x %-8d %-8d %-5d %-8d %-8u %-8llu\n&quot;,
+ -			   s,
+ +		seq_printf(seq, &quot;0  %-3d %-10u %08x %-8d %-8d %-5d %-8d %-8u %-8llu\n&quot;,
+  			   s-&gt;sk_protocol,
+  			   nlk-&gt;portid,
+<span class="del">- 			   nlk-&gt;groups ? (u32)nlk-&gt;groups[0] : 0,</span>
+<span class="add">+ 			   groups ? (u32)groups[0] : 0,</span>
+  			   sk_rmem_alloc_get(s),
+  			   sk_wmem_alloc_get(s),
+  			   READ_ONCE(nlk-&gt;cb_running),
+</div>
+</details></td>
+</tr>
+<tr>
+<td><code>ipsec-next</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>MAINTAINERS, drivers/net/ethernet/cortina/gemini.c, drivers/net/ethernet/meta/fbnic/fbnic_txrx.c (+13 more)</code></td>
+<td>18:01 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">fdf60b4f9f62b8a9ee3cc0de7f1903d6269ec5c9
+<span class="hdr">diff --cc drivers/net/ethernet/stmicro/stmmac/hwif.h</span>
+<span class="ctx">index 9314bcb85c221,fe18f98fae451..8a45afacd15d9</span>
+<span class="hdr">--- a/drivers/net/ethernet/stmicro/stmmac/hwif.h</span>
+<span class="hdr">+++ b/drivers/net/ethernet/stmicro/stmmac/hwif.h</span>
+<span class="ctx">@@@ -491,10 -490,8 +490,8 @@@ struct stmmac_ops </span>
+  	stmmac_do_callback(__priv, mac, config_l3_filter, __args)
+  #define stmmac_config_l4_filter(__priv, __args...) \
+  	stmmac_do_callback(__priv, mac, config_l4_filter, __args)
+<span class="del">- #define stmmac_set_arp_offload(__priv, __args...) \</span>
+<span class="del">- 	stmmac_do_void_callback(__priv, mac, set_arp_offload, __args)</span>
+  #define stmmac_fpe_map_preemption_class(__priv, __args...) \
+ -	stmmac_do_void_callback(__priv, mac, fpe_map_preemption_class, __args)
+ +	stmmac_do_callback(__priv, mac, fpe_map_preemption_class, __args)
+  
+  /* PTP and HW Timer helpers */
+  struct stmmac_hwtimestamp {
+<span class="hdr">diff --cc net/bridge/br_mst.c</span>
+<span class="ctx">index 1654efd3045b0,ecd8bba7430ee..63fc1dd0e9bc0</span>
+<span class="hdr">--- a/net/bridge/br_mst.c</span>
+<span class="hdr">+++ b/net/bridge/br_mst.c</span>
+<span class="ctx">@@@ -117,16 -119,11 +117,16 @@@ int br_mst_set_state(struct net_bridge_</span>
+  		err = switchdev_port_attr_set(p-&gt;dev, &amp;attr, extack);
+  		if (err &amp;&amp; err != -EOPNOTSUPP)
+  			goto out;
+ +		err = 0;
+  	}
+  
+ -	err = 0;
+ +	rcu_read_lock();
+ +	vg = nbp_vlan_group_rcu(p);
+ +	if (!vg)
+ +		goto out_rcu_unlock;
+ +
+  	list_for_each_entry_rcu(v, &amp;vg-&gt;vlan_list, vlist) {
+<span class="del">- 		if (v-&gt;brvlan-&gt;msti != msti)</span>
+<span class="add">+ 		if (READ_ONCE(v-&gt;brvlan-&gt;msti) != msti)</span>
+  			continue;
+  
+  		br_mst_vlan_set_state(vg, v, state);
+<span class="hdr">diff --cc net/core/neighbour.c</span>
+<span class="ctx">index 7448320f7ad52,27602bcbeb691..6ed8eb0751469</span>
+<span class="hdr">--- a/net/core/neighbour.c</span>
+<span class="hdr">+++ b/net/core/neighbour.c</span>
+<span class="ctx">@@@ -2620,15 -2659,9 +2669,12 @@@ static int neightbl_dump_info(struct sk</span>
+  				       NLM_F_MULTI) &lt; 0)
+  			break;
+  
+ -		nidx = 0;
+ -		p = list_next_entry(&amp;tbl-&gt;parms, list);
+ -		list_for_each_entry_from_rcu(p, &amp;tbl-&gt;parms_list, list) {
+ +		default_skip = 1;
+ +
+ +		list_for_each_entry_rcu(p, &amp;tbl-&gt;parms_list, list) {
+<span class="del">- 			if (!net_eq(neigh_parms_net(p), net))</span>
+<span class="del">- 				continue;</span>
+<span class="del">- </span>
+ +			if (!p-&gt;dev || p-&gt;dev == blackhole_netdev)
+ +				continue;
+ +
+  			if (nidx &lt; neigh_skip)
+  				goto next;
+  
+<span class="hdr">diff --cc net/netlink/af_netlink.c</span>
+<span class="ctx">index 9fdf964224ab4,537562aacb7ef..1e594baf7adf2</span>
+<span class="hdr">--- a/net/netlink/af_netlink.c</span>
+<span class="hdr">+++ b/net/netlink/af_netlink.c</span>
+<span class="ctx">@@@ -2724,19 -2705,11 +2724,18 @@@ static int netlink_native_seq_show(stru</span>
+  	} else {
+  		struct sock *s = v;
+  		struct netlink_sock *nlk = nlk_sk(s);
+ +		const unsigned long *groups;
+ +
+ +		/* Lockless read : netlink_realloc_groups() can change
+ +		 * nlk-&gt;groups under us. The old buffer is freed after an
+ +		 * RCU grace period, and this walk is RCU protected.
+ +		 */
+ +		groups = READ_ONCE(nlk-&gt;groups);
+  
+<span class="del">- 		seq_printf(seq, &quot;%pK %-3d %-10u %08x %-8d %-8d %-5d %-8d %-8u %-8llu\n&quot;,</span>
+<span class="del">- 			   s,</span>
+<span class="add">+ 		seq_printf(seq, &quot;0  %-3d %-10u %08x %-8d %-8d %-5d %-8d %-8u %-8llu\n&quot;,</span>
+  			   s-&gt;sk_protocol,
+  			   nlk-&gt;portid,
+ -			   nlk-&gt;groups ? (u32)nlk-&gt;groups[0] : 0,
+ +			   groups ? (u32)groups[0] : 0,
+  			   sk_rmem_alloc_get(s),
+  			   sk_wmem_alloc_get(s),
+  			   READ_ONCE(nlk-&gt;cb_running),
+</div>
+</details></td>
+</tr>
+<tr>
+<td><code>security</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>fs/namespace.c, include/linux/ns/ns_common_types.h, include/linux/sched.h (+1 more)</code></td>
+<td>18:17 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">1114f2acf212dfb0431bd72a5e9e44a014a6d73b
+<span class="hdr">diff --cc include/linux/ns/ns_common_types.h</span>
+<span class="ctx">index 6ed6b497831c7,5cfe0ce3c8818..47a5cfe2326a3</span>
+<span class="hdr">--- a/include/linux/ns/ns_common_types.h</span>
+<span class="hdr">+++ b/include/linux/ns/ns_common_types.h</span>
+<span class="ctx">@@@ -116,8 -116,13 +116,11 @@@ struct ns_common </span>
+  	struct dentry *stashed;
+  	const struct proc_ns_operations *ops;
+  	unsigned int inum;
+<span class="add">+ #ifdef CONFIG_SECURITY</span>
+<span class="add">+ 	void *ns_security;</span>
+<span class="add">+ #endif</span>
+ -	union {
+ -		struct ns_tree;
+ -		struct rcu_head ns_rcu;
+ -	};
+ +	struct ns_tree;
+ +	struct rcu_head ns_rcu;
+  };
+  
+  #define to_ns_common(__ns)                                    \
+</div>
+</details></td>
+</tr>
+<tr>
+<td><code>landlock</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>-</code></td>
+<td>18:28 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">4ecae95d758f37f8b570ed1715ceb0b0fc71ae27
+</div>
+</details></td>
+</tr>
+<tr>
+<td><code>security-next</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>fs/namei.c, fs/namespace.c, include/linux/lsm_hook_defs.h (+5 more)</code></td>
+<td>19:27 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">f4d632a09185ac2bc4ee3c9fb6efe2008fa3856f
+<span class="hdr">diff --cc fs/namei.c</span>
+<span class="ctx">index ca4f5e3be99ac,99f894f3f7e13..1dd4ec7d0e62f</span>
+<span class="hdr">--- a/fs/namei.c</span>
+<span class="hdr">+++ b/fs/namei.c</span>
+<span class="ctx">@@@ -4227,11 -4188,16 +4227,11 @@@ int vfs_create(struct mnt_idmap *idmap</span>
+  		return -EACCES;	/* shouldn&#x27;t it be ENOSYS? */
+  
+  	mode = vfs_prepare_mode(idmap, dir, mode, S_IALLUGO, S_IFREG);
+<span class="del">- 	error = security_inode_create(dir, dentry, mode);</span>
+<span class="add">+ 	error = security_inode_create(idmap, dir, dentry, mode);</span>
+  	if (error)
+  		return error;
+ -	error = try_break_deleg(dir, LEASE_BREAK_DIR_CREATE, di);
+ -	if (error)
+ -		return error;
+ -	error = dir-&gt;i_op-&gt;create(idmap, dir, dentry, mode);
+ -	if (!error)
+ -		fsnotify_create(dir, dentry);
+ -	return error;
+ +
+ +	return vfs_create_no_perm(idmap, dentry, mode, di);
+  }
+  EXPORT_SYMBOL(vfs_create);
+  
+<span class="ctx">@@@ -4368,21 -4328,7 +4368,21 @@@ static int may_o_create(struct mnt_idma</span>
+  	if (error)
+  		return error;
+  
+ -	return security_inode_create(idmap, dir-&gt;dentry-&gt;d_inode, dentry, mode);
+ +	if (create_dir)
+<span class="del">- 		error = security_inode_mkdir(dir_inode, dentry, mode);</span>
+<span class="add">++		error = security_inode_mkdir(idmap, dir_inode, dentry, mode);</span>
+ +	else
+<span class="del">- 		error = security_inode_create(dir_inode, dentry, mode);</span>
+<span class="add">++		error = security_inode_create(idmap, dir_inode, dentry, mode);</span>
+ +
+ +	return error;
+ +}
+ +
+ +static inline umode_t o_create_mode(struct mnt_idmap *idmap,
+ +		const struct inode *dir, int open_flag, umode_t mode)
+ +{
+ +	if (O_IS_MKDIR(open_flag))
+ +		return vfs_prepare_mode(idmap, dir, mode, S_IRWXUGO | S_ISVTX, S_IFDIR);
+ +	else
+ +		return vfs_prepare_mode(idmap, dir, mode, S_IALLUGO, S_IFREG);
+  }
+  
+  /**
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>storage <span class="category-count">1</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scsi-mkp</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>drivers/ata/libata-scsi.c, drivers/scsi/leapraid/leapraid_func.h, drivers/scsi/leapraid/leapraid_os.c (+5 more)</code></td>
+<td>17:56 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">f0e48da3d3f402fd3802dadf55dfe818238fc12f
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>subsystem <span class="category-count">2</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>char-misc</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>drivers/android/binder/node.rs, drivers/android/binder/node/wrapper.rs, drivers/android/binder/rust_binderfs.c (+1 more)</code></td>
+<td>17:53 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">4aec2a4b5d1906c4d9ddb9ab0f7435136ac19946
+</div>
+</details></td>
+</tr>
+<tr>
+<td><code>subsystem-next</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>MAINTAINERS, drivers/android/binder/page_range.rs, drivers/iio/light/lm3533-als.c</code></td>
+<td>19:45 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">8d90302ddf10ae5f9f145c15664d2ef7e48d6a95
+<span class="hdr">diff --cc MAINTAINERS</span>
+<span class="ctx">index 4ce83d0148167,614b35218b251..26e97b7784c2d</span>
+<span class="hdr">--- a/MAINTAINERS</span>
+<span class="hdr">+++ b/MAINTAINERS</span>
+<span class="ctx">@@@ -18597,10 -18417,10 +18597,10 @@@ M:	David Yang &lt;mmyangfl@gmail.com</span>
+  L:	netdev@vger.kernel.org
+  S:	Maintained
+  F:	Documentation/devicetree/bindings/net/dsa/motorcomm,yt921x.yaml
+ -F:	drivers/net/dsa/yt921x.*
+ +F:	drivers/net/dsa/motorcomm/
+  F:	net/dsa/tag_yt921x.c
+  
+<span class="del">- MOXA SMARTIO/INDUSTIO/INTELLIO SERIAL CARD</span>
+<span class="add">+ MOXA SMARTIO/INDUSTIO SERIAL CARD</span>
+  M:	Jiri Slaby &lt;jirislaby@kernel.org&gt;
+  S:	Maintained
+  F:	Documentation/driver-api/tty/moxa-smartio.rst
+<span class="hdr">diff --cc drivers/iio/light/lm3533-als.c</span>
+<span class="ctx">index 5db9591a85b93,4870e8050088b..218cb93b4cf99</span>
+<span class="hdr">--- a/drivers/iio/light/lm3533-als.c</span>
+<span class="hdr">+++ b/drivers/iio/light/lm3533-als.c</span>
+<span class="ctx">@@@ -432,12 -430,11 +431,12 @@@ static ssize_t store_thresh_either_en(s</span>
+  	u8 zone;
+  	int ret;
+  
+<span class="del">- 	if (!als-&gt;irq)</span>
+<span class="add">+ 	if (als-&gt;irq &lt;= 0)</span>
+  		return -EBUSY;
+  
+ -	if (kstrtoul(buf, 0, &amp;enable))
+ -		return -EINVAL;
+ +	ret = kstrtoul(buf, 0, &amp;enable);
+ +	if (ret)
+ +		return ret;
+  
+  	int_enabled = test_bit(LM3533_ALS_FLAG_INT_ENABLED, &amp;als-&gt;flags);
+  
+</div>
+</details></td>
+</tr>
+</tbody></table>
+
+<script>
+function filterByType(type) {
+    var rows = document.querySelectorAll('#main-table tbody tr');
+    for (var i = 0; i < rows.length; i++) {
+        rows[i].style.display = (type === 'all' || rows[i].dataset.type === type) ? '' : 'none';
+    }
+}
+function toggleAll() {
+    var details = document.querySelectorAll('details');
+    var anyOpen = false;
+    for (var i = 0; i < details.length; i++) {
+        if (details[i].open) { anyOpen = true; break; }
+    }
+    for (var i = 0; i < details.length; i++) {
+        details[i].open = !anyOpen;
+    }
+}
+</script>
+</body></html>
