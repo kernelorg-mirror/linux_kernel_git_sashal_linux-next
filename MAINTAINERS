@@ -7920,6 +7920,7 @@ S:	Supported
 F:	Documentation/devicetree/bindings/dpll/dpll-device.yaml
 F:	Documentation/devicetree/bindings/dpll/dpll-pin.yaml
 F:	Documentation/driver-api/dpll.rst
+F:	Documentation/netlink/specs/dpll.yaml
 F:	drivers/dpll/
 F:	include/linux/dpll.h
 F:	include/uapi/linux/dpll.h
@@ -12457,6 +12458,7 @@ F:	drivers/crypto/nx/Makefile
 F:	drivers/crypto/nx/nx-842*
 F:	include/linux/sw842.h
 F:	lib/842/
+F:	lib/tests/842_decompress_kunit.c
 
 IBM Power in-Nest Crypto Acceleration
 M:	Breno Leitão <leitao@debian.org>
@@ -22491,6 +22493,15 @@ S:	Maintained
 F:	Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
 F:	drivers/i2c/busses/i2c-qcom-cci.c
 
+QUALCOMM INLINE CRYPTO ENGINE DRIVER
+M:	Abel Vesa <abelvesa@kernel.org>
+L:	linux-arm-msm@vger.kernel.org
+L:	linux-crypto@vger.kernel.org
+S:	Maintained
+F:	Documentation/devicetree/bindings/crypto/qcom,inline-crypto-engine.yaml
+F:	drivers/soc/qcom/ice.c
+F:	include/soc/qcom/ice.h
+
 QUALCOMM INTERCONNECT BWMON DRIVER
 M:	Krzysztof Kozlowski <krzk@kernel.org>
 L:	linux-arm-msm@vger.kernel.org
@@ -28005,6 +28016,12 @@ S:	Maintained
 F:	Documentation/devicetree/bindings/clock/ultrarisc,dp1000-clk.yaml
 F:	drivers/clk/ultrarisc/*
 F:	include/dt-bindings/clock/ultrarisc,dp1000-clk.h
+
+ULTRARISC DP1000 DWMAC GLUE LAYER
+M:	Jia Wang <wangjia@ultrarisc.com>
+S:	Maintained
+F:	Documentation/devicetree/bindings/net/ultrarisc,dp1000-gmac.yaml
+F:	drivers/net/ethernet/stmicro/stmmac/dwmac-ultrarisc.c
 
 ULTRARISC DP1000 PINCTRL DRIVER
 M:	Jia Wang <wangjia@ultrarisc.com>
