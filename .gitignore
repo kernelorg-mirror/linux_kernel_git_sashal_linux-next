@@ -76,7 +76,6 @@ modules.order
 /vmlinux-gdb.py
 /vmlinuz
 /System.map
-/Module.markers
 /modules.builtin
 /modules.builtin.modinfo
 /modules.builtin.ranges
@@ -105,6 +104,7 @@ modules.order
 #
 # pacman files (make pacman-pkg)
 #
+/*.pkg.*.sig
 /PKGBUILD
 /pacman/
 
