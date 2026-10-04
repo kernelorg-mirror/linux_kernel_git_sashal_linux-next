@@ -30,6 +30,12 @@ soc/dt
 		ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/mediatek/linux tags/mtk-dts32-for-v7.4
 	arm-juno/dt
 		https://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux tags/juno-updates-7.4
+	ste/dt32
+		https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-nomadik tags/ux500-dts-for-7.4
+	gemini/dt
+		https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-integrator tags/gemini-dts-for-7.4
+	omap/dt32
+		https://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-omap tags/omap-for-v7.4/dt-signed
 
 soc/drivers
 	renesas/drivers
