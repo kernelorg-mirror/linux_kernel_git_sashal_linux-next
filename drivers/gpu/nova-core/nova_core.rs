@@ -18,6 +18,7 @@ mod firmware;
 mod fsp;
 mod gpu;
 mod gsp;
+mod irq;
 mod mctp;
 mod mm;
 #[macro_use]
