@@ -1,0 +1,3252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>linux-next Merge Run Report</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+       line-height: 1.6; color: #333; max-width: 1400px; margin: 0 auto; padding: 20px; }
+h1 { margin-bottom: 10px; }
+h2 { margin: 30px 0 15px; border-bottom: 2px solid #ddd; padding-bottom: 8px; }
+h3 { margin: 20px 0 10px; }
+.timestamp { color: #666; margin-bottom: 5px; }
+.time-range { color: #888; font-size: 0.9em; margin-bottom: 20px; }
+.summary { display: flex; gap: 15px; flex-wrap: wrap; margin: 20px 0; }
+.stat { background: #f5f5f5; border-radius: 8px; padding: 15px 20px; min-width: 120px; }
+.stat .number { font-size: 2em; font-weight: bold; }
+.stat .label { color: #666; font-size: 0.9em; }
+.stat.conflict .number { color: #9a6700; }
+.stat.rerere .number { color: #0969da; }
+.stat.build-fix .number { color: #cf222e; }
+table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #eee; }
+th { background: #f5f5f5; font-weight: 600; }
+tr:hover { background: #f9f9f9; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.85em;
+          font-weight: 500; }
+.badge.conflict { background: #fff8c5; color: #9a6700; }
+.badge.build-fix { background: #ffebe9; color: #cf222e; }
+.badge.rerere { background: #ddf4ff; color: #0969da; }
+details { margin: 5px 0; }
+summary { cursor: pointer; padding: 5px; font-weight: 500; }
+summary:hover { background: #f5f5f5; }
+.diff { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 6px;
+         overflow-x: auto; font-family: 'SFMono-Regular', Consolas, monospace;
+         font-size: 0.85em; white-space: pre; margin: 10px 0; max-height: 600px;
+         overflow-y: auto; }
+.diff .add { color: #3fb950; }
+.diff .del { color: #f85149; }
+.diff .hdr { color: #79c0ff; }
+.diff .ctx { color: #8b949e; }
+nav { position: sticky; top: 0; background: white; padding: 10px 0; border-bottom: 1px solid #ddd;
+       margin-bottom: 20px; z-index: 100; }
+nav a { margin-right: 20px; text-decoration: none; color: #0969da; }
+nav a:hover { text-decoration: underline; }
+.controls { display: flex; gap: 15px; align-items: center; margin: 10px 0; }
+.controls select { padding: 5px 10px; border: 1px solid #ccc; border-radius: 4px; }
+.controls button { padding: 5px 12px; border: 1px solid #ccc; border-radius: 4px;
+                    background: #f5f5f5; cursor: pointer; }
+.controls button:hover { background: #e5e5e5; }
+.empty-state { text-align: center; padding: 60px 20px; color: #666; }
+.empty-state .icon { font-size: 3em; color: #2ea043; }
+.empty-state p { font-size: 1.1em; margin-top: 10px; }
+.category-count { background: #f5f5f5; border-radius: 12px; padding: 2px 10px;
+                   font-size: 0.85em; color: #666; display: inline-block; margin-left: 8px; }
+</style>
+</head>
+<body>
+<h1>linux-next Merge Run Report</h1>
+<p class="timestamp">Generated: 2026-10-05 03:36 UTC</p>
+<p class="time-range">Run window: 2026-10-05 01:55 UTC &mdash; 2026-10-05 03:29 UTC</p>
+
+<nav>
+    <a href="#summary">Summary</a>
+    <a href="#interventions">All Interventions</a>
+    <a href="#by-category">By Category</a>
+</nav>
+
+<h2 id="summary">Summary</h2>
+<div class="summary">
+    <div class="stat"><div class="number">17</div><div class="label">Total Interventions</div></div>
+    <div class="stat conflict"><div class="number">3</div><div class="label">Conflicts</div></div>
+    <div class="stat rerere"><div class="number">14</div><div class="label">Rerere</div></div>
+    <div class="stat build-fix"><div class="number">0</div><div class="label">Build Fixes</div></div>
+    <div class="stat"><div class="number">17</div><div class="label">Trees Affected</div></div>
+    <div class="stat"><div class="number">13</div><div class="label">Categories</div></div>
+</div>
+
+<h2 id="interventions">All Interventions</h2>
+<div class="controls">
+    <label>Filter: <select id="type-filter" onchange="filterByType(this.value)">
+        <option value="all">All types</option>
+        <option value="conflict">Conflicts</option>
+        <option value="rerere">Rerere</option>
+        <option value="build-fix">Build Fixes</option>
+    </select></label>
+    <button onclick="toggleAll()">Expand / Collapse All</button>
+</div>
+<table id="main-table">
+<thead>
+<tr><th>Tree</th><th>Category</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr data-type="rerere" data-category="bus">
+<td><code>i2c-rust</code></td>
+<td>bus</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>-</code></td>
+<td>01:55 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">61218df544dc82b4976b2ee16081c04a0424e129
+</div>
+</details></td>
+</tr>
+<tr data-type="rerere" data-category="net">
+<td><code>rdma</code></td>
+<td>net</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>MAINTAINERS, drivers/infiniband/core/nldev.c, drivers/infiniband/core/verbs.c (+12 more)</code></td>
+<td>02:18 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">9ccce5742291a840195acce58dec231910bb2aa2
+<span class="hdr">diff --cc drivers/infiniband/hw/irdma/verbs.c</span>
+<span class="ctx">index 5d71300da0ff2,7d3540824e3aa..22a8511fffea9</span>
+<span class="hdr">--- a/drivers/infiniband/hw/irdma/verbs.c</span>
+<span class="hdr">+++ b/drivers/infiniband/hw/irdma/verbs.c</span>
+<span class="ctx">@@@ -4281,11 -4280,11 +4280,11 @@@ static int irdma_post_send(struct ib_q</span>
+  			stag_info.total_len = iwmr-&gt;ibmr.length;
+  			stag_info.reg_addr_pa = *palloc-&gt;level1.addr;
+  			stag_info.first_pm_pbl_index = palloc-&gt;level1.idx;
+ -			stag_info.local_fence = ib_wr-&gt;send_flags &amp; IB_SEND_FENCE;
+ +			stag_info.local_fence = true;
+  			if (iwmr-&gt;npages &gt; IRDMA_MIN_PAGES_PER_FMR)
+  				stag_info.chunk_size = 1;
+<span class="del">- 			err = irdma_sc_mr_fast_register(&amp;iwqp-&gt;sc_qp, &amp;stag_info,</span>
+<span class="del">- 							true);</span>
+<span class="add">+ 			err = irdma_sc_mr_fast_register(&amp;iwqp-&gt;sc_qp,</span>
+<span class="add">+ 							&amp;stag_info);</span>
+  			break;
+  		}
+  		default:
+<span class="hdr">diff --cc drivers/infiniband/sw/rxe/rxe_verbs.c</span>
+<span class="ctx">index 3864284522ebc,21855274f63ae..46d0810ea2a7a</span>
+<span class="hdr">--- a/drivers/infiniband/sw/rxe/rxe_verbs.c</span>
+<span class="hdr">+++ b/drivers/infiniband/sw/rxe/rxe_verbs.c</span>
+<span class="ctx">@@@ -1331,12 -1331,12 +1331,18 @@@ static struct ib_mr *rxe_rereg_user_mr(</span>
+  	if (err)
+  		return ERR_PTR(err);
+  
+ +	if ((flags &amp; IB_MR_REREG_ACCESS) &amp;&amp;
+ +	    (access &amp; ~RXE_ACCESS_SUPPORTED_MR)) {
+ +		rxe_err_mr(mr, &quot;access = %#x not supported\n&quot;, access);
+ +		return ERR_PTR(-EOPNOTSUPP);
+ +	}
+ +
+<span class="add">+ 	if ((flags &amp; IB_MR_REREG_ACCESS) &amp;&amp;</span>
+<span class="add">+ 	    ((access ^ mr-&gt;access) &amp; IB_ACCESS_ON_DEMAND)) {</span>
+<span class="add">+ 		rxe_err_mr(mr, &quot;cannot change IB_ACCESS_ON_DEMAND\n&quot;);</span>
+<span class="add">+ 		return ERR_PTR(-EOPNOTSUPP);</span>
+<span class="add">+ 	}</span>
+<span class="add">+ </span>
+  	if (flags &amp; IB_MR_REREG_PD) {
+  		rxe_put(old_pd);
+  		rxe_get(pd);
+</div>
+</details></td>
+</tr>
+<tr data-type="rerere" data-category="net">
+<td><code>net-next</code></td>
+<td>net</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>MAINTAINERS, drivers/net/amt.c, drivers/net/ethernet/microsoft/mana/gdma_main.c (+6 more)</code></td>
+<td>02:18 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">72fbfd352e2543c98595d728a2e5843bdf90f95b
+<span class="hdr">diff --cc drivers/net/ethernet/stmicro/stmmac/stmmac_main.c</span>
+<span class="ctx">index 9741f97fa37a2,0c381ae0d0ffa..26de7699e54f1</span>
+<span class="hdr">--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c</span>
+<span class="hdr">+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c</span>
+<span class="ctx">@@@ -893,38 -862,38 +894,46 @@@ static int stmmac_hwtstamp_get(struct n</span>
+   * Will be rerun after resuming from suspend, case in which the timestamping
+   * flags updated by stmmac_hwtstamp_set() also need to be restored.
+   */
+ -static int stmmac_init_tstamp_counter(struct stmmac_priv *priv,
+ -				      u32 systime_flags)
+ +static int stmmac_init_tstamp_counter(struct stmmac_priv *priv)
+  {
+ +	u32 default_addend = priv-&gt;default_addend;
+  	struct timespec64 now;
+ +	int ret;
+  
+<span class="del">- 	if (!priv-&gt;plat-&gt;clk_ptp_rate) {</span>
+<span class="del">- 		netdev_err(priv-&gt;dev, &quot;Invalid PTP clock rate&quot;);</span>
+<span class="del">- 		return -EINVAL;</span>
+<span class="del">- 	}</span>
+ -	stmmac_config_hw_tstamping(priv, priv-&gt;ptpaddr, systime_flags);
+ -	priv-&gt;systime_flags = systime_flags;
+<span class="del">--</span>
+ -	stmmac_update_subsecond_increment(priv);
+ +	ret = stmmac_update_subsecond_increment(priv, priv-&gt;systime_flags);
+ +	if (ret)
+ +		return ret;
+  
+  	/* initialize system time */
+  	ktime_get_real_ts64(&amp;now);
+  
+  	/* lower 32 bits of tv_sec are safe until y2106 */
+ -	stmmac_init_systime(priv, priv-&gt;ptpaddr, (u32)now.tv_sec, now.tv_nsec);
+ +	ret = stmmac_init_systime(priv, priv-&gt;ptpaddr, (u32)now.tv_sec,
+ +				  now.tv_nsec);
+ +	if (ret)
+ +		goto error;
+  
+  	return 0;
+ +error:
+ +	/* Restore previous configuration */
+ +	stmmac_restore_subsecond_increment(priv, default_addend);
+ +
+ +	return ret;
+  }
+  
+<span class="add">+ static int stmmac_init_ptp_clk_freq(struct stmmac_priv *priv)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	if (priv-&gt;plat-&gt;ptp_clk_freq_config)</span>
+<span class="add">+ 		priv-&gt;plat-&gt;ptp_clk_freq_config(priv);</span>
+<span class="add">+ </span>
+<span class="add">+ 	if (!priv-&gt;plat-&gt;clk_ptp_rate) {</span>
+<span class="add">+ 		netdev_info(priv-&gt;dev, &quot;PTP clock rate not configured\n&quot;);</span>
+<span class="add">+ 		return -EINVAL;</span>
+<span class="add">+ 	}</span>
+<span class="add">+ </span>
+<span class="add">+ 	return 0;</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+  /**
+   * stmmac_init_timestamping - initialise timestamping
+   * @priv: driver private structure
+<span class="ctx">@@@ -937,22 -912,8 +952,14 @@@ static int stmmac_init_timestamping(str</span>
+  	bool xmac = dwmac_is_xmac(priv-&gt;plat-&gt;core_type);
+  	int ret;
+  
+<span class="del">- 	if (priv-&gt;plat-&gt;ptp_clk_freq_config)</span>
+<span class="del">- 		priv-&gt;plat-&gt;ptp_clk_freq_config(priv);</span>
+<span class="del">- </span>
+<span class="del">- 	if (!(priv-&gt;dma_cap.time_stamp || priv-&gt;dma_cap.atime_stamp)) {</span>
+<span class="del">- 		netdev_info(priv-&gt;dev, &quot;PTP not supported by HW\n&quot;);</span>
+<span class="del">- 		return -EOPNOTSUPP;</span>
+<span class="del">- 	}</span>
+<span class="del">- </span>
+ -	ret = stmmac_init_tstamp_counter(priv, STMMAC_HWTS_ACTIVE |
+ -					       PTP_TCR_TSCFUPDT);
+ +	/* Reset hw ts configuration */
+ +	memset(&amp;priv-&gt;tstamp_config, 0, sizeof(priv-&gt;tstamp_config));
+ +	priv-&gt;systime_flags = STMMAC_HWTS_ACTIVE | PTP_TCR_TSCFUPDT;
+ +	priv-&gt;tsfupdt_coarse = false;
+ +	priv-&gt;hwts_tx_en = 0;
+ +	priv-&gt;hwts_rx_en = 0;
+ +
+ +	ret = stmmac_init_tstamp_counter(priv);
+  	if (ret) {
+  		netdev_warn(priv-&gt;dev, &quot;PTP init failed\n&quot;);
+  		return ret;
+<span class="hdr">diff --cc include/net/mana/gdma.h</span>
+<span class="ctx">index 2a28fcaa637d9,c610fc1067e0d..0b52582118e84</span>
+<span class="hdr">--- a/include/net/mana/gdma.h</span>
+<span class="hdr">+++ b/include/net/mana/gdma.h</span>
+<span class="ctx">@@@ -628,10 -686,10 +692,12 @@@ struct gdma_eqe </span>
+  #define MANA_PF2_DEVICE_ID 0x00C1
+  #define MANA_VF_DEVICE_ID 0x00BA
+  
+<span class="add">+ #define MANA_CDX_DEVICE_ID 0x00C2</span>
+<span class="add">+ </span>
+  struct gdma_posted_wqe_info {
+  	u32 wqe_size_in_bu;
+ +	/* Unmasked WQE start offset in GDMA basic units. */
+ +	u32 wqe_offset;
+  };
+  
+  /* GDMA_GENERATE_TEST_EQE */
+</div>
+</details></td>
+</tr>
+<tr data-type="rerere" data-category="security">
+<td><code>ipsec-next</code></td>
+<td>security</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>.mailmap, MAINTAINERS, drivers/net/ethernet/broadcom/bcmsysport.c (+23 more)</code></td>
+<td>02:37 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">96a737571f936eaf89e28aec4d2e0baa61dbd603
+<span class="hdr">diff --cc drivers/net/ethernet/realtek/r8169_main.c</span>
+<span class="ctx">index ee1bc9bd04470,1d06ddff98327..af84196647852</span>
+<span class="hdr">--- a/drivers/net/ethernet/realtek/r8169_main.c</span>
+<span class="hdr">+++ b/drivers/net/ethernet/realtek/r8169_main.c</span>
+<span class="ctx">@@@ -5474,22 -5619,6 +5619,12 @@@ static int r8169_mdio_register(struct r</span>
+  		return -EUNATCH;
+  	}
+  
+<span class="del">- 	tp-&gt;phydev-&gt;mac_managed_pm = true;</span>
+<span class="del">- 	if (rtl_supports_eee(tp))</span>
+<span class="del">- 		phy_support_eee(tp-&gt;phydev);</span>
+<span class="del">- 	phy_support_asym_pause(tp-&gt;phydev);</span>
+<span class="del">- </span>
+<span class="del">- 	/* mimic behavior of r8125/r8126 vendor drivers */</span>
+<span class="del">- 	if (tp-&gt;mac_version == RTL_GIGA_MAC_VER_61)</span>
+<span class="del">- 		phy_disable_eee_mode(tp-&gt;phydev,</span>
+<span class="del">- 				     ETHTOOL_LINK_MODE_2500baseT_Full_BIT);</span>
+<span class="del">- </span>
+ +	/* Keep EEE off but the version stays EEE-capable so that link-up
+ +	 * still clears the MAC TX-LPI bits.
+ +	 */
+ +	if (tp-&gt;mac_version == RTL_GIGA_MAC_VER_46)
+ +		phy_disable_eee(tp-&gt;phydev);
+ +
+  	/* PHY will be woken up in rtl_open() */
+  	phy_suspend(tp-&gt;phydev);
+  
+<span class="ctx">@@@ -5605,6 -5734,278 +5740,280 @@@ static bool rtl_aspm_is_safe(struct rtl</span>
+  	return false;
+  }
+  
+<span class="add">+ static void rtl_mac_link_down(struct phylink_config *config, unsigned int mode,</span>
+<span class="add">+ 			      phy_interface_t interface)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	struct rtl8169_private *tp = container_of(config,</span>
+<span class="add">+ 						  struct rtl8169_private,</span>
+<span class="add">+ 						  phylink_config);</span>
+<span class="add">+ </span>
+<span class="add">+ 	tp-&gt;speed = SPEED_UNKNOWN;</span>
+<span class="add">+ 	pm_runtime_idle(tp_to_dev(tp));</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static void rtl_mac_link_up(struct phylink_config *config,</span>
+<span class="add">+ 			    struct phy_device *phydev,</span>
+<span class="add">+ 			    unsigned int mode,</span>
+<span class="add">+ 			    phy_interface_t interface,</span>
+<span class="add">+ 			    int speed, int duplex,</span>
+<span class="add">+ 			    bool tx_pause, bool rx_pause)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	struct rtl8169_private *tp = container_of(config,</span>
+<span class="add">+ 						  struct rtl8169_private,</span>
+<span class="add">+ 						  phylink_config);</span>
+<span class="add">+ 	struct device *d = tp_to_dev(tp);</span>
+<span class="add">+ </span>
+<span class="add">+ 	tp-&gt;speed = speed;</span>
+<span class="add">+ 	rtl_link_chg_patch(tp, speed);</span>
+<span class="add">++	if (tp-&gt;mac_version == RTL_GIGA_MAC_VER_46)</span>
+<span class="add">++		rtl_enable_tx_lpi(tp, false);</span>
+<span class="add">+ </span>
+<span class="add">+ 	/*</span>
+<span class="add">+ 	 * Note: This hardware does not support forcing flow control.</span>
+<span class="add">+ 	 * Tx/Rx pause is completely hardwired: if autoneg is ON, hardware</span>
+<span class="add">+ 	 * handles it automatically based on PHY result; if autoneg is OFF,</span>
+<span class="add">+ 	 * hardware forces pause to be disabled. No software override exists.</span>
+<span class="add">+ 	 */</span>
+<span class="add">+ 	pm_request_resume(d);</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static struct phylink_pcs *rtl_mac_select_pcs(struct phylink_config *config,</span>
+<span class="add">+ 					      phy_interface_t interface)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	struct rtl8169_private *tp = container_of(config,</span>
+<span class="add">+ 						  struct rtl8169_private,</span>
+<span class="add">+ 						  phylink_config);</span>
+<span class="add">+ </span>
+<span class="add">+ 	if (!tp-&gt;pcs.ops)</span>
+<span class="add">+ 		return NULL;</span>
+<span class="add">+ </span>
+<span class="add">+ 	if (interface == PHY_INTERFACE_MODE_1000BASEX ||</span>
+<span class="add">+ 	    interface == PHY_INTERFACE_MODE_10GBASER)</span>
+<span class="add">+ 		return &amp;tp-&gt;pcs;</span>
+<span class="add">+ </span>
+<span class="add">+ 	return NULL;</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static void rtl_mac_config(struct phylink_config *config, unsigned int mode,</span>
+<span class="add">+ 			   const struct phylink_link_state *state)</span>
+<span class="add">+ {</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static u16 rtl8169_sds_read(struct rtl8169_private *tp, u16 sds_reg)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	unsigned long flags;</span>
+<span class="add">+ 	u16 val = 0;</span>
+<span class="add">+ </span>
+<span class="add">+ 	raw_spin_lock_irqsave(&amp;tp-&gt;mac_ocp_lock, flags);</span>
+<span class="add">+ 	__r8168_mac_ocp_write(tp, OCP_SDS_ADDR_REG, sds_reg);</span>
+<span class="add">+ 	__r8168_mac_ocp_write(tp, OCP_SDS_CMD_REG, SDS_CMD_READ);</span>
+<span class="add">+ 	val = __r8168_mac_ocp_read(tp, OCP_SDS_DATA_REG);</span>
+<span class="add">+ 	raw_spin_unlock_irqrestore(&amp;tp-&gt;mac_ocp_lock, flags);</span>
+<span class="add">+ </span>
+<span class="add">+ 	return val;</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static void rtl8169_pcs_get_state(struct phylink_pcs *pcs,</span>
+<span class="add">+ 				  unsigned int neg_mode,</span>
+<span class="add">+ 				  struct phylink_link_state *state)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	struct rtl8169_private *tp = container_of(pcs, struct rtl8169_private,</span>
+<span class="add">+ 						  pcs);</span>
+<span class="add">+ </span>
+<span class="add">+ 	if (tp-&gt;sfp_mode == RTL_SFP_8127_ATF) {</span>
+<span class="add">+ 		u16 stat1;</span>
+<span class="add">+ </span>
+<span class="add">+ 		stat1 = rtl8169_sds_read(tp, RTL_SDS_C45_BASE + MDIO_STAT1);</span>
+<span class="add">+ </span>
+<span class="add">+ 		if (!(stat1 &amp; MDIO_STAT1_LSTATUS))</span>
+<span class="add">+ 			stat1 = rtl8169_sds_read(tp, RTL_SDS_C45_BASE + MDIO_STAT1);</span>
+<span class="add">+ </span>
+<span class="add">+ 		state-&gt;link = !!(stat1 &amp; MDIO_STAT1_LSTATUS);</span>
+<span class="add">+ 		if (!state-&gt;link)</span>
+<span class="add">+ 			return;</span>
+<span class="add">+ </span>
+<span class="add">+ 		if (state-&gt;interface == PHY_INTERFACE_MODE_1000BASEX)</span>
+<span class="add">+ 			state-&gt;speed = SPEED_1000;</span>
+<span class="add">+ 		else</span>
+<span class="add">+ 			state-&gt;speed = SPEED_10000;</span>
+<span class="add">+ </span>
+<span class="add">+ 		state-&gt;duplex = DUPLEX_FULL;</span>
+<span class="add">+ 	} else {</span>
+<span class="add">+ 		u16 bmsr, lpa;</span>
+<span class="add">+ </span>
+<span class="add">+ 		bmsr = rtl8169_sds_read(tp, RTL_SDS_C22_BASE + MII_BMSR);</span>
+<span class="add">+ 		lpa = rtl8169_sds_read(tp, RTL_SDS_C22_BASE + MII_LPA);</span>
+<span class="add">+ 		phylink_mii_c22_pcs_decode_state(state, neg_mode, bmsr, lpa);</span>
+<span class="add">+ 	}</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static int rtl8169_pcs_config(struct phylink_pcs *pcs, unsigned int mode,</span>
+<span class="add">+ 			      phy_interface_t interface,</span>
+<span class="add">+ 			      const unsigned long *advertising,</span>
+<span class="add">+ 			      bool permit_pause_to_mac)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	struct rtl8169_private *tp = container_of(pcs, struct rtl8169_private,</span>
+<span class="add">+ 						  pcs);</span>
+<span class="add">+ </span>
+<span class="add">+ 	if (tp-&gt;sfp_mode == RTL_SFP_8127_ATF) {</span>
+<span class="add">+ 		switch (interface) {</span>
+<span class="add">+ 		case PHY_INTERFACE_MODE_10GBASER:</span>
+<span class="add">+ 			r8127_sfp_init_10g(tp);</span>
+<span class="add">+ 			break;</span>
+<span class="add">+ 		case PHY_INTERFACE_MODE_1000BASEX:</span>
+<span class="add">+ 			r8127_sfp_init_1g(tp);</span>
+<span class="add">+ 			break;</span>
+<span class="add">+ 		default:</span>
+<span class="add">+ 			netdev_err(tp-&gt;dev, &quot;Unsupported SFP interface mode: %s\n&quot;,</span>
+<span class="add">+ 				   phy_modes(interface));</span>
+<span class="add">+ 			return -EOPNOTSUPP;</span>
+<span class="add">+ 		}</span>
+<span class="add">+ 	}</span>
+<span class="add">+ </span>
+<span class="add">+ 	return 0;</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static int rtl8169_pcs_validate(struct phylink_pcs *pcs,</span>
+<span class="add">+ 				unsigned long *supported,</span>
+<span class="add">+ 				const struct phylink_link_state *state)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	return 0;</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static void rtl8169_pcs_an_restart(struct phylink_pcs *pcs)</span>
+<span class="add">+ {</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static void rtl_mac_disable_tx_lpi(struct phylink_config *config)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	struct rtl8169_private *tp = container_of(config,</span>
+<span class="add">+ 						  struct rtl8169_private,</span>
+<span class="add">+ 						  phylink_config);</span>
+<span class="add">+ </span>
+<span class="add">+ 	rtl_enable_tx_lpi(tp, false);</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static int rtl_mac_enable_tx_lpi(struct phylink_config *config,</span>
+<span class="add">+ 				 u32 timer,</span>
+<span class="add">+ 				 bool tx_clk_stop)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	struct rtl8169_private *tp = container_of(config,</span>
+<span class="add">+ 						  struct rtl8169_private,</span>
+<span class="add">+ 						  phylink_config);</span>
+<span class="add">+ </span>
+<span class="add">+ 	rtl_enable_tx_lpi(tp, true);</span>
+<span class="add">+ </span>
+<span class="add">+ 	return 0;</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static const struct phylink_mac_ops rtl_phylink_mac_ops = {</span>
+<span class="add">+ 	.mac_select_pcs = rtl_mac_select_pcs,</span>
+<span class="add">+ 	.mac_config = rtl_mac_config,</span>
+<span class="add">+ 	.mac_link_down  = rtl_mac_link_down,</span>
+<span class="add">+ 	.mac_link_up    = rtl_mac_link_up,</span>
+<span class="add">+ 	.mac_disable_tx_lpi = rtl_mac_disable_tx_lpi,</span>
+<span class="add">+ 	.mac_enable_tx_lpi = rtl_mac_enable_tx_lpi,</span>
+<span class="add">+ };</span>
+<span class="add">+ </span>
+<span class="add">+ static unsigned long rtl8169_get_lpi_caps(struct rtl8169_private *tp)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	unsigned long caps = 0;</span>
+<span class="add">+ </span>
+<span class="add">+ 	if (!rtl_supports_eee(tp) || tp-&gt;sfp_mode == RTL_SFP_8127_ATF)</span>
+<span class="add">+ 		return 0;</span>
+<span class="add">+ </span>
+<span class="add">+ 	caps |= MAC_100FD | MAC_1000FD;</span>
+<span class="add">+ </span>
+<span class="add">+ 	/* mimic behavior of r8125/r8126 vendor drivers</span>
+<span class="add">+ 	 * RTL_GIGA_MAC_VER_61 doesn&#x27;t support 2.5G eee</span>
+<span class="add">+ 	 */</span>
+<span class="add">+ 	if (tp-&gt;mac_version &gt;= RTL_GIGA_MAC_VER_63)</span>
+<span class="add">+ 		caps |= MAC_2500FD;</span>
+<span class="add">+ 	if (tp-&gt;mac_version &gt;= RTL_GIGA_MAC_VER_70)</span>
+<span class="add">+ 		caps |= MAC_5000FD;</span>
+<span class="add">+ 	if (tp-&gt;mac_version == RTL_GIGA_MAC_VER_80)</span>
+<span class="add">+ 		caps |= MAC_10000FD;</span>
+<span class="add">+ </span>
+<span class="add">+ 	return caps;</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static const struct phylink_pcs_ops r8169_pcs_ops = {</span>
+<span class="add">+ 	.pcs_validate = rtl8169_pcs_validate,</span>
+<span class="add">+ 	.pcs_get_state = rtl8169_pcs_get_state,</span>
+<span class="add">+ 	.pcs_config = rtl8169_pcs_config,</span>
+<span class="add">+ 	.pcs_an_restart = rtl8169_pcs_an_restart,</span>
+<span class="add">+ };</span>
+<span class="add">+ </span>
+<span class="add">+ static int rtl_init_phylink(struct rtl8169_private *tp)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	struct phylink *pl;</span>
+<span class="add">+ 	phy_interface_t phy_mode;</span>
+<span class="add">+ </span>
+<span class="add">+ 	tp-&gt;phylink_config.dev = &amp;tp-&gt;dev-&gt;dev;</span>
+<span class="add">+ 	tp-&gt;phylink_config.type = PHYLINK_NETDEV;</span>
+<span class="add">+ 	tp-&gt;phylink_config.mac_managed_pm = true;</span>
+<span class="add">+ 	tp-&gt;phylink_config.lpi_capabilities = rtl8169_get_lpi_caps(tp);</span>
+<span class="add">+ 	tp-&gt;phylink_config.eee_enabled_default = !!tp-&gt;phylink_config.lpi_capabilities;</span>
+<span class="add">+ 	tp-&gt;phylink_config.mac_capabilities |= MAC_ASYM_PAUSE | MAC_SYM_PAUSE;</span>
+<span class="add">+ </span>
+<span class="add">+ 	switch (tp-&gt;sfp_mode) {</span>
+<span class="add">+ 	case RTL_SFP_8168_AF:</span>
+<span class="add">+ 		tp-&gt;pcs.ops = &amp;r8169_pcs_ops;</span>
+<span class="add">+ 		tp-&gt;phylink_config.default_an_inband = true;</span>
+<span class="add">+ 		phy_mode = PHY_INTERFACE_MODE_1000BASEX;</span>
+<span class="add">+ 		tp-&gt;phylink_config.mac_capabilities |= MAC_1000FD;</span>
+<span class="add">+ 		break;</span>
+<span class="add">+ 	case RTL_SFP_8127_ATF:</span>
+<span class="add">+ 		tp-&gt;pcs.ops = &amp;r8169_pcs_ops;</span>
+<span class="add">+ 		phy_mode = PHY_INTERFACE_MODE_10GBASER;</span>
+<span class="add">+ 		tp-&gt;phylink_config.default_an_inband = true;</span>
+<span class="add">+ 		tp-&gt;phylink_config.mac_capabilities |= MAC_1000FD | MAC_10000FD;</span>
+<span class="add">+ 		__set_bit(PHY_INTERFACE_MODE_10GBASER,</span>
+<span class="add">+ 			  tp-&gt;phylink_config.supported_interfaces);</span>
+<span class="add">+ 		__set_bit(PHY_INTERFACE_MODE_1000BASEX,</span>
+<span class="add">+ 			  tp-&gt;phylink_config.supported_interfaces);</span>
+<span class="add">+ 		break;</span>
+<span class="add">+ 	default:</span>
+<span class="add">+ 		tp-&gt;phylink_config.mac_capabilities |= MAC_10 | MAC_100;</span>
+<span class="add">+ </span>
+<span class="add">+ 		if (tp-&gt;mac_version == RTL_GIGA_MAC_VER_80)</span>
+<span class="add">+ 			tp-&gt;phylink_config.mac_capabilities |= MAC_1000FD |</span>
+<span class="add">+ 							       MAC_2500FD |</span>
+<span class="add">+ 							       MAC_5000FD |</span>
+<span class="add">+ 							       MAC_10000FD;</span>
+<span class="add">+ 		else if (tp-&gt;mac_version == RTL_GIGA_MAC_VER_70)</span>
+<span class="add">+ 			tp-&gt;phylink_config.mac_capabilities |= MAC_1000FD |</span>
+<span class="add">+ 							       MAC_2500FD |</span>
+<span class="add">+ 							       MAC_5000FD;</span>
+<span class="add">+ 		else if (tp-&gt;mac_version &gt;= RTL_GIGA_MAC_VER_61)</span>
+<span class="add">+ 			tp-&gt;phylink_config.mac_capabilities |= MAC_1000FD |</span>
+<span class="add">+ 							       MAC_2500FD;</span>
+<span class="add">+ 		else</span>
+<span class="add">+ 			if (tp-&gt;supports_gmii)</span>
+<span class="add">+ 				tp-&gt;phylink_config.mac_capabilities |= MAC_1000FD;</span>
+<span class="add">+ </span>
+<span class="add">+ 		if (tp-&gt;mac_version &lt; RTL_GIGA_MAC_VER_61)</span>
+<span class="add">+ 			phy_mode = tp-&gt;supports_gmii ? PHY_INTERFACE_MODE_GMII :</span>
+<span class="add">+ 				   PHY_INTERFACE_MODE_MII;</span>
+<span class="add">+ 		else</span>
+<span class="add">+ 			phy_mode = PHY_INTERFACE_MODE_INTERNAL;</span>
+<span class="add">+ 		break;</span>
+<span class="add">+ 	}</span>
+<span class="add">+ </span>
+<span class="add">+ 	__set_bit(phy_mode, tp-&gt;phylink_config.supported_interfaces);</span>
+<span class="add">+ 	if (tp-&gt;phylink_config.lpi_capabilities)</span>
+<span class="add">+ 		__set_bit(phy_mode, tp-&gt;phylink_config.lpi_interfaces);</span>
+<span class="add">+ </span>
+<span class="add">+ 	pl = phylink_create(&amp;tp-&gt;phylink_config, tp_to_dev(tp)-&gt;fwnode,</span>
+<span class="add">+ 			    phy_mode, &amp;rtl_phylink_mac_ops);</span>
+<span class="add">+ 	if (IS_ERR(pl))</span>
+<span class="add">+ 		return PTR_ERR(pl);</span>
+<span class="add">+ </span>
+<span class="add">+ 	tp-&gt;phylink = pl;</span>
+<span class="add">+ </span>
+<span class="add">+ 	return 0;</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+  static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+  {
+  	const struct rtl_chip_info *chip;
+<span class="hdr">diff --cc drivers/net/ethernet/stmicro/stmmac/stmmac_main.c</span>
+<span class="ctx">index 9741f97fa37a2,3ad9252bf6aea..3ababbcf4addd</span>
+<span class="hdr">--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c</span>
+<span class="hdr">+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c</span>
+<span class="ctx">@@@ -893,38 -862,38 +894,46 @@@ static int stmmac_hwtstamp_get(struct n</span>
+   * Will be rerun after resuming from suspend, case in which the timestamping
+   * flags updated by stmmac_hwtstamp_set() also need to be restored.
+   */
+ -static int stmmac_init_tstamp_counter(struct stmmac_priv *priv,
+ -				      u32 systime_flags)
+ +static int stmmac_init_tstamp_counter(struct stmmac_priv *priv)
+  {
+ +	u32 default_addend = priv-&gt;default_addend;
+  	struct timespec64 now;
+ +	int ret;
+  
+<span class="del">- 	if (!priv-&gt;plat-&gt;clk_ptp_rate) {</span>
+<span class="del">- 		netdev_err(priv-&gt;dev, &quot;Invalid PTP clock rate&quot;);</span>
+<span class="del">- 		return -EINVAL;</span>
+<span class="del">- 	}</span>
+ -	stmmac_config_hw_tstamping(priv, priv-&gt;ptpaddr, systime_flags);
+ -	priv-&gt;systime_flags = systime_flags;
+<span class="del">--</span>
+ -	stmmac_update_subsecond_increment(priv);
+ +	ret = stmmac_update_subsecond_increment(priv, priv-&gt;systime_flags);
+ +	if (ret)
+ +		return ret;
+  
+  	/* initialize system time */
+  	ktime_get_real_ts64(&amp;now);
+  
+  	/* lower 32 bits of tv_sec are safe until y2106 */
+ -	stmmac_init_systime(priv, priv-&gt;ptpaddr, (u32)now.tv_sec, now.tv_nsec);
+ +	ret = stmmac_init_systime(priv, priv-&gt;ptpaddr, (u32)now.tv_sec,
+ +				  now.tv_nsec);
+ +	if (ret)
+ +		goto error;
+  
+  	return 0;
+ +error:
+ +	/* Restore previous configuration */
+ +	stmmac_restore_subsecond_increment(priv, default_addend);
+ +
+ +	return ret;
+  }
+  
+<span class="add">+ static int stmmac_init_ptp_clk_freq(struct stmmac_priv *priv)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	if (priv-&gt;plat-&gt;ptp_clk_freq_config)</span>
+<span class="add">+ 		priv-&gt;plat-&gt;ptp_clk_freq_config(priv);</span>
+<span class="add">+ </span>
+<span class="add">+ 	if (!priv-&gt;plat-&gt;clk_ptp_rate) {</span>
+<span class="add">+ 		netdev_info(priv-&gt;dev, &quot;PTP clock rate not configured\n&quot;);</span>
+<span class="add">+ 		return -EINVAL;</span>
+<span class="add">+ 	}</span>
+<span class="add">+ </span>
+<span class="add">+ 	return 0;</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+  /**
+   * stmmac_init_timestamping - initialise timestamping
+   * @priv: driver private structure
+<span class="ctx">@@@ -937,22 -912,8 +952,14 @@@ static int stmmac_init_timestamping(str</span>
+  	bool xmac = dwmac_is_xmac(priv-&gt;plat-&gt;core_type);
+  	int ret;
+  
+<span class="del">- 	if (priv-&gt;plat-&gt;ptp_clk_freq_config)</span>
+<span class="del">- 		priv-&gt;plat-&gt;ptp_clk_freq_config(priv);</span>
+<span class="del">- </span>
+<span class="del">- 	if (!(priv-&gt;dma_cap.time_stamp || priv-&gt;dma_cap.atime_stamp)) {</span>
+<span class="del">- 		netdev_info(priv-&gt;dev, &quot;PTP not supported by HW\n&quot;);</span>
+<span class="del">- 		return -EOPNOTSUPP;</span>
+<span class="del">- 	}</span>
+<span class="del">- </span>
+ -	ret = stmmac_init_tstamp_counter(priv, STMMAC_HWTS_ACTIVE |
+ -					       PTP_TCR_TSCFUPDT);
+ +	/* Reset hw ts configuration */
+ +	memset(&amp;priv-&gt;tstamp_config, 0, sizeof(priv-&gt;tstamp_config));
+ +	priv-&gt;systime_flags = STMMAC_HWTS_ACTIVE | PTP_TCR_TSCFUPDT;
+ +	priv-&gt;tsfupdt_coarse = false;
+ +	priv-&gt;hwts_tx_en = 0;
+ +	priv-&gt;hwts_rx_en = 0;
+ +
+ +	ret = stmmac_init_tstamp_counter(priv);
+  	if (ret) {
+  		netdev_warn(priv-&gt;dev, &quot;PTP init failed\n&quot;);
+  		return ret;
+<span class="hdr">diff --cc net/mac80211/tx.c</span>
+<span class="ctx">index d51f810dd2c5b,83b758724edff..fb0fafcd2acf8</span>
+<span class="hdr">--- a/net/mac80211/tx.c</span>
+<span class="hdr">+++ b/net/mac80211/tx.c</span>
+<span class="ctx">@@@ -2530,9 -2579,16 +2579,16 @@@ static inline bool ieee80211_is_tdls_se</span>
+  	       skb-&gt;data[14] == WLAN_TDLS_SNAP_RFTYPE;
+  }
+  
+<span class="del">- int ieee80211_lookup_ra_sta(struct ieee80211_sub_if_data *sdata,</span>
+<span class="del">- 			    struct sk_buff *skb,</span>
+<span class="del">- 			    struct sta_info **sta_out, bool bss)</span>
+<span class="add">+ /*</span>
+<span class="add">+  * Returns an error if the frame should be dropped, otherwise</span>
+<span class="add">+  * the *sta_out pointer is filled:</span>
+<span class="add">+  *  - valid sta pointer: frame goes to that station</span>
+<span class="add">+  *  - NULL: frame will be unicast to a yet unknown station</span>
+<span class="add">+  *  - ERR_PTR(-ENOENT): frame will be group addressed</span>
+<span class="add">+  */</span>
+<span class="add">+ static int ieee80211_lookup_ra_sta(struct ieee80211_sub_if_data *sdata,</span>
+<span class="add">+ 				   struct sk_buff *skb,</span>
+ -				   struct sta_info **sta_out)
+<span class="add">++				   struct sta_info **sta_out, bool bss)</span>
+  {
+  	struct sta_info *sta;
+  
+<span class="ctx">@@@ -4422,10 -4426,10 +4429,11 @@@ void __ieee80211_subif_start_xmit(struc</span>
+  	    ieee80211_mesh_xmit_fast(sdata, skb, ctrl_flags))
+  		goto out;
+  
+ -	if (ieee80211_lookup_ra_sta(sdata, skb, &amp;sta))
+ +	if (ieee80211_lookup_ra_sta(sdata, skb, &amp;sta,
+ +				    skb-&gt;protocol == sdata-&gt;control_port_protocol))
+  		goto out_free;
+  
+<span class="add">+ 	group_addressed = IS_ERR(sta);</span>
+  	if (IS_ERR(sta))
+  		sta = NULL;
+  
+<span class="hdr">diff --cc rust/kernel/net/netlink.rs</span>
+<span class="ctx">index 2f8733a694a95,a2f4bd171dcf1..36f2e39c3ab7b</span>
+<span class="hdr">--- a/rust/kernel/net/netlink.rs</span>
+<span class="hdr">+++ b/rust/kernel/net/netlink.rs</span>
+<span class="ctx">@@@ -11,9 -11,7 +11,8 @@@</span>
+  use kernel::{
+      alloc::{self, AllocError},
+      error::to_result,
+ +    num::casts::u16_as_usize,
+      prelude::*,
+<span class="del">-     transmute::AsBytes,</span>
+      types::Opaque,
+      ThisModule,
+  };
+<span class="ctx">@@@ -85,13 -88,8 +89,13 @@@ impl GenlMsg </span>
+      #[inline]
+      fn put&lt;T&gt;(&amp;mut self, attrtype: c_int, value: &amp;T) -&gt; Result
+      where
+<span class="del">-         T: ?Sized + AsBytes,</span>
+<span class="add">+         T: ?Sized + IntoBytes + Immutable,</span>
+      {
+ +        // `nla_len` is a 16-bit field that encodes the total attribute length
+ +        // (header + payload). Subtracting the header size from `u16::MAX` gives
+ +        // the largest payload that still fits within that field.
+ +        const MAX_PAYLOAD_LEN: usize = u16_as_usize(u16::MAX) - size_of::&lt;bindings::nlattr&gt;();
+ +
+          let skb = self.skb.skb.as_ptr();
+          let len = size_of_val(value);
+          let ptr = core::ptr::from_ref(value).cast::&lt;c_void&gt;();
+</div>
+</details></td>
+</tr>
+<tr data-type="rerere" data-category="security">
+<td><code>security</code></td>
+<td>security</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>fs/namespace.c, include/linux/ns/ns_common_types.h, include/linux/sched.h (+2 more)</code></td>
+<td>02:37 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">16f714c81d5af9f78227d7e678a17921bd08ff3a
+<span class="hdr">diff --cc include/linux/ns/ns_common_types.h</span>
+<span class="ctx">index 6ed6b497831c7,5cfe0ce3c8818..47a5cfe2326a3</span>
+<span class="hdr">--- a/include/linux/ns/ns_common_types.h</span>
+<span class="hdr">+++ b/include/linux/ns/ns_common_types.h</span>
+<span class="ctx">@@@ -116,8 -116,13 +116,11 @@@ struct ns_common </span>
+  	struct dentry *stashed;
+  	const struct proc_ns_operations *ops;
+  	unsigned int inum;
+<span class="add">+ #ifdef CONFIG_SECURITY</span>
+<span class="add">+ 	void *ns_security;</span>
+<span class="add">+ #endif</span>
+ -	union {
+ -		struct ns_tree;
+ -		struct rcu_head ns_rcu;
+ -	};
+ +	struct ns_tree;
+ +	struct rcu_head ns_rcu;
+  };
+  
+  #define to_ns_common(__ns)                                    \
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="net">
+<td><code>mlx5-next</code></td>
+<td>net</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>drivers/infiniband/hw/mlx5/main.c, drivers/infiniband/hw/mlx5/mlx5_ib.h, drivers/infiniband/hw/mlx5/mr.c (+5 more)</code></td>
+<td>02:39 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">1edddf51cf87cef452ee353e57661c32713247fc
+<span class="hdr">diff --cc drivers/infiniband/hw/mlx5/main.c</span>
+<span class="ctx">index 4a0b4dcf2830c,dd2a3996b14e1..65455aedd559b</span>
+<span class="hdr">--- a/drivers/infiniband/hw/mlx5/main.c</span>
+<span class="hdr">+++ b/drivers/infiniband/hw/mlx5/main.c</span>
+<span class="ctx">@@@ -5548,11 -5437,8 +5451,9 @@@ static int __init mlx5_ib_init(void</span>
+  drv_err:
+  	auxiliary_driver_unregister(&amp;mlx5r_mp_driver);
+  mp_err:
+<span class="del">- 	mlx5_data_direct_driver_unregister();</span>
+<span class="del">- dd_err:</span>
+  	mlx5r_rep_cleanup();
+  rep_err:
+ +	rcu_barrier();
+  	mlx5_ib_qp_event_cleanup();
+  qp_event_err:
+  	destroy_workqueue(mlx5_ib_event_wq);
+</div>
+</details></td>
+</tr>
+<tr data-type="rerere" data-category="net">
+<td><code>iwlwifi-next</code></td>
+<td>net</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c, drivers/net/wireless/intel/iwlwifi/iwl-trans.c, drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c (+1 more)</code></td>
+<td>02:39 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">ef945c7e6e585d539a5fd00d43b19d66c00b8a0c
+</div>
+</details></td>
+</tr>
+<tr data-type="rerere" data-category="docs">
+<td><code>docs-next</code></td>
+<td>docs</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>Documentation/ABI/testing/sysfs-bus-pci, Documentation/admin-guide/kernel-parameters.txt, Documentation/scheduler/index.rst</code></td>
+<td>02:45 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">df5b808fc4ce150060a7abac5fc0cb46aee0518b
+<span class="hdr">diff --cc Documentation/scheduler/index.rst</span>
+<span class="ctx">index a43647b9706d9,d6d75421756ac..791178ac8bec6</span>
+<span class="hdr">--- a/Documentation/scheduler/index.rst</span>
+<span class="hdr">+++ b/Documentation/scheduler/index.rst</span>
+<span class="ctx">@@@ -23,6 -23,6 +23,7 @@@ Schedule</span>
+      sched-stats
+      sched-ext
+      sched-debug
+ +    sched-paravirt
+<span class="add">+     sched-preemption</span>
+  
+      text_files
+</div>
+</details></td>
+</tr>
+<tr data-type="rerere" data-category="fixes">
+<td><code>fixes-next</code></td>
+<td>fixes</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>.mailmap, MAINTAINERS, drivers/net/ethernet/stmicro/stmmac/stmmac_main.c (+5 more)</code></td>
+<td>02:46 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">29f86d7babd16ad1d3ab25833d346b5b5d6bdc73
+<span class="hdr">diff --cc drivers/net/ethernet/stmicro/stmmac/stmmac_main.c</span>
+<span class="ctx">index 2cbf502c5769d,9741f97fa37a2..3ababbcf4addd</span>
+<span class="hdr">--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c</span>
+<span class="hdr">+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c</span>
+<span class="ctx">@@@ -862,38 -893,38 +894,46 @@@ static int stmmac_hwtstamp_get(struct n</span>
+   * Will be rerun after resuming from suspend, case in which the timestamping
+   * flags updated by stmmac_hwtstamp_set() also need to be restored.
+   */
+<span class="del">- static int stmmac_init_tstamp_counter(struct stmmac_priv *priv,</span>
+<span class="del">- 				      u32 systime_flags)</span>
+<span class="add">+ static int stmmac_init_tstamp_counter(struct stmmac_priv *priv)</span>
+  {
+<span class="add">+ 	u32 default_addend = priv-&gt;default_addend;</span>
+  	struct timespec64 now;
+<span class="add">+ 	int ret;</span>
+  
+<span class="del">- 	stmmac_config_hw_tstamping(priv, priv-&gt;ptpaddr, systime_flags);</span>
+<span class="del">- 	priv-&gt;systime_flags = systime_flags;</span>
+ -	if (!priv-&gt;plat-&gt;clk_ptp_rate) {
+ -		netdev_err(priv-&gt;dev, &quot;Invalid PTP clock rate&quot;);
+ -		return -EINVAL;
+ -	}
+<span class="del">--</span>
+<span class="del">- 	stmmac_update_subsecond_increment(priv);</span>
+<span class="add">+ 	ret = stmmac_update_subsecond_increment(priv, priv-&gt;systime_flags);</span>
+<span class="add">+ 	if (ret)</span>
+<span class="add">+ 		return ret;</span>
+  
+  	/* initialize system time */
+  	ktime_get_real_ts64(&amp;now);
+  
+  	/* lower 32 bits of tv_sec are safe until y2106 */
+<span class="del">- 	stmmac_init_systime(priv, priv-&gt;ptpaddr, (u32)now.tv_sec, now.tv_nsec);</span>
+<span class="add">+ 	ret = stmmac_init_systime(priv, priv-&gt;ptpaddr, (u32)now.tv_sec,</span>
+<span class="add">+ 				  now.tv_nsec);</span>
+<span class="add">+ 	if (ret)</span>
+<span class="add">+ 		goto error;</span>
+  
+  	return 0;
+<span class="add">+ error:</span>
+<span class="add">+ 	/* Restore previous configuration */</span>
+<span class="add">+ 	stmmac_restore_subsecond_increment(priv, default_addend);</span>
+<span class="add">+ </span>
+<span class="add">+ 	return ret;</span>
+  }
+  
+ +static int stmmac_init_ptp_clk_freq(struct stmmac_priv *priv)
+ +{
+ +	if (priv-&gt;plat-&gt;ptp_clk_freq_config)
+ +		priv-&gt;plat-&gt;ptp_clk_freq_config(priv);
+ +
+ +	if (!priv-&gt;plat-&gt;clk_ptp_rate) {
+ +		netdev_info(priv-&gt;dev, &quot;PTP clock rate not configured\n&quot;);
+ +		return -EINVAL;
+ +	}
+ +
+ +	return 0;
+ +}
+ +
+  /**
+   * stmmac_init_timestamping - initialise timestamping
+   * @priv: driver private structure
+<span class="ctx">@@@ -912,8 -937,22 +952,14 @@@ static int stmmac_init_timestamping(str</span>
+  	bool xmac = dwmac_is_xmac(priv-&gt;plat-&gt;core_type);
+  	int ret;
+  
+<span class="del">- 	ret = stmmac_init_tstamp_counter(priv, STMMAC_HWTS_ACTIVE |</span>
+<span class="del">- 					       PTP_TCR_TSCFUPDT);</span>
+ -	if (priv-&gt;plat-&gt;ptp_clk_freq_config)
+ -		priv-&gt;plat-&gt;ptp_clk_freq_config(priv);
+ -
+ -	if (!(priv-&gt;dma_cap.time_stamp || priv-&gt;dma_cap.atime_stamp)) {
+ -		netdev_info(priv-&gt;dev, &quot;PTP not supported by HW\n&quot;);
+ -		return -EOPNOTSUPP;
+ -	}
+ -
+<span class="add">+ 	/* Reset hw ts configuration */</span>
+<span class="add">+ 	memset(&amp;priv-&gt;tstamp_config, 0, sizeof(priv-&gt;tstamp_config));</span>
+<span class="add">+ 	priv-&gt;systime_flags = STMMAC_HWTS_ACTIVE | PTP_TCR_TSCFUPDT;</span>
+<span class="add">+ 	priv-&gt;tsfupdt_coarse = false;</span>
+<span class="add">+ 	priv-&gt;hwts_tx_en = 0;</span>
+<span class="add">+ 	priv-&gt;hwts_rx_en = 0;</span>
+<span class="add">+ </span>
+<span class="add">+ 	ret = stmmac_init_tstamp_counter(priv);</span>
+  	if (ret) {
+  		netdev_warn(priv-&gt;dev, &quot;PTP init failed\n&quot;);
+  		return ret;
+</div>
+</details></td>
+</tr>
+<tr data-type="rerere" data-category="graphics">
+<td><code>graphics-next</code></td>
+<td>graphics</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>MAINTAINERS, drivers/gpu/drm/i915/gt/intel_engine_cs.c, drivers/gpu/drm/xe/xe_configfs.c (+23 more)</code></td>
+<td>02:46 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">f8711465aafd1b23c7e9d8fe21c30c8424cfd3ec
+<span class="hdr">diff --cc drivers/gpu/drm/xe/xe_pt.c</span>
+<span class="ctx">index 6c6d9be2717ef,6ad4bbaa18600..8a95d58d9c6f6</span>
+<span class="hdr">--- a/drivers/gpu/drm/xe/xe_pt.c</span>
+<span class="hdr">+++ b/drivers/gpu/drm/xe/xe_pt.c</span>
+<span class="ctx">@@@ -5,10 -5,9 +5,11 @@@</span>
+  
+  #include &quot;xe_pt.h&quot;
+  
+ +#include &lt;linux/error-injection.h&gt;
+ +
+  #include &quot;regs/xe_gtt_defs.h&quot;
+  #include &quot;xe_bo.h&quot;
+<span class="add">+ #include &quot;xe_cpu_bind.h&quot;</span>
+  #include &quot;xe_device.h&quot;
+  #include &quot;xe_drm_client.h&quot;
+  #include &quot;xe_exec_queue.h&quot;
+<span class="hdr">diff --cc include/linux/mod_devicetable.h</span>
+<span class="ctx">index 318c4b5c3451b,4fe1cd64292f1..d1581bb647298</span>
+<span class="hdr">--- a/include/linux/mod_devicetable.h</span>
+<span class="hdr">+++ b/include/linux/mod_devicetable.h</span>
+<span class="ctx">@@@ -15,8 -15,6 +15,7 @@@</span>
+  #include &quot;device-id/acpi.h&quot;
+  #include &quot;device-id/amba.h&quot;
+  #include &quot;device-id/ap.h&quot;
+<span class="del">- #include &quot;device-id/apr.h&quot;</span>
+ +#include &quot;device-id/arm_smccc.h&quot;
+  #include &quot;device-id/auxiliary.h&quot;
+  #include &quot;device-id/bcma.h&quot;
+  #include &quot;device-id/ccw.h&quot;
+</div>
+</details></td>
+</tr>
+<tr data-type="rerere" data-category="iio">
+<td><code>iio-next</code></td>
+<td>iio</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml, Documentation/devicetree/bindings/trivial-devices.yaml, MAINTAINERS</code></td>
+<td>02:46 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">d28e15eddc5ff92e81f58ec847a4f709be6ac4c9
+<span class="hdr">diff --cc MAINTAINERS</span>
+<span class="ctx">index b91d76cfb8676,5fff17cc594cf..7136f4a3c419a</span>
+<span class="hdr">--- a/MAINTAINERS</span>
+<span class="hdr">+++ b/MAINTAINERS</span>
+<span class="ctx">@@@ -4418,15 -4472,15 +4451,24 @@@ S:	Orpha</span>
+  F:	Documentation/devicetree/bindings/sound/axentia,*
+  F:	sound/soc/atmel/tse850-pcm5142.c
+  
+<span class="add">+ AXIADO SARADC DRIVER</span>
+<span class="add">+ M:	Petar Stepanovic &lt;pstepanovic@axiado.com&gt;</span>
+<span class="add">+ M:	Akhila Kavi &lt;akavi@axiado.com&gt;</span>
+<span class="add">+ M:	Prasad Bolisetty &lt;pbolisetty@axiado.com&gt;</span>
+<span class="add">+ L:	linux-iio@vger.kernel.org</span>
+<span class="add">+ S:	Maintained</span>
+<span class="add">+ F:	Documentation/devicetree/bindings/iio/adc/axiado,ax3000-saradc.yaml</span>
+<span class="add">+ F:	drivers/iio/adc/axiado_saradc.c</span>
+<span class="add">+ </span>
+ +AXIADO SGPIO DRIVER
+ +M:	Petar Stepanovic &lt;pstepanovic@axiado.com&gt;
+ +M:	SriNavmani A &lt;srinavmani@axiado.com&gt;
+ +M:	Prasad Bolisetty &lt;pbolisetty@axiado.com&gt;
+ +L:	linux-gpio@vger.kernel.org
+ +S:	Supported
+ +F:	Documentation/devicetree/bindings/gpio/axiado,ax3005-sgpio.yaml
+ +F:	drivers/gpio/gpio-axiado-sgpio.c
+ +
+  AXIS ARTPEC ARM64 SoC SUPPORT
+  M:	Jesper Nilsson &lt;jesper.nilsson@axis.com&gt;
+  M:	Lars Persson &lt;lars.persson@axis.com&gt;
+</div>
+</details></td>
+</tr>
+<tr data-type="rerere" data-category="media">
+<td><code>media-next</code></td>
+<td>media</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml, MAINTAINERS, arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts (+3 more)</code></td>
+<td>02:46 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">5e08a2c68b6a36ed6f882320024b989b55dedded
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="mm">
+<td><code>mm-next</code></td>
+<td>mm</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>.mailmap, Documentation/admin-guide/cgroup-v2.rst, Documentation/admin-guide/kernel-parameters.txt (+104 more)</code></td>
+<td>03:12 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">03d86cc39fc59a6435bdf67a6b5fab5d9c16a262
+<span class="hdr">diff --cc Makefile</span>
+<span class="ctx">index 15ed0ed9649d7,ed3f4dfe942fc..11061c73f93e7</span>
+<span class="hdr">--- a/Makefile</span>
+<span class="hdr">+++ b/Makefile</span>
+<span class="ctx">@@@ -1181,33 -1176,9 +1181,12 @@@ endi</span>
+  # Ensure compilers do not transform certain loops into calls to wcslen()
+  KBUILD_CFLAGS += -fno-builtin-wcslen
+  
+<span class="del">- CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage</span>
+<span class="del">- ifdef CONFIG_CC_IS_GCC</span>
+<span class="del">- CFLAGS_GCOV	+= -fno-tree-loop-im</span>
+<span class="del">- # Use atomic counter updates to avoid concurrent-access crashes in GCOV.</span>
+<span class="del">- # Only enable if -fprofile-update=prefer-atomic does not introduce new</span>
+<span class="del">- # undefined symbols (e.g. libatomic calls that the kernel cannot link).</span>
+<span class="del">- CFLAGS_GCOV	+= $(call try-run,\</span>
+<span class="del">- 	echo &#x27;long long x; void f(void){x++;}&#x27; | \</span>
+<span class="del">- 	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -w -fprofile-arcs \</span>
+<span class="del">- 	-ftest-coverage -x c - -c -o &quot;$$TMP.base&quot; &amp;&amp; \</span>
+<span class="del">- 	echo &#x27;long long x; void f(void){x++;}&#x27; | \</span>
+<span class="del">- 	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -w -fprofile-arcs \</span>
+<span class="del">- 	-ftest-coverage -fprofile-update=prefer-atomic \</span>
+<span class="del">- 	-x c - -c -o &quot;$$TMP&quot; &amp;&amp; \</span>
+<span class="del">- 	$(NM) &quot;$$TMP.base&quot; | grep &#x27; U &#x27; &gt; &quot;$$TMP.ubase&quot; || true ; \</span>
+<span class="del">- 	$(NM) &quot;$$TMP&quot; | grep &#x27; U &#x27; &gt; &quot;$$TMP.utest&quot; || true ; \</span>
+<span class="del">- 	cmp -s &quot;$$TMP.ubase&quot; &quot;$$TMP.utest&quot;,\</span>
+<span class="del">- 	-fprofile-update=prefer-atomic)</span>
+<span class="del">- endif</span>
+<span class="del">- export CFLAGS_GCOV</span>
+<span class="del">- </span>
+  # change __FILE__ to the relative path to the source directory
+  ifdef building_out_of_srctree
+ -KBUILD_CPPFLAGS += -fmacro-prefix-map=$(srcroot)/=
+ +CFLAGS_PREFIX_MAP := -fmacro-prefix-map=$(srcroot)/=
+ +KBUILD_CPPFLAGS += $(CFLAGS_PREFIX_MAP)
+ +KBUILD_USERCFLAGS += $(CFLAGS_PREFIX_MAP)
+ +KBUILD_HOSTCFLAGS += $(CFLAGS_PREFIX_MAP)
+  ifeq ($(call rustc-option-yn, --remap-path-scope=macro),y)
+  KBUILD_RUSTFLAGS += --remap-path-prefix=$(srcroot)/= --remap-path-scope=macro
+  endif
+<span class="hdr">diff --cc arch/arm/mach-pxa/pxa3xx.c</span>
+<span class="ctx">index 46f4efdfb514f,ce9e418486653..a650f4ffde49d</span>
+<span class="hdr">--- a/arch/arm/mach-pxa/pxa3xx.c</span>
+<span class="hdr">+++ b/arch/arm/mach-pxa/pxa3xx.c</span>
+<span class="ctx">@@@ -13,8 -13,11 +13,9 @@@</span>
+  #include &lt;linux/module.h&gt;
+  #include &lt;linux/kernel.h&gt;
+  #include &lt;linux/init.h&gt;
+ -#include &lt;linux/gpio-pxa.h&gt;
+  #include &lt;linux/pm.h&gt;
+  #include &lt;linux/platform_device.h&gt;
+<span class="add">+ #include &lt;linux/interrupt.h&gt;</span>
+  #include &lt;linux/irq.h&gt;
+  #include &lt;linux/irqchip.h&gt;
+  #include &lt;linux/io.h&gt;
+<span class="hdr">diff --cc arch/arm64/Kconfig</span>
+<span class="ctx">index 9695bd1970c89,fd33f9d9188a1..5f2db2cecf977</span>
+<span class="hdr">--- a/arch/arm64/Kconfig</span>
+<span class="hdr">+++ b/arch/arm64/Kconfig</span>
+<span class="ctx">@@@ -81,9 -81,7 +81,8 @@@ config ARM6</span>
+  	select ARCH_HAS_PTE_PROTNONE
+  	select ARCH_SUPPORTS_NUMA_BALANCING
+  	select ARCH_SUPPORTS_PAGE_TABLE_CHECK
+<span class="del">- 	select ARCH_SUPPORTS_PER_VMA_LOCK</span>
+  	select ARCH_SUPPORTS_HUGE_PFNMAP if TRANSPARENT_HUGEPAGE
+ +	select ARCH_SUPPORTS_RMM
+  	select ARCH_SUPPORTS_RT
+  	select ARCH_SUPPORTS_SCHED_SMT
+  	select ARCH_SUPPORTS_SCHED_CLUSTER
+<span class="ctx">@@@ -222,9 -221,8 +221,8 @@@</span>
+  	select HAVE_RELIABLE_STACKTRACE
+  	select HAVE_POSIX_CPU_TIMERS_TASK_WORK
+  	select HAVE_FUNCTION_ARG_ACCESS_API
+<span class="del">- 	select MMU_GATHER_RCU_TABLE_FREE</span>
+  	select HAVE_RSEQ
+ -	select HAVE_RUST if RUSTC_SUPPORTS_ARM64
+ +	select HAVE_RUST
+  	select HAVE_STACKPROTECTOR
+  	select HAVE_STATIC_CALL if CFI
+  	select HAVE_SYSCALL_TRACEPOINTS
+<span class="hdr">diff --cc arch/arm64/mm/pageattr.c</span>
+<span class="ctx">index 14b2a3801f404,132938b32eb16..de7bf95003eaa</span>
+<span class="hdr">--- a/arch/arm64/mm/pageattr.c</span>
+<span class="hdr">+++ b/arch/arm64/mm/pageattr.c</span>
+<span class="ctx">@@@ -272,10 -272,12 +272,10 @@@ int set_direct_map_default_noflush(stru</span>
+  		return 0;
+  
+  	return update_range_prot((unsigned long)page_address(page),
+<span class="del">- 				 PAGE_SIZE, set_mask, clear_mask);</span>
+<span class="add">+ 				 PAGE_SIZE * numpages, set_mask, clear_mask);</span>
+  }
+  
+ -static int __set_memory_enc_dec(unsigned long addr,
+ -				int numpages,
+ -				bool encrypt)
+ +int __set_memory_enc_dec(unsigned long addr, int numpages, bool encrypt)
+  {
+  	unsigned long set_prot = 0, clear_prot = 0;
+  	phys_addr_t start, end;
+<span class="ctx">@@@ -319,23 -321,41 +319,7 @@@</span>
+  				      __pgprot(PTE_PRESENT_INVALID));
+  }
+  
+<span class="del">- int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool valid)</span>
+ -static int realm_set_memory_encrypted(unsigned long addr, int numpages)
+<span class="del">--{</span>
+<span class="del">- 	unsigned long addr = (unsigned long)page_address(page);</span>
+ -	int ret = __set_memory_enc_dec(addr, numpages, true);
+<span class="del">--</span>
+<span class="del">- 	if (!can_set_direct_map())</span>
+<span class="del">- 		return 0;</span>
+ -	/*
+ -	 * If the request to change state fails, then the only sensible cause
+ -	 * of action for the caller is to leak the memory
+ -	 */
+ -	WARN(ret, &quot;Failed to encrypt memory, %d pages will be leaked&quot;,
+ -	     numpages);
+<span class="del">--</span>
+<span class="del">- 	return set_memory_valid(addr, nr, valid);</span>
+ -	return ret;
+ -}
+ -
+ -static int realm_set_memory_decrypted(unsigned long addr, int numpages)
+ -{
+ -	int ret = __set_memory_enc_dec(addr, numpages, false);
+ -
+ -	WARN(ret, &quot;Failed to decrypt memory, %d pages will be leaked&quot;,
+ -	     numpages);
+ -
+ -	return ret;
+ -}
+ -
+ -static const struct arm64_mem_crypt_ops realm_crypt_ops = {
+ -	.encrypt = realm_set_memory_encrypted,
+ -	.decrypt = realm_set_memory_decrypted,
+ -};
+ -
+ -int realm_register_memory_enc_ops(void)
+ -{
+ -	return arm64_mem_crypt_ops_register(&amp;realm_crypt_ops);
+<span class="del">--}</span>
+<span class="del">--</span>
+  #ifdef CONFIG_DEBUG_PAGEALLOC
+<span class="del">- /*</span>
+<span class="del">-  * This is - apart from the return value - doing the same</span>
+<span class="del">-  * thing as the new set_direct_map_valid_noflush() function.</span>
+<span class="del">-  *</span>
+<span class="del">-  * Unify? Explain the conceptual differences?</span>
+<span class="del">-  */</span>
+  void __kernel_map_pages(struct page *page, int numpages, int enable)
+  {
+  	if (!can_set_direct_map())
+<span class="hdr">diff --cc arch/um/Kconfig</span>
+<span class="ctx">index 59d62c74fc41f,94b8ff70f578b..7245e3ada1c5a</span>
+<span class="hdr">--- a/arch/um/Kconfig</span>
+<span class="hdr">+++ b/arch/um/Kconfig</span>
+<span class="ctx">@@@ -45,16 -44,10 +45,15 @@@ config UM</span>
+  	select HAVE_SYSCALL_TRACEPOINTS
+  	select THREAD_INFO_IN_TASK
+  	select SPARSE_IRQ
+<span class="del">- 	select MMU_GATHER_RCU_TABLE_FREE if MMU</span>
+ +	select UACCESS_MEMCPY if !MMU
+ +	select GENERIC_STRNLEN_USER if !MMU
+ +	select GENERIC_STRNCPY_FROM_USER if !MMU
+  
+  config MMU
+ -	bool
+ +	bool &quot;MMU support&quot;
+  	default y
+ +	help
+ +	  Turning this off allows a nommu build, say Y.
+  
+  config UML_DMA_EMULATION
+  	bool
+<span class="hdr">diff --cc arch/x86/virt/vmx/tdx/tdx.c</span>
+<span class="ctx">index 96ced0494b687,3636a4d6ab8b9..680e5178a86f2</span>
+<span class="hdr">--- a/arch/x86/virt/vmx/tdx/tdx.c</span>
+<span class="hdr">+++ b/arch/x86/virt/vmx/tdx/tdx.c</span>
+<span class="ctx">@@@ -30,8 -30,8 +30,9 @@@</span>
+  #include &lt;linux/suspend.h&gt;
+  #include &lt;linux/syscore_ops.h&gt;
+  #include &lt;linux/idr.h&gt;
+ +#include &lt;linux/vmalloc.h&gt;
+  #include &lt;asm/page.h&gt;
+<span class="add">+ #include &lt;asm/cacheflush.h&gt;</span>
+  #include &lt;asm/special_insns.h&gt;
+  #include &lt;asm/msr-index.h&gt;
+  #include &lt;asm/msr.h&gt;
+<span class="hdr">diff --cc drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c</span>
+<span class="ctx">index 0330c719a776c,fe1dac7b81bfb..4bec97fffe270</span>
+<span class="hdr">--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c</span>
+<span class="hdr">+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c</span>
+<span class="ctx">@@@ -25,9 -25,9 +25,8 @@@</span>
+   *          Alex Deucher
+   *          Jerome Glisse
+   */
+ -#include &lt;linux/ktime.h&gt;
+  #include &lt;linux/module.h&gt;
+  #include &lt;linux/overflow.h&gt;
+<span class="del">- #include &lt;linux/pagemap.h&gt;</span>
+  #include &lt;linux/pci.h&gt;
+  #include &lt;linux/dma-buf.h&gt;
+  #include &lt;linux/dma-fence-unwrap.h&gt;
+<span class="hdr">diff --cc drivers/gpu/drm/amd/amdkfd/kfd_migrate.c</span>
+<span class="ctx">index 8b96e1fe741a1,0ee1a96484ced..9535ebe5837af</span>
+<span class="hdr">--- a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c</span>
+<span class="hdr">+++ b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c</span>
+<span class="ctx">@@@ -24,8 -24,7 +24,9 @@@</span>
+  #include &lt;linux/dma-direction.h&gt;
+  #include &lt;linux/dma-mapping.h&gt;
+  #include &lt;linux/migrate.h&gt;
+<span class="add">+ #include &lt;linux/pagemap.h&gt;</span>
+ +#include &quot;amdgpu.h&quot;
+ +#include &quot;amdgpu_sdma.h&quot;
+  #include &quot;amdgpu_sync.h&quot;
+  #include &quot;amdgpu_object.h&quot;
+  #include &quot;amdgpu_vm.h&quot;
+<span class="hdr">diff --cc fs/f2fs/f2fs.h</span>
+<span class="ctx">index 089a62c054ea1,85937de3d7016..257b9bdd2ea7b</span>
+<span class="hdr">--- a/fs/f2fs/f2fs.h</span>
+<span class="hdr">+++ b/fs/f2fs/f2fs.h</span>
+<span class="ctx">@@@ -1612,21 -1614,23 +1609,21 @@@ static inline void f2fs_clear_bit(unsig</span>
+   *
+   * Layout A: lowest bit should be 1
+   * | bit0 = 1 | bit1 | bit2 | ... | bit MAX | private data .... |
+<span class="del">-  * bit 0	PAGE_PRIVATE_NOT_POINTER</span>
+<span class="del">-  * bit 1	PAGE_PRIVATE_ONGOING_MIGRATION</span>
+<span class="del">-  * bit 2	PAGE_PRIVATE_REF_RESOURCE</span>
+<span class="del">-  * bit 3	PAGE_PRIVATE_ATOMIC_WRITE</span>
+<span class="add">+  * bit 0	F2FS_FOLIO_PRIVATE_NOT_POINTER</span>
+<span class="add">+  * bit 1	F2FS_FOLIO_PRIVATE_ONGOING_MIGRATION</span>
+ - * bit 2	F2FS_FOLIO_PRIVATE_INLINE_INODE
+ - * bit 3	F2FS_FOLIO_PRIVATE_REF_RESOURCE
+ - * bit 4	F2FS_FOLIO_PRIVATE_ATOMIC_WRITE
+ - * bit 5-	f2fs private data
+<span class="add">++ * bit 2	F2FS_FOLIO_PRIVATE_REF_RESOURCE</span>
+<span class="add">++ * bit 3	F2FS_FOLIO_PRIVATE_ATOMIC_WRITE</span>
+ + * bit 4-	f2fs private data
+   *
+   * Layout B: lowest bit should be 0
+<span class="del">-  * page.private is a wrapped pointer.</span>
+<span class="add">+  * folio-&gt;private is a wrapped pointer.</span>
+   */
+  enum {
+<span class="del">- 	PAGE_PRIVATE_NOT_POINTER,		/* private contains non-pointer data */</span>
+<span class="del">- 	PAGE_PRIVATE_ONGOING_MIGRATION,		/* data page which is on-going migrating */</span>
+<span class="del">- 	PAGE_PRIVATE_REF_RESOURCE,		/* dirty page has referenced resources */</span>
+<span class="del">- 	PAGE_PRIVATE_ATOMIC_WRITE,		/* data page from atomic write path */</span>
+<span class="del">- 	PAGE_PRIVATE_MAX</span>
+<span class="add">+ 	F2FS_FOLIO_PRIVATE_NOT_POINTER,		/* private contains non-pointer data */</span>
+<span class="add">+ 	F2FS_FOLIO_PRIVATE_ONGOING_MIGRATION,		/* data page which is on-going migrating */</span>
+ -	F2FS_FOLIO_PRIVATE_INLINE_INODE,		/* inode page contains inline data */
+<span class="add">+ 	F2FS_FOLIO_PRIVATE_REF_RESOURCE,		/* dirty page has referenced resources */</span>
+<span class="add">+ 	F2FS_FOLIO_PRIVATE_ATOMIC_WRITE,		/* data page from atomic write path */</span>
+<span class="add">+ 	F2FS_FOLIO_PRIVATE_MAX</span>
+  };
+  
+  /* For compression */
+<span class="ctx">@@@ -2801,25 -2710,22 +2785,19 @@@ static inline void folio_clear_f2fs_##n</span>
+  		folio_detach_private(folio);				\
+  	else								\
+  		folio-&gt;private = (void *)v;				\
+<span class="del">- }									\</span>
+<span class="del">- static inline void clear_page_private_##name(struct page *page) \</span>
+<span class="del">- { \</span>
+<span class="del">- 	clear_bit(PAGE_PRIVATE_##flagname, &amp;page_private(page)); \</span>
+<span class="del">- 	if (page_private(page) == BIT(PAGE_PRIVATE_NOT_POINTER)) \</span>
+<span class="del">- 		detach_page_private(page); \</span>
+  }
+  
+<span class="del">- PAGE_PRIVATE_GET_FUNC(nonpointer, NOT_POINTER);</span>
+<span class="del">- PAGE_PRIVATE_GET_FUNC(gcing, ONGOING_MIGRATION);</span>
+<span class="del">- PAGE_PRIVATE_GET_FUNC(atomic, ATOMIC_WRITE);</span>
+<span class="add">+ F2FS_FOLIO_PRIVATE_GET_FUNC(nonpointer, NOT_POINTER);</span>
+ -F2FS_FOLIO_PRIVATE_GET_FUNC(inline, INLINE_INODE);
+<span class="add">+ F2FS_FOLIO_PRIVATE_GET_FUNC(gcing, ONGOING_MIGRATION);</span>
+<span class="add">+ F2FS_FOLIO_PRIVATE_GET_FUNC(atomic, ATOMIC_WRITE);</span>
+  
+<span class="del">- PAGE_PRIVATE_SET_FUNC(reference, REF_RESOURCE);</span>
+<span class="del">- PAGE_PRIVATE_SET_FUNC(gcing, ONGOING_MIGRATION);</span>
+<span class="del">- PAGE_PRIVATE_SET_FUNC(atomic, ATOMIC_WRITE);</span>
+<span class="add">+ F2FS_FOLIO_PRIVATE_SET_FUNC(reference, REF_RESOURCE);</span>
+ -F2FS_FOLIO_PRIVATE_SET_FUNC(inline, INLINE_INODE);
+<span class="add">+ F2FS_FOLIO_PRIVATE_SET_FUNC(gcing, ONGOING_MIGRATION);</span>
+<span class="add">+ F2FS_FOLIO_PRIVATE_SET_FUNC(atomic, ATOMIC_WRITE);</span>
+  
+<span class="del">- PAGE_PRIVATE_CLEAR_FUNC(reference, REF_RESOURCE);</span>
+<span class="del">- PAGE_PRIVATE_CLEAR_FUNC(gcing, ONGOING_MIGRATION);</span>
+<span class="del">- PAGE_PRIVATE_CLEAR_FUNC(atomic, ATOMIC_WRITE);</span>
+<span class="add">+ F2FS_FOLIO_PRIVATE_CLEAR_FUNC(reference, REF_RESOURCE);</span>
+ -F2FS_FOLIO_PRIVATE_CLEAR_FUNC(inline, INLINE_INODE);
+<span class="add">+ F2FS_FOLIO_PRIVATE_CLEAR_FUNC(gcing, ONGOING_MIGRATION);</span>
+<span class="add">+ F2FS_FOLIO_PRIVATE_CLEAR_FUNC(atomic, ATOMIC_WRITE);</span>
+  
+  static inline unsigned long folio_get_f2fs_data(struct folio *folio)
+  {
+<span class="hdr">diff --cc fs/fuse/dax.c</span>
+<span class="ctx">index 7905e7b366444,a5994f1c637d9..a2bb9c041a4cb</span>
+<span class="hdr">--- a/fs/fuse/dax.c</span>
+<span class="hdr">+++ b/fs/fuse/dax.c</span>
+<span class="ctx">@@@ -826,8 -826,7 +826,8 @@@ int fuse_vdax_mmap(struct file *file, s</span>
+  {
+  	file_accessed(file);
+  	vma-&gt;vm_ops = &amp;fuse_dax_vm_ops;
+<span class="del">- 	vm_flags_set(vma, VM_MIXEDMAP | VM_HUGEPAGE);</span>
+<span class="add">+ 	vma_set_flags(vma, VMA_HUGEPAGE_BIT);</span>
+ +	vma-&gt;vm_page_prot = pgprot_decrypted(vma-&gt;vm_page_prot);
+  	return 0;
+  }
+  
+<span class="hdr">diff --cc fs/xfs/libxfs/xfs_btree.c</span>
+<span class="ctx">index 7effebe297ea0,6738d9d1511bc..2434c54a35708</span>
+<span class="hdr">--- a/fs/xfs/libxfs/xfs_btree.c</span>
+<span class="hdr">+++ b/fs/xfs/libxfs/xfs_btree.c</span>
+<span class="ctx">@@@ -3008,32 -3007,12 +3007,18 @@@ xfs_btree_split_worker</span>
+  {
+  	struct xfs_btree_split_args	*args = container_of(work,
+  						struct xfs_btree_split_args, work);
+<span class="del">- 	unsigned long		pflags;</span>
+<span class="del">- 	unsigned long		new_pflags = 0;</span>
+ -	xfs_trans_set_context(args-&gt;cur-&gt;bc_tp);
+ +	unsigned int		nofs_flags;
+ +
+<span class="del">- 	/*</span>
+<span class="del">- 	 * we are in a transaction context here, but may also be doing work</span>
+<span class="del">- 	 * in kswapd context, and hence we may need to inherit that state</span>
+<span class="del">- 	 * temporarily to ensure that we don&#x27;t block waiting for memory reclaim</span>
+<span class="del">- 	 * in any way.</span>
+<span class="del">- 	 */</span>
+<span class="del">- 	if (args-&gt;kswapd)</span>
+<span class="del">- 		new_pflags |= PF_MEMALLOC | PF_KSWAPD;</span>
+<span class="del">- </span>
+<span class="del">- 	current_set_flags_nested(&amp;pflags, new_pflags);</span>
+<span class="del">- </span>
+ +	/*
+ +	 * Don&#x27;t use xfs_trans_set_context() here: it would overwrite the
+ +	 * caller&#x27;s saved NOFS state in tp-&gt;t_pflags. Use a local scope.
+ +	 */
+ +	nofs_flags = memalloc_nofs_save();
+  
+  	args-&gt;result = __xfs_btree_split(args-&gt;cur, args-&gt;level, args-&gt;ptrp,
+  					 args-&gt;key, args-&gt;curp, args-&gt;stat);
+  
+ -	xfs_trans_clear_context(args-&gt;cur-&gt;bc_tp);
+ +	memalloc_nofs_restore(nofs_flags);
+<span class="del">- 	current_restore_flags_nested(&amp;pflags, new_pflags);</span>
+  
+  	/*
+  	 * Do not access args after complete() has run here. We don&#x27;t own args
+<span class="hdr">diff --cc kernel/sched/fair.c</span>
+<span class="ctx">index 5c98d8dfce5d8,8d38c3b7d7920..6af41206e53e9</span>
+<span class="hdr">--- a/kernel/sched/fair.c</span>
+<span class="hdr">+++ b/kernel/sched/fair.c</span>
+<span class="ctx">@@@ -22,9 -22,7 +22,8 @@@</span>
+   */
+  #include &lt;linux/energy_model.h&gt;
+  #include &lt;linux/mmap_lock.h&gt;
+<span class="del">- #include &lt;linux/hugetlb_inline.h&gt;</span>
+  #include &lt;linux/jiffies.h&gt;
+ +#include &lt;linux/math.h&gt;
+  #include &lt;linux/mm_api.h&gt;
+  #include &lt;linux/highmem.h&gt;
+  #include &lt;linux/hrtimer.h&gt;
+<span class="hdr">diff --cc mm/internal.h</span>
+<span class="ctx">index 9e3be236f18c0,ff28b940e0cd2..a665834c214cd</span>
+<span class="hdr">--- a/mm/internal.h</span>
+<span class="hdr">+++ b/mm/internal.h</span>
+<span class="ctx">@@@ -23,17 -24,7 +24,10 @@@</span>
+  #include &quot;vma.h&quot;
+  
+  struct folio_batch;
+<span class="del">- struct hstate;</span>
+  
+ +int __copy_remote_mm_str(struct mm_struct *mm, unsigned long addr,
+ +		void *buf, int len, unsigned int gup_flags);
+ +
+<span class="del">- struct huge_bootmem_page {</span>
+<span class="del">- 	struct list_head list;</span>
+<span class="del">- 	struct hstate *hstate;</span>
+<span class="del">- 	unsigned long flags;</span>
+<span class="del">- };</span>
+<span class="del">- </span>
+  /* mm/workingset.c */
+  bool workingset_test_recent(void *shadow, bool file, bool *workingset,
+  			    bool flush);
+<span class="hdr">diff --cc scripts/kallsyms.c</span>
+<span class="ctx">index ecb444078c1ca,be42a91113500..8bf256464d598</span>
+<span class="hdr">--- a/scripts/kallsyms.c</span>
+<span class="hdr">+++ b/scripts/kallsyms.c</span>
+<span class="ctx">@@@ -33,11 -26,13 +33,12 @@@</span>
+  #include &lt;string.h&gt;
+  #include &lt;ctype.h&gt;
+  #include &lt;limits.h&gt;
+ -
+ +#include &lt;sys/stat.h&gt;
+  #include &lt;xalloc.h&gt;
+  
+ +#include &quot;kallsyms.h&quot;
+<span class="add">+ #include &quot;../kernel/kallsyms_internal.h&quot;</span>
+  
+ -#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
+ -
+  #define KSYM_NAME_LEN		512
+  
+  struct sym_entry {
+<span class="ctx">@@@ -412,11 -359,10 +415,11 @@@ static void write_src(FILE *out_bin_fil</span>
+  	markers = xmalloc(sizeof(*markers) * markers_cnt);
+  
+  	output_label(&quot;kallsyms_names&quot;);
+ +	bin_start = bin_pos(out_bin_file);
+  	off = 0;
+  	for (i = 0; i &lt; table_cnt; i++) {
+<span class="del">- 		if ((i &amp; 0xFF) == 0)</span>
+<span class="del">- 			markers[i &gt;&gt; 8] = off;</span>
+<span class="add">+ 		if ((i &amp; KALLSYMS_MARKER_MASK) == 0)</span>
+<span class="add">+ 			markers[i &gt;&gt; KALLSYMS_MARKER_SHIFT] = off;</span>
+  		table[i]-&gt;seq = i;
+  
+  		/* There cannot be any symbol of length zero. */
+</div>
+</details></td>
+</tr>
+<tr data-type="rerere" data-category="rust">
+<td><code>rust-next</code></td>
+<td>rust</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>rust/bindings/bindings_helper.h, scripts/remove-stale-files</code></td>
+<td>03:12 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">cbbe3dabbbc08d55f48cb81bbc2c80d17b24eb23
+<span class="hdr">diff --cc scripts/remove-stale-files</span>
+<span class="ctx">index e46337e4bfb8f,f1f776caae00a..61a558164a31a</span>
+<span class="hdr">--- a/scripts/remove-stale-files</span>
+<span class="hdr">+++ b/scripts/remove-stale-files</span>
+<span class="ctx">@@@ -27,4 -27,4 +27,6 @@@ rm -f *.spe</span>
+  
+  rm -f lib/test_fortify.log
+  
+ +rm -f usr/gen_init_cpio
+<span class="add">++</span>
+<span class="add">+ rm -f rust/doctests_kernel_generated_kunit.c</span>
+</div>
+</details></td>
+</tr>
+<tr data-type="rerere" data-category="soc">
+<td><code>soc-next</code></td>
+<td>soc</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>Documentation/devicetree/bindings/display/fsl,lcdif.yaml, Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml, Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml (+19 more)</code></td>
+<td>03:12 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">02af74570da426adb09a940ec100ef2ef341aadd
+<span class="hdr">diff --cc MAINTAINERS</span>
+<span class="ctx">index f07b9ff932c3e,2e3f27db74ff3..b63608eaf7ab4</span>
+<span class="hdr">--- a/MAINTAINERS</span>
+<span class="hdr">+++ b/MAINTAINERS</span>
+<span class="ctx">@@@ -23966,16 -23557,9 +23970,17 @@@ F:	drivers/irqchip/irq-riscv-rpmi-sysms</span>
+  F:	drivers/mailbox/riscv-sbi-mpxy-mbox.c
+  F:	include/linux/mailbox/riscv-rpmi-message.h
+  
+ +RISC-V RPMI DEVICE POWER DRIVER
+ +M:	Joshua Yeong &lt;joshua.yeong@starfivetech.com&gt;
+ +L:	linux-riscv@lists.infradead.org
+ +S:	Maintained
+ +F:	Documentation/devicetree/bindings/power/riscv,rpmi-device-power.yaml
+ +F:	Documentation/devicetree/bindings/power/riscv,rpmi-mpxy-device-power.yaml
+ +F:	drivers/pmdomain/riscv/
+ +
+  RISC-V SPACEMIT SoC Support
+  M:	Yixun Lan &lt;dlan@kernel.org&gt;
+<span class="add">+ R:	Troy Mitchell &lt;troy.mitchell@linux.spacemit.com&gt;</span>
+  L:	linux-riscv@lists.infradead.org
+  L:	spacemit@lists.linux.dev
+  S:	Maintained
+<span class="hdr">diff --cc arch/arm64/configs/defconfig</span>
+<span class="ctx">index e9995ed54062b,716e344e324e1..d2df87d98279e</span>
+<span class="hdr">--- a/arch/arm64/configs/defconfig</span>
+<span class="hdr">+++ b/arch/arm64/configs/defconfig</span>
+<span class="ctx">@@@ -1748,8 -1641,10 +1641,8 @@@ CONFIG_PWM_VISCONTI=</span>
+  CONFIG_PWM_XILINX=m
+  CONFIG_SL28CPLD_INTC=y
+  CONFIG_XILINX_INTC=y
+<span class="del">- CONFIG_TI_SCI_INTR_IRQCHIP=y</span>
+<span class="del">- CONFIG_TI_SCI_INTA_IRQCHIP=y</span>
+ -CONFIG_QCOM_PDC=y
+ -CONFIG_QCOM_MPM=y
+<span class="add">+ CONFIG_TI_SCI_INTR_IRQCHIP=m</span>
+<span class="add">+ CONFIG_TI_SCI_INTA_IRQCHIP=m</span>
+  CONFIG_RESET_GPIO=m
+  CONFIG_RESET_IMX7=y
+  CONFIG_RESET_QCOM_AOSS=y
+</div>
+</details></td>
+</tr>
+<tr data-type="rerere" data-category="sound">
+<td><code>sound-next</code></td>
+<td>sound</td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>Documentation/devicetree/bindings/vendor-prefixes.yaml, MAINTAINERS, drivers/acpi/scan.c (+5 more)</code></td>
+<td>03:12 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">6cb19dfbd3bce53d30905b8ed5d7a9802fd61bae
+<span class="hdr">diff --cc MAINTAINERS</span>
+<span class="ctx">index b63608eaf7ab4,feda5dbc1f77d..8624f204c25bd</span>
+<span class="hdr">--- a/MAINTAINERS</span>
+<span class="hdr">+++ b/MAINTAINERS</span>
+<span class="ctx">@@@ -9859,8 -9716,14 +9874,15 @@@ M:	Jeff Layton &lt;jlayton@kernel.org</span>
+  S:	Maintained
+  F:	include/linux/errseq.h
+  F:	lib/errseq.c
+ +F:	lib/tests/errseq_kunit.c
+  
+<span class="add">+ ES9039Q2M AUDIO CODEC DRIVER</span>
+<span class="add">+ M:	Karl Asseily &lt;karl@asseily.com&gt;</span>
+<span class="add">+ L:	linux-sound@vger.kernel.org</span>
+<span class="add">+ S:	Maintained</span>
+<span class="add">+ F:	Documentation/devicetree/bindings/sound/esstech,es9039q2m.yaml</span>
+<span class="add">+ F:	sound/soc/codecs/es9039q2m.c</span>
+<span class="add">+ </span>
+  ESD CAN NETWORK DRIVERS
+  M:	Stefan Mätje &lt;stefan.maetje@esd.eu&gt;
+  R:	socketcan@esd.eu
+<span class="hdr">diff --cc sound/mips/snd-n64.c</span>
+<span class="ctx">index e2cf9df15d485,8cc001c58d5e6..da889570cebcf</span>
+<span class="hdr">--- a/sound/mips/snd-n64.c</span>
+<span class="hdr">+++ b/sound/mips/snd-n64.c</span>
+<span class="ctx">@@@ -296,25 -305,20 +305,20 @@@ static int __init n64audio_probe(struc</span>
+  	spin_lock_init(&amp;priv-&gt;chan.lock);
+  
+  	priv-&gt;card = card;
+<span class="add">+ 	card-&gt;private_free = n64audio_free;</span>
+  
+  	priv-&gt;ring_base = dma_alloc_coherent(card-&gt;dev, 32 * 1024, &amp;priv-&gt;ring_base_dma,
+ -					     GFP_DMA|GFP_KERNEL);
+ +					     GFP_KERNEL);
+<span class="del">- 	if (!priv-&gt;ring_base) {</span>
+<span class="del">- 		err = -ENOMEM;</span>
+<span class="del">- 		goto fail_card;</span>
+<span class="del">- 	}</span>
+<span class="add">+ 	if (!priv-&gt;ring_base)</span>
+<span class="add">+ 		return -ENOMEM;</span>
+  
+  	priv-&gt;mi_reg_base = devm_platform_ioremap_resource(pdev, 0);
+<span class="del">- 	if (IS_ERR(priv-&gt;mi_reg_base)) {</span>
+<span class="del">- 		err = PTR_ERR(priv-&gt;mi_reg_base);</span>
+<span class="del">- 		goto fail_dma_alloc;</span>
+<span class="del">- 	}</span>
+<span class="add">+ 	if (IS_ERR(priv-&gt;mi_reg_base))</span>
+<span class="add">+ 		return PTR_ERR(priv-&gt;mi_reg_base);</span>
+  
+  	priv-&gt;ai_reg_base = devm_platform_ioremap_resource(pdev, 1);
+<span class="del">- 	if (IS_ERR(priv-&gt;ai_reg_base)) {</span>
+<span class="del">- 		err = PTR_ERR(priv-&gt;ai_reg_base);</span>
+<span class="del">- 		goto fail_dma_alloc;</span>
+<span class="del">- 	}</span>
+<span class="add">+ 	if (IS_ERR(priv-&gt;ai_reg_base))</span>
+<span class="add">+ 		return PTR_ERR(priv-&gt;ai_reg_base);</span>
+  
+  	err = snd_pcm_new(card, &quot;N64 Audio&quot;, 0, 1, 0, &amp;pcm);
+  	if (err &lt; 0)
+</div>
+</details></td>
+</tr>
+<tr data-type="conflict" data-category="subsystem">
+<td><code>subsystem-next</code></td>
+<td>subsystem</td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>Documentation/devicetree/bindings/mfd/ti,tps65910.yaml, MAINTAINERS, drivers/android/binder/page_range.rs (+3 more)</code></td>
+<td>03:29 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">f83b9d430711543061fd0b3c055cc43c30186073
+<span class="hdr">diff --cc MAINTAINERS</span>
+<span class="ctx">index 17d832296d006,6a43083c579a9..83309b2d9a6bc</span>
+<span class="hdr">--- a/MAINTAINERS</span>
+<span class="hdr">+++ b/MAINTAINERS</span>
+<span class="ctx">@@@ -18728,10 -18498,10 +18728,10 @@@ M:	David Yang &lt;mmyangfl@gmail.com</span>
+  L:	netdev@vger.kernel.org
+  S:	Maintained
+  F:	Documentation/devicetree/bindings/net/dsa/motorcomm,yt921x.yaml
+ -F:	drivers/net/dsa/yt921x.*
+ +F:	drivers/net/dsa/motorcomm/
+  F:	net/dsa/tag_yt921x.c
+  
+<span class="del">- MOXA SMARTIO/INDUSTIO/INTELLIO SERIAL CARD</span>
+<span class="add">+ MOXA SMARTIO/INDUSTIO SERIAL CARD</span>
+  M:	Jiri Slaby &lt;jirislaby@kernel.org&gt;
+  S:	Maintained
+  F:	Documentation/driver-api/tty/moxa-smartio.rst
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h2 id="by-category">By Category</h2>
+<h3>bus <span class="category-count">1</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>i2c-rust</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>-</code></td>
+<td>01:55 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">61218df544dc82b4976b2ee16081c04a0424e129
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>docs <span class="category-count">1</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docs-next</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>Documentation/ABI/testing/sysfs-bus-pci, Documentation/admin-guide/kernel-parameters.txt, Documentation/scheduler/index.rst</code></td>
+<td>02:45 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">df5b808fc4ce150060a7abac5fc0cb46aee0518b
+<span class="hdr">diff --cc Documentation/scheduler/index.rst</span>
+<span class="ctx">index a43647b9706d9,d6d75421756ac..791178ac8bec6</span>
+<span class="hdr">--- a/Documentation/scheduler/index.rst</span>
+<span class="hdr">+++ b/Documentation/scheduler/index.rst</span>
+<span class="ctx">@@@ -23,6 -23,6 +23,7 @@@ Schedule</span>
+      sched-stats
+      sched-ext
+      sched-debug
+ +    sched-paravirt
+<span class="add">+     sched-preemption</span>
+  
+      text_files
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>fixes <span class="category-count">1</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fixes-next</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>.mailmap, MAINTAINERS, drivers/net/ethernet/stmicro/stmmac/stmmac_main.c (+5 more)</code></td>
+<td>02:46 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">29f86d7babd16ad1d3ab25833d346b5b5d6bdc73
+<span class="hdr">diff --cc drivers/net/ethernet/stmicro/stmmac/stmmac_main.c</span>
+<span class="ctx">index 2cbf502c5769d,9741f97fa37a2..3ababbcf4addd</span>
+<span class="hdr">--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c</span>
+<span class="hdr">+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c</span>
+<span class="ctx">@@@ -862,38 -893,38 +894,46 @@@ static int stmmac_hwtstamp_get(struct n</span>
+   * Will be rerun after resuming from suspend, case in which the timestamping
+   * flags updated by stmmac_hwtstamp_set() also need to be restored.
+   */
+<span class="del">- static int stmmac_init_tstamp_counter(struct stmmac_priv *priv,</span>
+<span class="del">- 				      u32 systime_flags)</span>
+<span class="add">+ static int stmmac_init_tstamp_counter(struct stmmac_priv *priv)</span>
+  {
+<span class="add">+ 	u32 default_addend = priv-&gt;default_addend;</span>
+  	struct timespec64 now;
+<span class="add">+ 	int ret;</span>
+  
+<span class="del">- 	stmmac_config_hw_tstamping(priv, priv-&gt;ptpaddr, systime_flags);</span>
+<span class="del">- 	priv-&gt;systime_flags = systime_flags;</span>
+ -	if (!priv-&gt;plat-&gt;clk_ptp_rate) {
+ -		netdev_err(priv-&gt;dev, &quot;Invalid PTP clock rate&quot;);
+ -		return -EINVAL;
+ -	}
+<span class="del">--</span>
+<span class="del">- 	stmmac_update_subsecond_increment(priv);</span>
+<span class="add">+ 	ret = stmmac_update_subsecond_increment(priv, priv-&gt;systime_flags);</span>
+<span class="add">+ 	if (ret)</span>
+<span class="add">+ 		return ret;</span>
+  
+  	/* initialize system time */
+  	ktime_get_real_ts64(&amp;now);
+  
+  	/* lower 32 bits of tv_sec are safe until y2106 */
+<span class="del">- 	stmmac_init_systime(priv, priv-&gt;ptpaddr, (u32)now.tv_sec, now.tv_nsec);</span>
+<span class="add">+ 	ret = stmmac_init_systime(priv, priv-&gt;ptpaddr, (u32)now.tv_sec,</span>
+<span class="add">+ 				  now.tv_nsec);</span>
+<span class="add">+ 	if (ret)</span>
+<span class="add">+ 		goto error;</span>
+  
+  	return 0;
+<span class="add">+ error:</span>
+<span class="add">+ 	/* Restore previous configuration */</span>
+<span class="add">+ 	stmmac_restore_subsecond_increment(priv, default_addend);</span>
+<span class="add">+ </span>
+<span class="add">+ 	return ret;</span>
+  }
+  
+ +static int stmmac_init_ptp_clk_freq(struct stmmac_priv *priv)
+ +{
+ +	if (priv-&gt;plat-&gt;ptp_clk_freq_config)
+ +		priv-&gt;plat-&gt;ptp_clk_freq_config(priv);
+ +
+ +	if (!priv-&gt;plat-&gt;clk_ptp_rate) {
+ +		netdev_info(priv-&gt;dev, &quot;PTP clock rate not configured\n&quot;);
+ +		return -EINVAL;
+ +	}
+ +
+ +	return 0;
+ +}
+ +
+  /**
+   * stmmac_init_timestamping - initialise timestamping
+   * @priv: driver private structure
+<span class="ctx">@@@ -912,8 -937,22 +952,14 @@@ static int stmmac_init_timestamping(str</span>
+  	bool xmac = dwmac_is_xmac(priv-&gt;plat-&gt;core_type);
+  	int ret;
+  
+<span class="del">- 	ret = stmmac_init_tstamp_counter(priv, STMMAC_HWTS_ACTIVE |</span>
+<span class="del">- 					       PTP_TCR_TSCFUPDT);</span>
+ -	if (priv-&gt;plat-&gt;ptp_clk_freq_config)
+ -		priv-&gt;plat-&gt;ptp_clk_freq_config(priv);
+ -
+ -	if (!(priv-&gt;dma_cap.time_stamp || priv-&gt;dma_cap.atime_stamp)) {
+ -		netdev_info(priv-&gt;dev, &quot;PTP not supported by HW\n&quot;);
+ -		return -EOPNOTSUPP;
+ -	}
+ -
+<span class="add">+ 	/* Reset hw ts configuration */</span>
+<span class="add">+ 	memset(&amp;priv-&gt;tstamp_config, 0, sizeof(priv-&gt;tstamp_config));</span>
+<span class="add">+ 	priv-&gt;systime_flags = STMMAC_HWTS_ACTIVE | PTP_TCR_TSCFUPDT;</span>
+<span class="add">+ 	priv-&gt;tsfupdt_coarse = false;</span>
+<span class="add">+ 	priv-&gt;hwts_tx_en = 0;</span>
+<span class="add">+ 	priv-&gt;hwts_rx_en = 0;</span>
+<span class="add">+ </span>
+<span class="add">+ 	ret = stmmac_init_tstamp_counter(priv);</span>
+  	if (ret) {
+  		netdev_warn(priv-&gt;dev, &quot;PTP init failed\n&quot;);
+  		return ret;
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>graphics <span class="category-count">1</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>graphics-next</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>MAINTAINERS, drivers/gpu/drm/i915/gt/intel_engine_cs.c, drivers/gpu/drm/xe/xe_configfs.c (+23 more)</code></td>
+<td>02:46 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">f8711465aafd1b23c7e9d8fe21c30c8424cfd3ec
+<span class="hdr">diff --cc drivers/gpu/drm/xe/xe_pt.c</span>
+<span class="ctx">index 6c6d9be2717ef,6ad4bbaa18600..8a95d58d9c6f6</span>
+<span class="hdr">--- a/drivers/gpu/drm/xe/xe_pt.c</span>
+<span class="hdr">+++ b/drivers/gpu/drm/xe/xe_pt.c</span>
+<span class="ctx">@@@ -5,10 -5,9 +5,11 @@@</span>
+  
+  #include &quot;xe_pt.h&quot;
+  
+ +#include &lt;linux/error-injection.h&gt;
+ +
+  #include &quot;regs/xe_gtt_defs.h&quot;
+  #include &quot;xe_bo.h&quot;
+<span class="add">+ #include &quot;xe_cpu_bind.h&quot;</span>
+  #include &quot;xe_device.h&quot;
+  #include &quot;xe_drm_client.h&quot;
+  #include &quot;xe_exec_queue.h&quot;
+<span class="hdr">diff --cc include/linux/mod_devicetable.h</span>
+<span class="ctx">index 318c4b5c3451b,4fe1cd64292f1..d1581bb647298</span>
+<span class="hdr">--- a/include/linux/mod_devicetable.h</span>
+<span class="hdr">+++ b/include/linux/mod_devicetable.h</span>
+<span class="ctx">@@@ -15,8 -15,6 +15,7 @@@</span>
+  #include &quot;device-id/acpi.h&quot;
+  #include &quot;device-id/amba.h&quot;
+  #include &quot;device-id/ap.h&quot;
+<span class="del">- #include &quot;device-id/apr.h&quot;</span>
+ +#include &quot;device-id/arm_smccc.h&quot;
+  #include &quot;device-id/auxiliary.h&quot;
+  #include &quot;device-id/bcma.h&quot;
+  #include &quot;device-id/ccw.h&quot;
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>iio <span class="category-count">1</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>iio-next</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml, Documentation/devicetree/bindings/trivial-devices.yaml, MAINTAINERS</code></td>
+<td>02:46 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">d28e15eddc5ff92e81f58ec847a4f709be6ac4c9
+<span class="hdr">diff --cc MAINTAINERS</span>
+<span class="ctx">index b91d76cfb8676,5fff17cc594cf..7136f4a3c419a</span>
+<span class="hdr">--- a/MAINTAINERS</span>
+<span class="hdr">+++ b/MAINTAINERS</span>
+<span class="ctx">@@@ -4418,15 -4472,15 +4451,24 @@@ S:	Orpha</span>
+  F:	Documentation/devicetree/bindings/sound/axentia,*
+  F:	sound/soc/atmel/tse850-pcm5142.c
+  
+<span class="add">+ AXIADO SARADC DRIVER</span>
+<span class="add">+ M:	Petar Stepanovic &lt;pstepanovic@axiado.com&gt;</span>
+<span class="add">+ M:	Akhila Kavi &lt;akavi@axiado.com&gt;</span>
+<span class="add">+ M:	Prasad Bolisetty &lt;pbolisetty@axiado.com&gt;</span>
+<span class="add">+ L:	linux-iio@vger.kernel.org</span>
+<span class="add">+ S:	Maintained</span>
+<span class="add">+ F:	Documentation/devicetree/bindings/iio/adc/axiado,ax3000-saradc.yaml</span>
+<span class="add">+ F:	drivers/iio/adc/axiado_saradc.c</span>
+<span class="add">+ </span>
+ +AXIADO SGPIO DRIVER
+ +M:	Petar Stepanovic &lt;pstepanovic@axiado.com&gt;
+ +M:	SriNavmani A &lt;srinavmani@axiado.com&gt;
+ +M:	Prasad Bolisetty &lt;pbolisetty@axiado.com&gt;
+ +L:	linux-gpio@vger.kernel.org
+ +S:	Supported
+ +F:	Documentation/devicetree/bindings/gpio/axiado,ax3005-sgpio.yaml
+ +F:	drivers/gpio/gpio-axiado-sgpio.c
+ +
+  AXIS ARTPEC ARM64 SoC SUPPORT
+  M:	Jesper Nilsson &lt;jesper.nilsson@axis.com&gt;
+  M:	Lars Persson &lt;lars.persson@axis.com&gt;
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>media <span class="category-count">1</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>media-next</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml, MAINTAINERS, arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts (+3 more)</code></td>
+<td>02:46 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">5e08a2c68b6a36ed6f882320024b989b55dedded
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>mm <span class="category-count">1</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mm-next</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>.mailmap, Documentation/admin-guide/cgroup-v2.rst, Documentation/admin-guide/kernel-parameters.txt (+104 more)</code></td>
+<td>03:12 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">03d86cc39fc59a6435bdf67a6b5fab5d9c16a262
+<span class="hdr">diff --cc Makefile</span>
+<span class="ctx">index 15ed0ed9649d7,ed3f4dfe942fc..11061c73f93e7</span>
+<span class="hdr">--- a/Makefile</span>
+<span class="hdr">+++ b/Makefile</span>
+<span class="ctx">@@@ -1181,33 -1176,9 +1181,12 @@@ endi</span>
+  # Ensure compilers do not transform certain loops into calls to wcslen()
+  KBUILD_CFLAGS += -fno-builtin-wcslen
+  
+<span class="del">- CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage</span>
+<span class="del">- ifdef CONFIG_CC_IS_GCC</span>
+<span class="del">- CFLAGS_GCOV	+= -fno-tree-loop-im</span>
+<span class="del">- # Use atomic counter updates to avoid concurrent-access crashes in GCOV.</span>
+<span class="del">- # Only enable if -fprofile-update=prefer-atomic does not introduce new</span>
+<span class="del">- # undefined symbols (e.g. libatomic calls that the kernel cannot link).</span>
+<span class="del">- CFLAGS_GCOV	+= $(call try-run,\</span>
+<span class="del">- 	echo &#x27;long long x; void f(void){x++;}&#x27; | \</span>
+<span class="del">- 	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -w -fprofile-arcs \</span>
+<span class="del">- 	-ftest-coverage -x c - -c -o &quot;$$TMP.base&quot; &amp;&amp; \</span>
+<span class="del">- 	echo &#x27;long long x; void f(void){x++;}&#x27; | \</span>
+<span class="del">- 	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -w -fprofile-arcs \</span>
+<span class="del">- 	-ftest-coverage -fprofile-update=prefer-atomic \</span>
+<span class="del">- 	-x c - -c -o &quot;$$TMP&quot; &amp;&amp; \</span>
+<span class="del">- 	$(NM) &quot;$$TMP.base&quot; | grep &#x27; U &#x27; &gt; &quot;$$TMP.ubase&quot; || true ; \</span>
+<span class="del">- 	$(NM) &quot;$$TMP&quot; | grep &#x27; U &#x27; &gt; &quot;$$TMP.utest&quot; || true ; \</span>
+<span class="del">- 	cmp -s &quot;$$TMP.ubase&quot; &quot;$$TMP.utest&quot;,\</span>
+<span class="del">- 	-fprofile-update=prefer-atomic)</span>
+<span class="del">- endif</span>
+<span class="del">- export CFLAGS_GCOV</span>
+<span class="del">- </span>
+  # change __FILE__ to the relative path to the source directory
+  ifdef building_out_of_srctree
+ -KBUILD_CPPFLAGS += -fmacro-prefix-map=$(srcroot)/=
+ +CFLAGS_PREFIX_MAP := -fmacro-prefix-map=$(srcroot)/=
+ +KBUILD_CPPFLAGS += $(CFLAGS_PREFIX_MAP)
+ +KBUILD_USERCFLAGS += $(CFLAGS_PREFIX_MAP)
+ +KBUILD_HOSTCFLAGS += $(CFLAGS_PREFIX_MAP)
+  ifeq ($(call rustc-option-yn, --remap-path-scope=macro),y)
+  KBUILD_RUSTFLAGS += --remap-path-prefix=$(srcroot)/= --remap-path-scope=macro
+  endif
+<span class="hdr">diff --cc arch/arm/mach-pxa/pxa3xx.c</span>
+<span class="ctx">index 46f4efdfb514f,ce9e418486653..a650f4ffde49d</span>
+<span class="hdr">--- a/arch/arm/mach-pxa/pxa3xx.c</span>
+<span class="hdr">+++ b/arch/arm/mach-pxa/pxa3xx.c</span>
+<span class="ctx">@@@ -13,8 -13,11 +13,9 @@@</span>
+  #include &lt;linux/module.h&gt;
+  #include &lt;linux/kernel.h&gt;
+  #include &lt;linux/init.h&gt;
+ -#include &lt;linux/gpio-pxa.h&gt;
+  #include &lt;linux/pm.h&gt;
+  #include &lt;linux/platform_device.h&gt;
+<span class="add">+ #include &lt;linux/interrupt.h&gt;</span>
+  #include &lt;linux/irq.h&gt;
+  #include &lt;linux/irqchip.h&gt;
+  #include &lt;linux/io.h&gt;
+<span class="hdr">diff --cc arch/arm64/Kconfig</span>
+<span class="ctx">index 9695bd1970c89,fd33f9d9188a1..5f2db2cecf977</span>
+<span class="hdr">--- a/arch/arm64/Kconfig</span>
+<span class="hdr">+++ b/arch/arm64/Kconfig</span>
+<span class="ctx">@@@ -81,9 -81,7 +81,8 @@@ config ARM6</span>
+  	select ARCH_HAS_PTE_PROTNONE
+  	select ARCH_SUPPORTS_NUMA_BALANCING
+  	select ARCH_SUPPORTS_PAGE_TABLE_CHECK
+<span class="del">- 	select ARCH_SUPPORTS_PER_VMA_LOCK</span>
+  	select ARCH_SUPPORTS_HUGE_PFNMAP if TRANSPARENT_HUGEPAGE
+ +	select ARCH_SUPPORTS_RMM
+  	select ARCH_SUPPORTS_RT
+  	select ARCH_SUPPORTS_SCHED_SMT
+  	select ARCH_SUPPORTS_SCHED_CLUSTER
+<span class="ctx">@@@ -222,9 -221,8 +221,8 @@@</span>
+  	select HAVE_RELIABLE_STACKTRACE
+  	select HAVE_POSIX_CPU_TIMERS_TASK_WORK
+  	select HAVE_FUNCTION_ARG_ACCESS_API
+<span class="del">- 	select MMU_GATHER_RCU_TABLE_FREE</span>
+  	select HAVE_RSEQ
+ -	select HAVE_RUST if RUSTC_SUPPORTS_ARM64
+ +	select HAVE_RUST
+  	select HAVE_STACKPROTECTOR
+  	select HAVE_STATIC_CALL if CFI
+  	select HAVE_SYSCALL_TRACEPOINTS
+<span class="hdr">diff --cc arch/arm64/mm/pageattr.c</span>
+<span class="ctx">index 14b2a3801f404,132938b32eb16..de7bf95003eaa</span>
+<span class="hdr">--- a/arch/arm64/mm/pageattr.c</span>
+<span class="hdr">+++ b/arch/arm64/mm/pageattr.c</span>
+<span class="ctx">@@@ -272,10 -272,12 +272,10 @@@ int set_direct_map_default_noflush(stru</span>
+  		return 0;
+  
+  	return update_range_prot((unsigned long)page_address(page),
+<span class="del">- 				 PAGE_SIZE, set_mask, clear_mask);</span>
+<span class="add">+ 				 PAGE_SIZE * numpages, set_mask, clear_mask);</span>
+  }
+  
+ -static int __set_memory_enc_dec(unsigned long addr,
+ -				int numpages,
+ -				bool encrypt)
+ +int __set_memory_enc_dec(unsigned long addr, int numpages, bool encrypt)
+  {
+  	unsigned long set_prot = 0, clear_prot = 0;
+  	phys_addr_t start, end;
+<span class="ctx">@@@ -319,23 -321,41 +319,7 @@@</span>
+  				      __pgprot(PTE_PRESENT_INVALID));
+  }
+  
+<span class="del">- int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool valid)</span>
+ -static int realm_set_memory_encrypted(unsigned long addr, int numpages)
+<span class="del">--{</span>
+<span class="del">- 	unsigned long addr = (unsigned long)page_address(page);</span>
+ -	int ret = __set_memory_enc_dec(addr, numpages, true);
+<span class="del">--</span>
+<span class="del">- 	if (!can_set_direct_map())</span>
+<span class="del">- 		return 0;</span>
+ -	/*
+ -	 * If the request to change state fails, then the only sensible cause
+ -	 * of action for the caller is to leak the memory
+ -	 */
+ -	WARN(ret, &quot;Failed to encrypt memory, %d pages will be leaked&quot;,
+ -	     numpages);
+<span class="del">--</span>
+<span class="del">- 	return set_memory_valid(addr, nr, valid);</span>
+ -	return ret;
+ -}
+ -
+ -static int realm_set_memory_decrypted(unsigned long addr, int numpages)
+ -{
+ -	int ret = __set_memory_enc_dec(addr, numpages, false);
+ -
+ -	WARN(ret, &quot;Failed to decrypt memory, %d pages will be leaked&quot;,
+ -	     numpages);
+ -
+ -	return ret;
+ -}
+ -
+ -static const struct arm64_mem_crypt_ops realm_crypt_ops = {
+ -	.encrypt = realm_set_memory_encrypted,
+ -	.decrypt = realm_set_memory_decrypted,
+ -};
+ -
+ -int realm_register_memory_enc_ops(void)
+ -{
+ -	return arm64_mem_crypt_ops_register(&amp;realm_crypt_ops);
+<span class="del">--}</span>
+<span class="del">--</span>
+  #ifdef CONFIG_DEBUG_PAGEALLOC
+<span class="del">- /*</span>
+<span class="del">-  * This is - apart from the return value - doing the same</span>
+<span class="del">-  * thing as the new set_direct_map_valid_noflush() function.</span>
+<span class="del">-  *</span>
+<span class="del">-  * Unify? Explain the conceptual differences?</span>
+<span class="del">-  */</span>
+  void __kernel_map_pages(struct page *page, int numpages, int enable)
+  {
+  	if (!can_set_direct_map())
+<span class="hdr">diff --cc arch/um/Kconfig</span>
+<span class="ctx">index 59d62c74fc41f,94b8ff70f578b..7245e3ada1c5a</span>
+<span class="hdr">--- a/arch/um/Kconfig</span>
+<span class="hdr">+++ b/arch/um/Kconfig</span>
+<span class="ctx">@@@ -45,16 -44,10 +45,15 @@@ config UM</span>
+  	select HAVE_SYSCALL_TRACEPOINTS
+  	select THREAD_INFO_IN_TASK
+  	select SPARSE_IRQ
+<span class="del">- 	select MMU_GATHER_RCU_TABLE_FREE if MMU</span>
+ +	select UACCESS_MEMCPY if !MMU
+ +	select GENERIC_STRNLEN_USER if !MMU
+ +	select GENERIC_STRNCPY_FROM_USER if !MMU
+  
+  config MMU
+ -	bool
+ +	bool &quot;MMU support&quot;
+  	default y
+ +	help
+ +	  Turning this off allows a nommu build, say Y.
+  
+  config UML_DMA_EMULATION
+  	bool
+<span class="hdr">diff --cc arch/x86/virt/vmx/tdx/tdx.c</span>
+<span class="ctx">index 96ced0494b687,3636a4d6ab8b9..680e5178a86f2</span>
+<span class="hdr">--- a/arch/x86/virt/vmx/tdx/tdx.c</span>
+<span class="hdr">+++ b/arch/x86/virt/vmx/tdx/tdx.c</span>
+<span class="ctx">@@@ -30,8 -30,8 +30,9 @@@</span>
+  #include &lt;linux/suspend.h&gt;
+  #include &lt;linux/syscore_ops.h&gt;
+  #include &lt;linux/idr.h&gt;
+ +#include &lt;linux/vmalloc.h&gt;
+  #include &lt;asm/page.h&gt;
+<span class="add">+ #include &lt;asm/cacheflush.h&gt;</span>
+  #include &lt;asm/special_insns.h&gt;
+  #include &lt;asm/msr-index.h&gt;
+  #include &lt;asm/msr.h&gt;
+<span class="hdr">diff --cc drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c</span>
+<span class="ctx">index 0330c719a776c,fe1dac7b81bfb..4bec97fffe270</span>
+<span class="hdr">--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c</span>
+<span class="hdr">+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c</span>
+<span class="ctx">@@@ -25,9 -25,9 +25,8 @@@</span>
+   *          Alex Deucher
+   *          Jerome Glisse
+   */
+ -#include &lt;linux/ktime.h&gt;
+  #include &lt;linux/module.h&gt;
+  #include &lt;linux/overflow.h&gt;
+<span class="del">- #include &lt;linux/pagemap.h&gt;</span>
+  #include &lt;linux/pci.h&gt;
+  #include &lt;linux/dma-buf.h&gt;
+  #include &lt;linux/dma-fence-unwrap.h&gt;
+<span class="hdr">diff --cc drivers/gpu/drm/amd/amdkfd/kfd_migrate.c</span>
+<span class="ctx">index 8b96e1fe741a1,0ee1a96484ced..9535ebe5837af</span>
+<span class="hdr">--- a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c</span>
+<span class="hdr">+++ b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c</span>
+<span class="ctx">@@@ -24,8 -24,7 +24,9 @@@</span>
+  #include &lt;linux/dma-direction.h&gt;
+  #include &lt;linux/dma-mapping.h&gt;
+  #include &lt;linux/migrate.h&gt;
+<span class="add">+ #include &lt;linux/pagemap.h&gt;</span>
+ +#include &quot;amdgpu.h&quot;
+ +#include &quot;amdgpu_sdma.h&quot;
+  #include &quot;amdgpu_sync.h&quot;
+  #include &quot;amdgpu_object.h&quot;
+  #include &quot;amdgpu_vm.h&quot;
+<span class="hdr">diff --cc fs/f2fs/f2fs.h</span>
+<span class="ctx">index 089a62c054ea1,85937de3d7016..257b9bdd2ea7b</span>
+<span class="hdr">--- a/fs/f2fs/f2fs.h</span>
+<span class="hdr">+++ b/fs/f2fs/f2fs.h</span>
+<span class="ctx">@@@ -1612,21 -1614,23 +1609,21 @@@ static inline void f2fs_clear_bit(unsig</span>
+   *
+   * Layout A: lowest bit should be 1
+   * | bit0 = 1 | bit1 | bit2 | ... | bit MAX | private data .... |
+<span class="del">-  * bit 0	PAGE_PRIVATE_NOT_POINTER</span>
+<span class="del">-  * bit 1	PAGE_PRIVATE_ONGOING_MIGRATION</span>
+<span class="del">-  * bit 2	PAGE_PRIVATE_REF_RESOURCE</span>
+<span class="del">-  * bit 3	PAGE_PRIVATE_ATOMIC_WRITE</span>
+<span class="add">+  * bit 0	F2FS_FOLIO_PRIVATE_NOT_POINTER</span>
+<span class="add">+  * bit 1	F2FS_FOLIO_PRIVATE_ONGOING_MIGRATION</span>
+ - * bit 2	F2FS_FOLIO_PRIVATE_INLINE_INODE
+ - * bit 3	F2FS_FOLIO_PRIVATE_REF_RESOURCE
+ - * bit 4	F2FS_FOLIO_PRIVATE_ATOMIC_WRITE
+ - * bit 5-	f2fs private data
+<span class="add">++ * bit 2	F2FS_FOLIO_PRIVATE_REF_RESOURCE</span>
+<span class="add">++ * bit 3	F2FS_FOLIO_PRIVATE_ATOMIC_WRITE</span>
+ + * bit 4-	f2fs private data
+   *
+   * Layout B: lowest bit should be 0
+<span class="del">-  * page.private is a wrapped pointer.</span>
+<span class="add">+  * folio-&gt;private is a wrapped pointer.</span>
+   */
+  enum {
+<span class="del">- 	PAGE_PRIVATE_NOT_POINTER,		/* private contains non-pointer data */</span>
+<span class="del">- 	PAGE_PRIVATE_ONGOING_MIGRATION,		/* data page which is on-going migrating */</span>
+<span class="del">- 	PAGE_PRIVATE_REF_RESOURCE,		/* dirty page has referenced resources */</span>
+<span class="del">- 	PAGE_PRIVATE_ATOMIC_WRITE,		/* data page from atomic write path */</span>
+<span class="del">- 	PAGE_PRIVATE_MAX</span>
+<span class="add">+ 	F2FS_FOLIO_PRIVATE_NOT_POINTER,		/* private contains non-pointer data */</span>
+<span class="add">+ 	F2FS_FOLIO_PRIVATE_ONGOING_MIGRATION,		/* data page which is on-going migrating */</span>
+ -	F2FS_FOLIO_PRIVATE_INLINE_INODE,		/* inode page contains inline data */
+<span class="add">+ 	F2FS_FOLIO_PRIVATE_REF_RESOURCE,		/* dirty page has referenced resources */</span>
+<span class="add">+ 	F2FS_FOLIO_PRIVATE_ATOMIC_WRITE,		/* data page from atomic write path */</span>
+<span class="add">+ 	F2FS_FOLIO_PRIVATE_MAX</span>
+  };
+  
+  /* For compression */
+<span class="ctx">@@@ -2801,25 -2710,22 +2785,19 @@@ static inline void folio_clear_f2fs_##n</span>
+  		folio_detach_private(folio);				\
+  	else								\
+  		folio-&gt;private = (void *)v;				\
+<span class="del">- }									\</span>
+<span class="del">- static inline void clear_page_private_##name(struct page *page) \</span>
+<span class="del">- { \</span>
+<span class="del">- 	clear_bit(PAGE_PRIVATE_##flagname, &amp;page_private(page)); \</span>
+<span class="del">- 	if (page_private(page) == BIT(PAGE_PRIVATE_NOT_POINTER)) \</span>
+<span class="del">- 		detach_page_private(page); \</span>
+  }
+  
+<span class="del">- PAGE_PRIVATE_GET_FUNC(nonpointer, NOT_POINTER);</span>
+<span class="del">- PAGE_PRIVATE_GET_FUNC(gcing, ONGOING_MIGRATION);</span>
+<span class="del">- PAGE_PRIVATE_GET_FUNC(atomic, ATOMIC_WRITE);</span>
+<span class="add">+ F2FS_FOLIO_PRIVATE_GET_FUNC(nonpointer, NOT_POINTER);</span>
+ -F2FS_FOLIO_PRIVATE_GET_FUNC(inline, INLINE_INODE);
+<span class="add">+ F2FS_FOLIO_PRIVATE_GET_FUNC(gcing, ONGOING_MIGRATION);</span>
+<span class="add">+ F2FS_FOLIO_PRIVATE_GET_FUNC(atomic, ATOMIC_WRITE);</span>
+  
+<span class="del">- PAGE_PRIVATE_SET_FUNC(reference, REF_RESOURCE);</span>
+<span class="del">- PAGE_PRIVATE_SET_FUNC(gcing, ONGOING_MIGRATION);</span>
+<span class="del">- PAGE_PRIVATE_SET_FUNC(atomic, ATOMIC_WRITE);</span>
+<span class="add">+ F2FS_FOLIO_PRIVATE_SET_FUNC(reference, REF_RESOURCE);</span>
+ -F2FS_FOLIO_PRIVATE_SET_FUNC(inline, INLINE_INODE);
+<span class="add">+ F2FS_FOLIO_PRIVATE_SET_FUNC(gcing, ONGOING_MIGRATION);</span>
+<span class="add">+ F2FS_FOLIO_PRIVATE_SET_FUNC(atomic, ATOMIC_WRITE);</span>
+  
+<span class="del">- PAGE_PRIVATE_CLEAR_FUNC(reference, REF_RESOURCE);</span>
+<span class="del">- PAGE_PRIVATE_CLEAR_FUNC(gcing, ONGOING_MIGRATION);</span>
+<span class="del">- PAGE_PRIVATE_CLEAR_FUNC(atomic, ATOMIC_WRITE);</span>
+<span class="add">+ F2FS_FOLIO_PRIVATE_CLEAR_FUNC(reference, REF_RESOURCE);</span>
+ -F2FS_FOLIO_PRIVATE_CLEAR_FUNC(inline, INLINE_INODE);
+<span class="add">+ F2FS_FOLIO_PRIVATE_CLEAR_FUNC(gcing, ONGOING_MIGRATION);</span>
+<span class="add">+ F2FS_FOLIO_PRIVATE_CLEAR_FUNC(atomic, ATOMIC_WRITE);</span>
+  
+  static inline unsigned long folio_get_f2fs_data(struct folio *folio)
+  {
+<span class="hdr">diff --cc fs/fuse/dax.c</span>
+<span class="ctx">index 7905e7b366444,a5994f1c637d9..a2bb9c041a4cb</span>
+<span class="hdr">--- a/fs/fuse/dax.c</span>
+<span class="hdr">+++ b/fs/fuse/dax.c</span>
+<span class="ctx">@@@ -826,8 -826,7 +826,8 @@@ int fuse_vdax_mmap(struct file *file, s</span>
+  {
+  	file_accessed(file);
+  	vma-&gt;vm_ops = &amp;fuse_dax_vm_ops;
+<span class="del">- 	vm_flags_set(vma, VM_MIXEDMAP | VM_HUGEPAGE);</span>
+<span class="add">+ 	vma_set_flags(vma, VMA_HUGEPAGE_BIT);</span>
+ +	vma-&gt;vm_page_prot = pgprot_decrypted(vma-&gt;vm_page_prot);
+  	return 0;
+  }
+  
+<span class="hdr">diff --cc fs/xfs/libxfs/xfs_btree.c</span>
+<span class="ctx">index 7effebe297ea0,6738d9d1511bc..2434c54a35708</span>
+<span class="hdr">--- a/fs/xfs/libxfs/xfs_btree.c</span>
+<span class="hdr">+++ b/fs/xfs/libxfs/xfs_btree.c</span>
+<span class="ctx">@@@ -3008,32 -3007,12 +3007,18 @@@ xfs_btree_split_worker</span>
+  {
+  	struct xfs_btree_split_args	*args = container_of(work,
+  						struct xfs_btree_split_args, work);
+<span class="del">- 	unsigned long		pflags;</span>
+<span class="del">- 	unsigned long		new_pflags = 0;</span>
+ -	xfs_trans_set_context(args-&gt;cur-&gt;bc_tp);
+ +	unsigned int		nofs_flags;
+ +
+<span class="del">- 	/*</span>
+<span class="del">- 	 * we are in a transaction context here, but may also be doing work</span>
+<span class="del">- 	 * in kswapd context, and hence we may need to inherit that state</span>
+<span class="del">- 	 * temporarily to ensure that we don&#x27;t block waiting for memory reclaim</span>
+<span class="del">- 	 * in any way.</span>
+<span class="del">- 	 */</span>
+<span class="del">- 	if (args-&gt;kswapd)</span>
+<span class="del">- 		new_pflags |= PF_MEMALLOC | PF_KSWAPD;</span>
+<span class="del">- </span>
+<span class="del">- 	current_set_flags_nested(&amp;pflags, new_pflags);</span>
+<span class="del">- </span>
+ +	/*
+ +	 * Don&#x27;t use xfs_trans_set_context() here: it would overwrite the
+ +	 * caller&#x27;s saved NOFS state in tp-&gt;t_pflags. Use a local scope.
+ +	 */
+ +	nofs_flags = memalloc_nofs_save();
+  
+  	args-&gt;result = __xfs_btree_split(args-&gt;cur, args-&gt;level, args-&gt;ptrp,
+  					 args-&gt;key, args-&gt;curp, args-&gt;stat);
+  
+ -	xfs_trans_clear_context(args-&gt;cur-&gt;bc_tp);
+ +	memalloc_nofs_restore(nofs_flags);
+<span class="del">- 	current_restore_flags_nested(&amp;pflags, new_pflags);</span>
+  
+  	/*
+  	 * Do not access args after complete() has run here. We don&#x27;t own args
+<span class="hdr">diff --cc kernel/sched/fair.c</span>
+<span class="ctx">index 5c98d8dfce5d8,8d38c3b7d7920..6af41206e53e9</span>
+<span class="hdr">--- a/kernel/sched/fair.c</span>
+<span class="hdr">+++ b/kernel/sched/fair.c</span>
+<span class="ctx">@@@ -22,9 -22,7 +22,8 @@@</span>
+   */
+  #include &lt;linux/energy_model.h&gt;
+  #include &lt;linux/mmap_lock.h&gt;
+<span class="del">- #include &lt;linux/hugetlb_inline.h&gt;</span>
+  #include &lt;linux/jiffies.h&gt;
+ +#include &lt;linux/math.h&gt;
+  #include &lt;linux/mm_api.h&gt;
+  #include &lt;linux/highmem.h&gt;
+  #include &lt;linux/hrtimer.h&gt;
+<span class="hdr">diff --cc mm/internal.h</span>
+<span class="ctx">index 9e3be236f18c0,ff28b940e0cd2..a665834c214cd</span>
+<span class="hdr">--- a/mm/internal.h</span>
+<span class="hdr">+++ b/mm/internal.h</span>
+<span class="ctx">@@@ -23,17 -24,7 +24,10 @@@</span>
+  #include &quot;vma.h&quot;
+  
+  struct folio_batch;
+<span class="del">- struct hstate;</span>
+  
+ +int __copy_remote_mm_str(struct mm_struct *mm, unsigned long addr,
+ +		void *buf, int len, unsigned int gup_flags);
+ +
+<span class="del">- struct huge_bootmem_page {</span>
+<span class="del">- 	struct list_head list;</span>
+<span class="del">- 	struct hstate *hstate;</span>
+<span class="del">- 	unsigned long flags;</span>
+<span class="del">- };</span>
+<span class="del">- </span>
+  /* mm/workingset.c */
+  bool workingset_test_recent(void *shadow, bool file, bool *workingset,
+  			    bool flush);
+<span class="hdr">diff --cc scripts/kallsyms.c</span>
+<span class="ctx">index ecb444078c1ca,be42a91113500..8bf256464d598</span>
+<span class="hdr">--- a/scripts/kallsyms.c</span>
+<span class="hdr">+++ b/scripts/kallsyms.c</span>
+<span class="ctx">@@@ -33,11 -26,13 +33,12 @@@</span>
+  #include &lt;string.h&gt;
+  #include &lt;ctype.h&gt;
+  #include &lt;limits.h&gt;
+ -
+ +#include &lt;sys/stat.h&gt;
+  #include &lt;xalloc.h&gt;
+  
+ +#include &quot;kallsyms.h&quot;
+<span class="add">+ #include &quot;../kernel/kallsyms_internal.h&quot;</span>
+  
+ -#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
+ -
+  #define KSYM_NAME_LEN		512
+  
+  struct sym_entry {
+<span class="ctx">@@@ -412,11 -359,10 +415,11 @@@ static void write_src(FILE *out_bin_fil</span>
+  	markers = xmalloc(sizeof(*markers) * markers_cnt);
+  
+  	output_label(&quot;kallsyms_names&quot;);
+ +	bin_start = bin_pos(out_bin_file);
+  	off = 0;
+  	for (i = 0; i &lt; table_cnt; i++) {
+<span class="del">- 		if ((i &amp; 0xFF) == 0)</span>
+<span class="del">- 			markers[i &gt;&gt; 8] = off;</span>
+<span class="add">+ 		if ((i &amp; KALLSYMS_MARKER_MASK) == 0)</span>
+<span class="add">+ 			markers[i &gt;&gt; KALLSYMS_MARKER_SHIFT] = off;</span>
+  		table[i]-&gt;seq = i;
+  
+  		/* There cannot be any symbol of length zero. */
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>net <span class="category-count">4</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rdma</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>MAINTAINERS, drivers/infiniband/core/nldev.c, drivers/infiniband/core/verbs.c (+12 more)</code></td>
+<td>02:18 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">9ccce5742291a840195acce58dec231910bb2aa2
+<span class="hdr">diff --cc drivers/infiniband/hw/irdma/verbs.c</span>
+<span class="ctx">index 5d71300da0ff2,7d3540824e3aa..22a8511fffea9</span>
+<span class="hdr">--- a/drivers/infiniband/hw/irdma/verbs.c</span>
+<span class="hdr">+++ b/drivers/infiniband/hw/irdma/verbs.c</span>
+<span class="ctx">@@@ -4281,11 -4280,11 +4280,11 @@@ static int irdma_post_send(struct ib_q</span>
+  			stag_info.total_len = iwmr-&gt;ibmr.length;
+  			stag_info.reg_addr_pa = *palloc-&gt;level1.addr;
+  			stag_info.first_pm_pbl_index = palloc-&gt;level1.idx;
+ -			stag_info.local_fence = ib_wr-&gt;send_flags &amp; IB_SEND_FENCE;
+ +			stag_info.local_fence = true;
+  			if (iwmr-&gt;npages &gt; IRDMA_MIN_PAGES_PER_FMR)
+  				stag_info.chunk_size = 1;
+<span class="del">- 			err = irdma_sc_mr_fast_register(&amp;iwqp-&gt;sc_qp, &amp;stag_info,</span>
+<span class="del">- 							true);</span>
+<span class="add">+ 			err = irdma_sc_mr_fast_register(&amp;iwqp-&gt;sc_qp,</span>
+<span class="add">+ 							&amp;stag_info);</span>
+  			break;
+  		}
+  		default:
+<span class="hdr">diff --cc drivers/infiniband/sw/rxe/rxe_verbs.c</span>
+<span class="ctx">index 3864284522ebc,21855274f63ae..46d0810ea2a7a</span>
+<span class="hdr">--- a/drivers/infiniband/sw/rxe/rxe_verbs.c</span>
+<span class="hdr">+++ b/drivers/infiniband/sw/rxe/rxe_verbs.c</span>
+<span class="ctx">@@@ -1331,12 -1331,12 +1331,18 @@@ static struct ib_mr *rxe_rereg_user_mr(</span>
+  	if (err)
+  		return ERR_PTR(err);
+  
+ +	if ((flags &amp; IB_MR_REREG_ACCESS) &amp;&amp;
+ +	    (access &amp; ~RXE_ACCESS_SUPPORTED_MR)) {
+ +		rxe_err_mr(mr, &quot;access = %#x not supported\n&quot;, access);
+ +		return ERR_PTR(-EOPNOTSUPP);
+ +	}
+ +
+<span class="add">+ 	if ((flags &amp; IB_MR_REREG_ACCESS) &amp;&amp;</span>
+<span class="add">+ 	    ((access ^ mr-&gt;access) &amp; IB_ACCESS_ON_DEMAND)) {</span>
+<span class="add">+ 		rxe_err_mr(mr, &quot;cannot change IB_ACCESS_ON_DEMAND\n&quot;);</span>
+<span class="add">+ 		return ERR_PTR(-EOPNOTSUPP);</span>
+<span class="add">+ 	}</span>
+<span class="add">+ </span>
+  	if (flags &amp; IB_MR_REREG_PD) {
+  		rxe_put(old_pd);
+  		rxe_get(pd);
+</div>
+</details></td>
+</tr>
+<tr>
+<td><code>net-next</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>MAINTAINERS, drivers/net/amt.c, drivers/net/ethernet/microsoft/mana/gdma_main.c (+6 more)</code></td>
+<td>02:18 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">72fbfd352e2543c98595d728a2e5843bdf90f95b
+<span class="hdr">diff --cc drivers/net/ethernet/stmicro/stmmac/stmmac_main.c</span>
+<span class="ctx">index 9741f97fa37a2,0c381ae0d0ffa..26de7699e54f1</span>
+<span class="hdr">--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c</span>
+<span class="hdr">+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c</span>
+<span class="ctx">@@@ -893,38 -862,38 +894,46 @@@ static int stmmac_hwtstamp_get(struct n</span>
+   * Will be rerun after resuming from suspend, case in which the timestamping
+   * flags updated by stmmac_hwtstamp_set() also need to be restored.
+   */
+ -static int stmmac_init_tstamp_counter(struct stmmac_priv *priv,
+ -				      u32 systime_flags)
+ +static int stmmac_init_tstamp_counter(struct stmmac_priv *priv)
+  {
+ +	u32 default_addend = priv-&gt;default_addend;
+  	struct timespec64 now;
+ +	int ret;
+  
+<span class="del">- 	if (!priv-&gt;plat-&gt;clk_ptp_rate) {</span>
+<span class="del">- 		netdev_err(priv-&gt;dev, &quot;Invalid PTP clock rate&quot;);</span>
+<span class="del">- 		return -EINVAL;</span>
+<span class="del">- 	}</span>
+ -	stmmac_config_hw_tstamping(priv, priv-&gt;ptpaddr, systime_flags);
+ -	priv-&gt;systime_flags = systime_flags;
+<span class="del">--</span>
+ -	stmmac_update_subsecond_increment(priv);
+ +	ret = stmmac_update_subsecond_increment(priv, priv-&gt;systime_flags);
+ +	if (ret)
+ +		return ret;
+  
+  	/* initialize system time */
+  	ktime_get_real_ts64(&amp;now);
+  
+  	/* lower 32 bits of tv_sec are safe until y2106 */
+ -	stmmac_init_systime(priv, priv-&gt;ptpaddr, (u32)now.tv_sec, now.tv_nsec);
+ +	ret = stmmac_init_systime(priv, priv-&gt;ptpaddr, (u32)now.tv_sec,
+ +				  now.tv_nsec);
+ +	if (ret)
+ +		goto error;
+  
+  	return 0;
+ +error:
+ +	/* Restore previous configuration */
+ +	stmmac_restore_subsecond_increment(priv, default_addend);
+ +
+ +	return ret;
+  }
+  
+<span class="add">+ static int stmmac_init_ptp_clk_freq(struct stmmac_priv *priv)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	if (priv-&gt;plat-&gt;ptp_clk_freq_config)</span>
+<span class="add">+ 		priv-&gt;plat-&gt;ptp_clk_freq_config(priv);</span>
+<span class="add">+ </span>
+<span class="add">+ 	if (!priv-&gt;plat-&gt;clk_ptp_rate) {</span>
+<span class="add">+ 		netdev_info(priv-&gt;dev, &quot;PTP clock rate not configured\n&quot;);</span>
+<span class="add">+ 		return -EINVAL;</span>
+<span class="add">+ 	}</span>
+<span class="add">+ </span>
+<span class="add">+ 	return 0;</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+  /**
+   * stmmac_init_timestamping - initialise timestamping
+   * @priv: driver private structure
+<span class="ctx">@@@ -937,22 -912,8 +952,14 @@@ static int stmmac_init_timestamping(str</span>
+  	bool xmac = dwmac_is_xmac(priv-&gt;plat-&gt;core_type);
+  	int ret;
+  
+<span class="del">- 	if (priv-&gt;plat-&gt;ptp_clk_freq_config)</span>
+<span class="del">- 		priv-&gt;plat-&gt;ptp_clk_freq_config(priv);</span>
+<span class="del">- </span>
+<span class="del">- 	if (!(priv-&gt;dma_cap.time_stamp || priv-&gt;dma_cap.atime_stamp)) {</span>
+<span class="del">- 		netdev_info(priv-&gt;dev, &quot;PTP not supported by HW\n&quot;);</span>
+<span class="del">- 		return -EOPNOTSUPP;</span>
+<span class="del">- 	}</span>
+<span class="del">- </span>
+ -	ret = stmmac_init_tstamp_counter(priv, STMMAC_HWTS_ACTIVE |
+ -					       PTP_TCR_TSCFUPDT);
+ +	/* Reset hw ts configuration */
+ +	memset(&amp;priv-&gt;tstamp_config, 0, sizeof(priv-&gt;tstamp_config));
+ +	priv-&gt;systime_flags = STMMAC_HWTS_ACTIVE | PTP_TCR_TSCFUPDT;
+ +	priv-&gt;tsfupdt_coarse = false;
+ +	priv-&gt;hwts_tx_en = 0;
+ +	priv-&gt;hwts_rx_en = 0;
+ +
+ +	ret = stmmac_init_tstamp_counter(priv);
+  	if (ret) {
+  		netdev_warn(priv-&gt;dev, &quot;PTP init failed\n&quot;);
+  		return ret;
+<span class="hdr">diff --cc include/net/mana/gdma.h</span>
+<span class="ctx">index 2a28fcaa637d9,c610fc1067e0d..0b52582118e84</span>
+<span class="hdr">--- a/include/net/mana/gdma.h</span>
+<span class="hdr">+++ b/include/net/mana/gdma.h</span>
+<span class="ctx">@@@ -628,10 -686,10 +692,12 @@@ struct gdma_eqe </span>
+  #define MANA_PF2_DEVICE_ID 0x00C1
+  #define MANA_VF_DEVICE_ID 0x00BA
+  
+<span class="add">+ #define MANA_CDX_DEVICE_ID 0x00C2</span>
+<span class="add">+ </span>
+  struct gdma_posted_wqe_info {
+  	u32 wqe_size_in_bu;
+ +	/* Unmasked WQE start offset in GDMA basic units. */
+ +	u32 wqe_offset;
+  };
+  
+  /* GDMA_GENERATE_TEST_EQE */
+</div>
+</details></td>
+</tr>
+<tr>
+<td><code>mlx5-next</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>drivers/infiniband/hw/mlx5/main.c, drivers/infiniband/hw/mlx5/mlx5_ib.h, drivers/infiniband/hw/mlx5/mr.c (+5 more)</code></td>
+<td>02:39 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">1edddf51cf87cef452ee353e57661c32713247fc
+<span class="hdr">diff --cc drivers/infiniband/hw/mlx5/main.c</span>
+<span class="ctx">index 4a0b4dcf2830c,dd2a3996b14e1..65455aedd559b</span>
+<span class="hdr">--- a/drivers/infiniband/hw/mlx5/main.c</span>
+<span class="hdr">+++ b/drivers/infiniband/hw/mlx5/main.c</span>
+<span class="ctx">@@@ -5548,11 -5437,8 +5451,9 @@@ static int __init mlx5_ib_init(void</span>
+  drv_err:
+  	auxiliary_driver_unregister(&amp;mlx5r_mp_driver);
+  mp_err:
+<span class="del">- 	mlx5_data_direct_driver_unregister();</span>
+<span class="del">- dd_err:</span>
+  	mlx5r_rep_cleanup();
+  rep_err:
+ +	rcu_barrier();
+  	mlx5_ib_qp_event_cleanup();
+  qp_event_err:
+  	destroy_workqueue(mlx5_ib_event_wq);
+</div>
+</details></td>
+</tr>
+<tr>
+<td><code>iwlwifi-next</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c, drivers/net/wireless/intel/iwlwifi/iwl-trans.c, drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c (+1 more)</code></td>
+<td>02:39 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">ef945c7e6e585d539a5fd00d43b19d66c00b8a0c
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>rust <span class="category-count">1</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rust-next</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>rust/bindings/bindings_helper.h, scripts/remove-stale-files</code></td>
+<td>03:12 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">cbbe3dabbbc08d55f48cb81bbc2c80d17b24eb23
+<span class="hdr">diff --cc scripts/remove-stale-files</span>
+<span class="ctx">index e46337e4bfb8f,f1f776caae00a..61a558164a31a</span>
+<span class="hdr">--- a/scripts/remove-stale-files</span>
+<span class="hdr">+++ b/scripts/remove-stale-files</span>
+<span class="ctx">@@@ -27,4 -27,4 +27,6 @@@ rm -f *.spe</span>
+  
+  rm -f lib/test_fortify.log
+  
+ +rm -f usr/gen_init_cpio
+<span class="add">++</span>
+<span class="add">+ rm -f rust/doctests_kernel_generated_kunit.c</span>
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>security <span class="category-count">2</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ipsec-next</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>.mailmap, MAINTAINERS, drivers/net/ethernet/broadcom/bcmsysport.c (+23 more)</code></td>
+<td>02:37 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">96a737571f936eaf89e28aec4d2e0baa61dbd603
+<span class="hdr">diff --cc drivers/net/ethernet/realtek/r8169_main.c</span>
+<span class="ctx">index ee1bc9bd04470,1d06ddff98327..af84196647852</span>
+<span class="hdr">--- a/drivers/net/ethernet/realtek/r8169_main.c</span>
+<span class="hdr">+++ b/drivers/net/ethernet/realtek/r8169_main.c</span>
+<span class="ctx">@@@ -5474,22 -5619,6 +5619,12 @@@ static int r8169_mdio_register(struct r</span>
+  		return -EUNATCH;
+  	}
+  
+<span class="del">- 	tp-&gt;phydev-&gt;mac_managed_pm = true;</span>
+<span class="del">- 	if (rtl_supports_eee(tp))</span>
+<span class="del">- 		phy_support_eee(tp-&gt;phydev);</span>
+<span class="del">- 	phy_support_asym_pause(tp-&gt;phydev);</span>
+<span class="del">- </span>
+<span class="del">- 	/* mimic behavior of r8125/r8126 vendor drivers */</span>
+<span class="del">- 	if (tp-&gt;mac_version == RTL_GIGA_MAC_VER_61)</span>
+<span class="del">- 		phy_disable_eee_mode(tp-&gt;phydev,</span>
+<span class="del">- 				     ETHTOOL_LINK_MODE_2500baseT_Full_BIT);</span>
+<span class="del">- </span>
+ +	/* Keep EEE off but the version stays EEE-capable so that link-up
+ +	 * still clears the MAC TX-LPI bits.
+ +	 */
+ +	if (tp-&gt;mac_version == RTL_GIGA_MAC_VER_46)
+ +		phy_disable_eee(tp-&gt;phydev);
+ +
+  	/* PHY will be woken up in rtl_open() */
+  	phy_suspend(tp-&gt;phydev);
+  
+<span class="ctx">@@@ -5605,6 -5734,278 +5740,280 @@@ static bool rtl_aspm_is_safe(struct rtl</span>
+  	return false;
+  }
+  
+<span class="add">+ static void rtl_mac_link_down(struct phylink_config *config, unsigned int mode,</span>
+<span class="add">+ 			      phy_interface_t interface)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	struct rtl8169_private *tp = container_of(config,</span>
+<span class="add">+ 						  struct rtl8169_private,</span>
+<span class="add">+ 						  phylink_config);</span>
+<span class="add">+ </span>
+<span class="add">+ 	tp-&gt;speed = SPEED_UNKNOWN;</span>
+<span class="add">+ 	pm_runtime_idle(tp_to_dev(tp));</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static void rtl_mac_link_up(struct phylink_config *config,</span>
+<span class="add">+ 			    struct phy_device *phydev,</span>
+<span class="add">+ 			    unsigned int mode,</span>
+<span class="add">+ 			    phy_interface_t interface,</span>
+<span class="add">+ 			    int speed, int duplex,</span>
+<span class="add">+ 			    bool tx_pause, bool rx_pause)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	struct rtl8169_private *tp = container_of(config,</span>
+<span class="add">+ 						  struct rtl8169_private,</span>
+<span class="add">+ 						  phylink_config);</span>
+<span class="add">+ 	struct device *d = tp_to_dev(tp);</span>
+<span class="add">+ </span>
+<span class="add">+ 	tp-&gt;speed = speed;</span>
+<span class="add">+ 	rtl_link_chg_patch(tp, speed);</span>
+<span class="add">++	if (tp-&gt;mac_version == RTL_GIGA_MAC_VER_46)</span>
+<span class="add">++		rtl_enable_tx_lpi(tp, false);</span>
+<span class="add">+ </span>
+<span class="add">+ 	/*</span>
+<span class="add">+ 	 * Note: This hardware does not support forcing flow control.</span>
+<span class="add">+ 	 * Tx/Rx pause is completely hardwired: if autoneg is ON, hardware</span>
+<span class="add">+ 	 * handles it automatically based on PHY result; if autoneg is OFF,</span>
+<span class="add">+ 	 * hardware forces pause to be disabled. No software override exists.</span>
+<span class="add">+ 	 */</span>
+<span class="add">+ 	pm_request_resume(d);</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static struct phylink_pcs *rtl_mac_select_pcs(struct phylink_config *config,</span>
+<span class="add">+ 					      phy_interface_t interface)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	struct rtl8169_private *tp = container_of(config,</span>
+<span class="add">+ 						  struct rtl8169_private,</span>
+<span class="add">+ 						  phylink_config);</span>
+<span class="add">+ </span>
+<span class="add">+ 	if (!tp-&gt;pcs.ops)</span>
+<span class="add">+ 		return NULL;</span>
+<span class="add">+ </span>
+<span class="add">+ 	if (interface == PHY_INTERFACE_MODE_1000BASEX ||</span>
+<span class="add">+ 	    interface == PHY_INTERFACE_MODE_10GBASER)</span>
+<span class="add">+ 		return &amp;tp-&gt;pcs;</span>
+<span class="add">+ </span>
+<span class="add">+ 	return NULL;</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static void rtl_mac_config(struct phylink_config *config, unsigned int mode,</span>
+<span class="add">+ 			   const struct phylink_link_state *state)</span>
+<span class="add">+ {</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static u16 rtl8169_sds_read(struct rtl8169_private *tp, u16 sds_reg)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	unsigned long flags;</span>
+<span class="add">+ 	u16 val = 0;</span>
+<span class="add">+ </span>
+<span class="add">+ 	raw_spin_lock_irqsave(&amp;tp-&gt;mac_ocp_lock, flags);</span>
+<span class="add">+ 	__r8168_mac_ocp_write(tp, OCP_SDS_ADDR_REG, sds_reg);</span>
+<span class="add">+ 	__r8168_mac_ocp_write(tp, OCP_SDS_CMD_REG, SDS_CMD_READ);</span>
+<span class="add">+ 	val = __r8168_mac_ocp_read(tp, OCP_SDS_DATA_REG);</span>
+<span class="add">+ 	raw_spin_unlock_irqrestore(&amp;tp-&gt;mac_ocp_lock, flags);</span>
+<span class="add">+ </span>
+<span class="add">+ 	return val;</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static void rtl8169_pcs_get_state(struct phylink_pcs *pcs,</span>
+<span class="add">+ 				  unsigned int neg_mode,</span>
+<span class="add">+ 				  struct phylink_link_state *state)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	struct rtl8169_private *tp = container_of(pcs, struct rtl8169_private,</span>
+<span class="add">+ 						  pcs);</span>
+<span class="add">+ </span>
+<span class="add">+ 	if (tp-&gt;sfp_mode == RTL_SFP_8127_ATF) {</span>
+<span class="add">+ 		u16 stat1;</span>
+<span class="add">+ </span>
+<span class="add">+ 		stat1 = rtl8169_sds_read(tp, RTL_SDS_C45_BASE + MDIO_STAT1);</span>
+<span class="add">+ </span>
+<span class="add">+ 		if (!(stat1 &amp; MDIO_STAT1_LSTATUS))</span>
+<span class="add">+ 			stat1 = rtl8169_sds_read(tp, RTL_SDS_C45_BASE + MDIO_STAT1);</span>
+<span class="add">+ </span>
+<span class="add">+ 		state-&gt;link = !!(stat1 &amp; MDIO_STAT1_LSTATUS);</span>
+<span class="add">+ 		if (!state-&gt;link)</span>
+<span class="add">+ 			return;</span>
+<span class="add">+ </span>
+<span class="add">+ 		if (state-&gt;interface == PHY_INTERFACE_MODE_1000BASEX)</span>
+<span class="add">+ 			state-&gt;speed = SPEED_1000;</span>
+<span class="add">+ 		else</span>
+<span class="add">+ 			state-&gt;speed = SPEED_10000;</span>
+<span class="add">+ </span>
+<span class="add">+ 		state-&gt;duplex = DUPLEX_FULL;</span>
+<span class="add">+ 	} else {</span>
+<span class="add">+ 		u16 bmsr, lpa;</span>
+<span class="add">+ </span>
+<span class="add">+ 		bmsr = rtl8169_sds_read(tp, RTL_SDS_C22_BASE + MII_BMSR);</span>
+<span class="add">+ 		lpa = rtl8169_sds_read(tp, RTL_SDS_C22_BASE + MII_LPA);</span>
+<span class="add">+ 		phylink_mii_c22_pcs_decode_state(state, neg_mode, bmsr, lpa);</span>
+<span class="add">+ 	}</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static int rtl8169_pcs_config(struct phylink_pcs *pcs, unsigned int mode,</span>
+<span class="add">+ 			      phy_interface_t interface,</span>
+<span class="add">+ 			      const unsigned long *advertising,</span>
+<span class="add">+ 			      bool permit_pause_to_mac)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	struct rtl8169_private *tp = container_of(pcs, struct rtl8169_private,</span>
+<span class="add">+ 						  pcs);</span>
+<span class="add">+ </span>
+<span class="add">+ 	if (tp-&gt;sfp_mode == RTL_SFP_8127_ATF) {</span>
+<span class="add">+ 		switch (interface) {</span>
+<span class="add">+ 		case PHY_INTERFACE_MODE_10GBASER:</span>
+<span class="add">+ 			r8127_sfp_init_10g(tp);</span>
+<span class="add">+ 			break;</span>
+<span class="add">+ 		case PHY_INTERFACE_MODE_1000BASEX:</span>
+<span class="add">+ 			r8127_sfp_init_1g(tp);</span>
+<span class="add">+ 			break;</span>
+<span class="add">+ 		default:</span>
+<span class="add">+ 			netdev_err(tp-&gt;dev, &quot;Unsupported SFP interface mode: %s\n&quot;,</span>
+<span class="add">+ 				   phy_modes(interface));</span>
+<span class="add">+ 			return -EOPNOTSUPP;</span>
+<span class="add">+ 		}</span>
+<span class="add">+ 	}</span>
+<span class="add">+ </span>
+<span class="add">+ 	return 0;</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static int rtl8169_pcs_validate(struct phylink_pcs *pcs,</span>
+<span class="add">+ 				unsigned long *supported,</span>
+<span class="add">+ 				const struct phylink_link_state *state)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	return 0;</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static void rtl8169_pcs_an_restart(struct phylink_pcs *pcs)</span>
+<span class="add">+ {</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static void rtl_mac_disable_tx_lpi(struct phylink_config *config)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	struct rtl8169_private *tp = container_of(config,</span>
+<span class="add">+ 						  struct rtl8169_private,</span>
+<span class="add">+ 						  phylink_config);</span>
+<span class="add">+ </span>
+<span class="add">+ 	rtl_enable_tx_lpi(tp, false);</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static int rtl_mac_enable_tx_lpi(struct phylink_config *config,</span>
+<span class="add">+ 				 u32 timer,</span>
+<span class="add">+ 				 bool tx_clk_stop)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	struct rtl8169_private *tp = container_of(config,</span>
+<span class="add">+ 						  struct rtl8169_private,</span>
+<span class="add">+ 						  phylink_config);</span>
+<span class="add">+ </span>
+<span class="add">+ 	rtl_enable_tx_lpi(tp, true);</span>
+<span class="add">+ </span>
+<span class="add">+ 	return 0;</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static const struct phylink_mac_ops rtl_phylink_mac_ops = {</span>
+<span class="add">+ 	.mac_select_pcs = rtl_mac_select_pcs,</span>
+<span class="add">+ 	.mac_config = rtl_mac_config,</span>
+<span class="add">+ 	.mac_link_down  = rtl_mac_link_down,</span>
+<span class="add">+ 	.mac_link_up    = rtl_mac_link_up,</span>
+<span class="add">+ 	.mac_disable_tx_lpi = rtl_mac_disable_tx_lpi,</span>
+<span class="add">+ 	.mac_enable_tx_lpi = rtl_mac_enable_tx_lpi,</span>
+<span class="add">+ };</span>
+<span class="add">+ </span>
+<span class="add">+ static unsigned long rtl8169_get_lpi_caps(struct rtl8169_private *tp)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	unsigned long caps = 0;</span>
+<span class="add">+ </span>
+<span class="add">+ 	if (!rtl_supports_eee(tp) || tp-&gt;sfp_mode == RTL_SFP_8127_ATF)</span>
+<span class="add">+ 		return 0;</span>
+<span class="add">+ </span>
+<span class="add">+ 	caps |= MAC_100FD | MAC_1000FD;</span>
+<span class="add">+ </span>
+<span class="add">+ 	/* mimic behavior of r8125/r8126 vendor drivers</span>
+<span class="add">+ 	 * RTL_GIGA_MAC_VER_61 doesn&#x27;t support 2.5G eee</span>
+<span class="add">+ 	 */</span>
+<span class="add">+ 	if (tp-&gt;mac_version &gt;= RTL_GIGA_MAC_VER_63)</span>
+<span class="add">+ 		caps |= MAC_2500FD;</span>
+<span class="add">+ 	if (tp-&gt;mac_version &gt;= RTL_GIGA_MAC_VER_70)</span>
+<span class="add">+ 		caps |= MAC_5000FD;</span>
+<span class="add">+ 	if (tp-&gt;mac_version == RTL_GIGA_MAC_VER_80)</span>
+<span class="add">+ 		caps |= MAC_10000FD;</span>
+<span class="add">+ </span>
+<span class="add">+ 	return caps;</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+<span class="add">+ static const struct phylink_pcs_ops r8169_pcs_ops = {</span>
+<span class="add">+ 	.pcs_validate = rtl8169_pcs_validate,</span>
+<span class="add">+ 	.pcs_get_state = rtl8169_pcs_get_state,</span>
+<span class="add">+ 	.pcs_config = rtl8169_pcs_config,</span>
+<span class="add">+ 	.pcs_an_restart = rtl8169_pcs_an_restart,</span>
+<span class="add">+ };</span>
+<span class="add">+ </span>
+<span class="add">+ static int rtl_init_phylink(struct rtl8169_private *tp)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	struct phylink *pl;</span>
+<span class="add">+ 	phy_interface_t phy_mode;</span>
+<span class="add">+ </span>
+<span class="add">+ 	tp-&gt;phylink_config.dev = &amp;tp-&gt;dev-&gt;dev;</span>
+<span class="add">+ 	tp-&gt;phylink_config.type = PHYLINK_NETDEV;</span>
+<span class="add">+ 	tp-&gt;phylink_config.mac_managed_pm = true;</span>
+<span class="add">+ 	tp-&gt;phylink_config.lpi_capabilities = rtl8169_get_lpi_caps(tp);</span>
+<span class="add">+ 	tp-&gt;phylink_config.eee_enabled_default = !!tp-&gt;phylink_config.lpi_capabilities;</span>
+<span class="add">+ 	tp-&gt;phylink_config.mac_capabilities |= MAC_ASYM_PAUSE | MAC_SYM_PAUSE;</span>
+<span class="add">+ </span>
+<span class="add">+ 	switch (tp-&gt;sfp_mode) {</span>
+<span class="add">+ 	case RTL_SFP_8168_AF:</span>
+<span class="add">+ 		tp-&gt;pcs.ops = &amp;r8169_pcs_ops;</span>
+<span class="add">+ 		tp-&gt;phylink_config.default_an_inband = true;</span>
+<span class="add">+ 		phy_mode = PHY_INTERFACE_MODE_1000BASEX;</span>
+<span class="add">+ 		tp-&gt;phylink_config.mac_capabilities |= MAC_1000FD;</span>
+<span class="add">+ 		break;</span>
+<span class="add">+ 	case RTL_SFP_8127_ATF:</span>
+<span class="add">+ 		tp-&gt;pcs.ops = &amp;r8169_pcs_ops;</span>
+<span class="add">+ 		phy_mode = PHY_INTERFACE_MODE_10GBASER;</span>
+<span class="add">+ 		tp-&gt;phylink_config.default_an_inband = true;</span>
+<span class="add">+ 		tp-&gt;phylink_config.mac_capabilities |= MAC_1000FD | MAC_10000FD;</span>
+<span class="add">+ 		__set_bit(PHY_INTERFACE_MODE_10GBASER,</span>
+<span class="add">+ 			  tp-&gt;phylink_config.supported_interfaces);</span>
+<span class="add">+ 		__set_bit(PHY_INTERFACE_MODE_1000BASEX,</span>
+<span class="add">+ 			  tp-&gt;phylink_config.supported_interfaces);</span>
+<span class="add">+ 		break;</span>
+<span class="add">+ 	default:</span>
+<span class="add">+ 		tp-&gt;phylink_config.mac_capabilities |= MAC_10 | MAC_100;</span>
+<span class="add">+ </span>
+<span class="add">+ 		if (tp-&gt;mac_version == RTL_GIGA_MAC_VER_80)</span>
+<span class="add">+ 			tp-&gt;phylink_config.mac_capabilities |= MAC_1000FD |</span>
+<span class="add">+ 							       MAC_2500FD |</span>
+<span class="add">+ 							       MAC_5000FD |</span>
+<span class="add">+ 							       MAC_10000FD;</span>
+<span class="add">+ 		else if (tp-&gt;mac_version == RTL_GIGA_MAC_VER_70)</span>
+<span class="add">+ 			tp-&gt;phylink_config.mac_capabilities |= MAC_1000FD |</span>
+<span class="add">+ 							       MAC_2500FD |</span>
+<span class="add">+ 							       MAC_5000FD;</span>
+<span class="add">+ 		else if (tp-&gt;mac_version &gt;= RTL_GIGA_MAC_VER_61)</span>
+<span class="add">+ 			tp-&gt;phylink_config.mac_capabilities |= MAC_1000FD |</span>
+<span class="add">+ 							       MAC_2500FD;</span>
+<span class="add">+ 		else</span>
+<span class="add">+ 			if (tp-&gt;supports_gmii)</span>
+<span class="add">+ 				tp-&gt;phylink_config.mac_capabilities |= MAC_1000FD;</span>
+<span class="add">+ </span>
+<span class="add">+ 		if (tp-&gt;mac_version &lt; RTL_GIGA_MAC_VER_61)</span>
+<span class="add">+ 			phy_mode = tp-&gt;supports_gmii ? PHY_INTERFACE_MODE_GMII :</span>
+<span class="add">+ 				   PHY_INTERFACE_MODE_MII;</span>
+<span class="add">+ 		else</span>
+<span class="add">+ 			phy_mode = PHY_INTERFACE_MODE_INTERNAL;</span>
+<span class="add">+ 		break;</span>
+<span class="add">+ 	}</span>
+<span class="add">+ </span>
+<span class="add">+ 	__set_bit(phy_mode, tp-&gt;phylink_config.supported_interfaces);</span>
+<span class="add">+ 	if (tp-&gt;phylink_config.lpi_capabilities)</span>
+<span class="add">+ 		__set_bit(phy_mode, tp-&gt;phylink_config.lpi_interfaces);</span>
+<span class="add">+ </span>
+<span class="add">+ 	pl = phylink_create(&amp;tp-&gt;phylink_config, tp_to_dev(tp)-&gt;fwnode,</span>
+<span class="add">+ 			    phy_mode, &amp;rtl_phylink_mac_ops);</span>
+<span class="add">+ 	if (IS_ERR(pl))</span>
+<span class="add">+ 		return PTR_ERR(pl);</span>
+<span class="add">+ </span>
+<span class="add">+ 	tp-&gt;phylink = pl;</span>
+<span class="add">+ </span>
+<span class="add">+ 	return 0;</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+  static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+  {
+  	const struct rtl_chip_info *chip;
+<span class="hdr">diff --cc drivers/net/ethernet/stmicro/stmmac/stmmac_main.c</span>
+<span class="ctx">index 9741f97fa37a2,3ad9252bf6aea..3ababbcf4addd</span>
+<span class="hdr">--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c</span>
+<span class="hdr">+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c</span>
+<span class="ctx">@@@ -893,38 -862,38 +894,46 @@@ static int stmmac_hwtstamp_get(struct n</span>
+   * Will be rerun after resuming from suspend, case in which the timestamping
+   * flags updated by stmmac_hwtstamp_set() also need to be restored.
+   */
+ -static int stmmac_init_tstamp_counter(struct stmmac_priv *priv,
+ -				      u32 systime_flags)
+ +static int stmmac_init_tstamp_counter(struct stmmac_priv *priv)
+  {
+ +	u32 default_addend = priv-&gt;default_addend;
+  	struct timespec64 now;
+ +	int ret;
+  
+<span class="del">- 	if (!priv-&gt;plat-&gt;clk_ptp_rate) {</span>
+<span class="del">- 		netdev_err(priv-&gt;dev, &quot;Invalid PTP clock rate&quot;);</span>
+<span class="del">- 		return -EINVAL;</span>
+<span class="del">- 	}</span>
+ -	stmmac_config_hw_tstamping(priv, priv-&gt;ptpaddr, systime_flags);
+ -	priv-&gt;systime_flags = systime_flags;
+<span class="del">--</span>
+ -	stmmac_update_subsecond_increment(priv);
+ +	ret = stmmac_update_subsecond_increment(priv, priv-&gt;systime_flags);
+ +	if (ret)
+ +		return ret;
+  
+  	/* initialize system time */
+  	ktime_get_real_ts64(&amp;now);
+  
+  	/* lower 32 bits of tv_sec are safe until y2106 */
+ -	stmmac_init_systime(priv, priv-&gt;ptpaddr, (u32)now.tv_sec, now.tv_nsec);
+ +	ret = stmmac_init_systime(priv, priv-&gt;ptpaddr, (u32)now.tv_sec,
+ +				  now.tv_nsec);
+ +	if (ret)
+ +		goto error;
+  
+  	return 0;
+ +error:
+ +	/* Restore previous configuration */
+ +	stmmac_restore_subsecond_increment(priv, default_addend);
+ +
+ +	return ret;
+  }
+  
+<span class="add">+ static int stmmac_init_ptp_clk_freq(struct stmmac_priv *priv)</span>
+<span class="add">+ {</span>
+<span class="add">+ 	if (priv-&gt;plat-&gt;ptp_clk_freq_config)</span>
+<span class="add">+ 		priv-&gt;plat-&gt;ptp_clk_freq_config(priv);</span>
+<span class="add">+ </span>
+<span class="add">+ 	if (!priv-&gt;plat-&gt;clk_ptp_rate) {</span>
+<span class="add">+ 		netdev_info(priv-&gt;dev, &quot;PTP clock rate not configured\n&quot;);</span>
+<span class="add">+ 		return -EINVAL;</span>
+<span class="add">+ 	}</span>
+<span class="add">+ </span>
+<span class="add">+ 	return 0;</span>
+<span class="add">+ }</span>
+<span class="add">+ </span>
+  /**
+   * stmmac_init_timestamping - initialise timestamping
+   * @priv: driver private structure
+<span class="ctx">@@@ -937,22 -912,8 +952,14 @@@ static int stmmac_init_timestamping(str</span>
+  	bool xmac = dwmac_is_xmac(priv-&gt;plat-&gt;core_type);
+  	int ret;
+  
+<span class="del">- 	if (priv-&gt;plat-&gt;ptp_clk_freq_config)</span>
+<span class="del">- 		priv-&gt;plat-&gt;ptp_clk_freq_config(priv);</span>
+<span class="del">- </span>
+<span class="del">- 	if (!(priv-&gt;dma_cap.time_stamp || priv-&gt;dma_cap.atime_stamp)) {</span>
+<span class="del">- 		netdev_info(priv-&gt;dev, &quot;PTP not supported by HW\n&quot;);</span>
+<span class="del">- 		return -EOPNOTSUPP;</span>
+<span class="del">- 	}</span>
+<span class="del">- </span>
+ -	ret = stmmac_init_tstamp_counter(priv, STMMAC_HWTS_ACTIVE |
+ -					       PTP_TCR_TSCFUPDT);
+ +	/* Reset hw ts configuration */
+ +	memset(&amp;priv-&gt;tstamp_config, 0, sizeof(priv-&gt;tstamp_config));
+ +	priv-&gt;systime_flags = STMMAC_HWTS_ACTIVE | PTP_TCR_TSCFUPDT;
+ +	priv-&gt;tsfupdt_coarse = false;
+ +	priv-&gt;hwts_tx_en = 0;
+ +	priv-&gt;hwts_rx_en = 0;
+ +
+ +	ret = stmmac_init_tstamp_counter(priv);
+  	if (ret) {
+  		netdev_warn(priv-&gt;dev, &quot;PTP init failed\n&quot;);
+  		return ret;
+<span class="hdr">diff --cc net/mac80211/tx.c</span>
+<span class="ctx">index d51f810dd2c5b,83b758724edff..fb0fafcd2acf8</span>
+<span class="hdr">--- a/net/mac80211/tx.c</span>
+<span class="hdr">+++ b/net/mac80211/tx.c</span>
+<span class="ctx">@@@ -2530,9 -2579,16 +2579,16 @@@ static inline bool ieee80211_is_tdls_se</span>
+  	       skb-&gt;data[14] == WLAN_TDLS_SNAP_RFTYPE;
+  }
+  
+<span class="del">- int ieee80211_lookup_ra_sta(struct ieee80211_sub_if_data *sdata,</span>
+<span class="del">- 			    struct sk_buff *skb,</span>
+<span class="del">- 			    struct sta_info **sta_out, bool bss)</span>
+<span class="add">+ /*</span>
+<span class="add">+  * Returns an error if the frame should be dropped, otherwise</span>
+<span class="add">+  * the *sta_out pointer is filled:</span>
+<span class="add">+  *  - valid sta pointer: frame goes to that station</span>
+<span class="add">+  *  - NULL: frame will be unicast to a yet unknown station</span>
+<span class="add">+  *  - ERR_PTR(-ENOENT): frame will be group addressed</span>
+<span class="add">+  */</span>
+<span class="add">+ static int ieee80211_lookup_ra_sta(struct ieee80211_sub_if_data *sdata,</span>
+<span class="add">+ 				   struct sk_buff *skb,</span>
+ -				   struct sta_info **sta_out)
+<span class="add">++				   struct sta_info **sta_out, bool bss)</span>
+  {
+  	struct sta_info *sta;
+  
+<span class="ctx">@@@ -4422,10 -4426,10 +4429,11 @@@ void __ieee80211_subif_start_xmit(struc</span>
+  	    ieee80211_mesh_xmit_fast(sdata, skb, ctrl_flags))
+  		goto out;
+  
+ -	if (ieee80211_lookup_ra_sta(sdata, skb, &amp;sta))
+ +	if (ieee80211_lookup_ra_sta(sdata, skb, &amp;sta,
+ +				    skb-&gt;protocol == sdata-&gt;control_port_protocol))
+  		goto out_free;
+  
+<span class="add">+ 	group_addressed = IS_ERR(sta);</span>
+  	if (IS_ERR(sta))
+  		sta = NULL;
+  
+<span class="hdr">diff --cc rust/kernel/net/netlink.rs</span>
+<span class="ctx">index 2f8733a694a95,a2f4bd171dcf1..36f2e39c3ab7b</span>
+<span class="hdr">--- a/rust/kernel/net/netlink.rs</span>
+<span class="hdr">+++ b/rust/kernel/net/netlink.rs</span>
+<span class="ctx">@@@ -11,9 -11,7 +11,8 @@@</span>
+  use kernel::{
+      alloc::{self, AllocError},
+      error::to_result,
+ +    num::casts::u16_as_usize,
+      prelude::*,
+<span class="del">-     transmute::AsBytes,</span>
+      types::Opaque,
+      ThisModule,
+  };
+<span class="ctx">@@@ -85,13 -88,8 +89,13 @@@ impl GenlMsg </span>
+      #[inline]
+      fn put&lt;T&gt;(&amp;mut self, attrtype: c_int, value: &amp;T) -&gt; Result
+      where
+<span class="del">-         T: ?Sized + AsBytes,</span>
+<span class="add">+         T: ?Sized + IntoBytes + Immutable,</span>
+      {
+ +        // `nla_len` is a 16-bit field that encodes the total attribute length
+ +        // (header + payload). Subtracting the header size from `u16::MAX` gives
+ +        // the largest payload that still fits within that field.
+ +        const MAX_PAYLOAD_LEN: usize = u16_as_usize(u16::MAX) - size_of::&lt;bindings::nlattr&gt;();
+ +
+          let skb = self.skb.skb.as_ptr();
+          let len = size_of_val(value);
+          let ptr = core::ptr::from_ref(value).cast::&lt;c_void&gt;();
+</div>
+</details></td>
+</tr>
+<tr>
+<td><code>security</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>fs/namespace.c, include/linux/ns/ns_common_types.h, include/linux/sched.h (+2 more)</code></td>
+<td>02:37 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">16f714c81d5af9f78227d7e678a17921bd08ff3a
+<span class="hdr">diff --cc include/linux/ns/ns_common_types.h</span>
+<span class="ctx">index 6ed6b497831c7,5cfe0ce3c8818..47a5cfe2326a3</span>
+<span class="hdr">--- a/include/linux/ns/ns_common_types.h</span>
+<span class="hdr">+++ b/include/linux/ns/ns_common_types.h</span>
+<span class="ctx">@@@ -116,8 -116,13 +116,11 @@@ struct ns_common </span>
+  	struct dentry *stashed;
+  	const struct proc_ns_operations *ops;
+  	unsigned int inum;
+<span class="add">+ #ifdef CONFIG_SECURITY</span>
+<span class="add">+ 	void *ns_security;</span>
+<span class="add">+ #endif</span>
+ -	union {
+ -		struct ns_tree;
+ -		struct rcu_head ns_rcu;
+ -	};
+ +	struct ns_tree;
+ +	struct rcu_head ns_rcu;
+  };
+  
+  #define to_ns_common(__ns)                                    \
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>soc <span class="category-count">1</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>soc-next</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>Documentation/devicetree/bindings/display/fsl,lcdif.yaml, Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml, Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml (+19 more)</code></td>
+<td>03:12 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">02af74570da426adb09a940ec100ef2ef341aadd
+<span class="hdr">diff --cc MAINTAINERS</span>
+<span class="ctx">index f07b9ff932c3e,2e3f27db74ff3..b63608eaf7ab4</span>
+<span class="hdr">--- a/MAINTAINERS</span>
+<span class="hdr">+++ b/MAINTAINERS</span>
+<span class="ctx">@@@ -23966,16 -23557,9 +23970,17 @@@ F:	drivers/irqchip/irq-riscv-rpmi-sysms</span>
+  F:	drivers/mailbox/riscv-sbi-mpxy-mbox.c
+  F:	include/linux/mailbox/riscv-rpmi-message.h
+  
+ +RISC-V RPMI DEVICE POWER DRIVER
+ +M:	Joshua Yeong &lt;joshua.yeong@starfivetech.com&gt;
+ +L:	linux-riscv@lists.infradead.org
+ +S:	Maintained
+ +F:	Documentation/devicetree/bindings/power/riscv,rpmi-device-power.yaml
+ +F:	Documentation/devicetree/bindings/power/riscv,rpmi-mpxy-device-power.yaml
+ +F:	drivers/pmdomain/riscv/
+ +
+  RISC-V SPACEMIT SoC Support
+  M:	Yixun Lan &lt;dlan@kernel.org&gt;
+<span class="add">+ R:	Troy Mitchell &lt;troy.mitchell@linux.spacemit.com&gt;</span>
+  L:	linux-riscv@lists.infradead.org
+  L:	spacemit@lists.linux.dev
+  S:	Maintained
+<span class="hdr">diff --cc arch/arm64/configs/defconfig</span>
+<span class="ctx">index e9995ed54062b,716e344e324e1..d2df87d98279e</span>
+<span class="hdr">--- a/arch/arm64/configs/defconfig</span>
+<span class="hdr">+++ b/arch/arm64/configs/defconfig</span>
+<span class="ctx">@@@ -1748,8 -1641,10 +1641,8 @@@ CONFIG_PWM_VISCONTI=</span>
+  CONFIG_PWM_XILINX=m
+  CONFIG_SL28CPLD_INTC=y
+  CONFIG_XILINX_INTC=y
+<span class="del">- CONFIG_TI_SCI_INTR_IRQCHIP=y</span>
+<span class="del">- CONFIG_TI_SCI_INTA_IRQCHIP=y</span>
+ -CONFIG_QCOM_PDC=y
+ -CONFIG_QCOM_MPM=y
+<span class="add">+ CONFIG_TI_SCI_INTR_IRQCHIP=m</span>
+<span class="add">+ CONFIG_TI_SCI_INTA_IRQCHIP=m</span>
+  CONFIG_RESET_GPIO=m
+  CONFIG_RESET_IMX7=y
+  CONFIG_RESET_QCOM_AOSS=y
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>sound <span class="category-count">1</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sound-next</code></td>
+<td><span class="badge rerere">rerere</span></td>
+<td><code>Documentation/devicetree/bindings/vendor-prefixes.yaml, MAINTAINERS, drivers/acpi/scan.c (+5 more)</code></td>
+<td>03:12 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">6cb19dfbd3bce53d30905b8ed5d7a9802fd61bae
+<span class="hdr">diff --cc MAINTAINERS</span>
+<span class="ctx">index b63608eaf7ab4,feda5dbc1f77d..8624f204c25bd</span>
+<span class="hdr">--- a/MAINTAINERS</span>
+<span class="hdr">+++ b/MAINTAINERS</span>
+<span class="ctx">@@@ -9859,8 -9716,14 +9874,15 @@@ M:	Jeff Layton &lt;jlayton@kernel.org</span>
+  S:	Maintained
+  F:	include/linux/errseq.h
+  F:	lib/errseq.c
+ +F:	lib/tests/errseq_kunit.c
+  
+<span class="add">+ ES9039Q2M AUDIO CODEC DRIVER</span>
+<span class="add">+ M:	Karl Asseily &lt;karl@asseily.com&gt;</span>
+<span class="add">+ L:	linux-sound@vger.kernel.org</span>
+<span class="add">+ S:	Maintained</span>
+<span class="add">+ F:	Documentation/devicetree/bindings/sound/esstech,es9039q2m.yaml</span>
+<span class="add">+ F:	sound/soc/codecs/es9039q2m.c</span>
+<span class="add">+ </span>
+  ESD CAN NETWORK DRIVERS
+  M:	Stefan Mätje &lt;stefan.maetje@esd.eu&gt;
+  R:	socketcan@esd.eu
+<span class="hdr">diff --cc sound/mips/snd-n64.c</span>
+<span class="ctx">index e2cf9df15d485,8cc001c58d5e6..da889570cebcf</span>
+<span class="hdr">--- a/sound/mips/snd-n64.c</span>
+<span class="hdr">+++ b/sound/mips/snd-n64.c</span>
+<span class="ctx">@@@ -296,25 -305,20 +305,20 @@@ static int __init n64audio_probe(struc</span>
+  	spin_lock_init(&amp;priv-&gt;chan.lock);
+  
+  	priv-&gt;card = card;
+<span class="add">+ 	card-&gt;private_free = n64audio_free;</span>
+  
+  	priv-&gt;ring_base = dma_alloc_coherent(card-&gt;dev, 32 * 1024, &amp;priv-&gt;ring_base_dma,
+ -					     GFP_DMA|GFP_KERNEL);
+ +					     GFP_KERNEL);
+<span class="del">- 	if (!priv-&gt;ring_base) {</span>
+<span class="del">- 		err = -ENOMEM;</span>
+<span class="del">- 		goto fail_card;</span>
+<span class="del">- 	}</span>
+<span class="add">+ 	if (!priv-&gt;ring_base)</span>
+<span class="add">+ 		return -ENOMEM;</span>
+  
+  	priv-&gt;mi_reg_base = devm_platform_ioremap_resource(pdev, 0);
+<span class="del">- 	if (IS_ERR(priv-&gt;mi_reg_base)) {</span>
+<span class="del">- 		err = PTR_ERR(priv-&gt;mi_reg_base);</span>
+<span class="del">- 		goto fail_dma_alloc;</span>
+<span class="del">- 	}</span>
+<span class="add">+ 	if (IS_ERR(priv-&gt;mi_reg_base))</span>
+<span class="add">+ 		return PTR_ERR(priv-&gt;mi_reg_base);</span>
+  
+  	priv-&gt;ai_reg_base = devm_platform_ioremap_resource(pdev, 1);
+<span class="del">- 	if (IS_ERR(priv-&gt;ai_reg_base)) {</span>
+<span class="del">- 		err = PTR_ERR(priv-&gt;ai_reg_base);</span>
+<span class="del">- 		goto fail_dma_alloc;</span>
+<span class="del">- 	}</span>
+<span class="add">+ 	if (IS_ERR(priv-&gt;ai_reg_base))</span>
+<span class="add">+ 		return PTR_ERR(priv-&gt;ai_reg_base);</span>
+  
+  	err = snd_pcm_new(card, &quot;N64 Audio&quot;, 0, 1, 0, &amp;pcm);
+  	if (err &lt; 0)
+</div>
+</details></td>
+</tr>
+</tbody></table>
+<h3>subsystem <span class="category-count">1</span></h3>
+<table>
+<thead>
+<tr><th>Tree</th><th>Type</th><th>Files</th><th>Time</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>subsystem-next</code></td>
+<td><span class="badge conflict">conflict</span></td>
+<td><code>Documentation/devicetree/bindings/mfd/ti,tps65910.yaml, MAINTAINERS, drivers/android/binder/page_range.rs (+3 more)</code></td>
+<td>03:29 UTC</td>
+<td><details><summary>View diff</summary>
+<div class="diff">f83b9d430711543061fd0b3c055cc43c30186073
+<span class="hdr">diff --cc MAINTAINERS</span>
+<span class="ctx">index 17d832296d006,6a43083c579a9..83309b2d9a6bc</span>
+<span class="hdr">--- a/MAINTAINERS</span>
+<span class="hdr">+++ b/MAINTAINERS</span>
+<span class="ctx">@@@ -18728,10 -18498,10 +18728,10 @@@ M:	David Yang &lt;mmyangfl@gmail.com</span>
+  L:	netdev@vger.kernel.org
+  S:	Maintained
+  F:	Documentation/devicetree/bindings/net/dsa/motorcomm,yt921x.yaml
+ -F:	drivers/net/dsa/yt921x.*
+ +F:	drivers/net/dsa/motorcomm/
+  F:	net/dsa/tag_yt921x.c
+  
+<span class="del">- MOXA SMARTIO/INDUSTIO/INTELLIO SERIAL CARD</span>
+<span class="add">+ MOXA SMARTIO/INDUSTIO SERIAL CARD</span>
+  M:	Jiri Slaby &lt;jirislaby@kernel.org&gt;
+  S:	Maintained
+  F:	Documentation/driver-api/tty/moxa-smartio.rst
+</div>
+</details></td>
+</tr>
+</tbody></table>
+
+<script>
+function filterByType(type) {
+    var rows = document.querySelectorAll('#main-table tbody tr');
+    for (var i = 0; i < rows.length; i++) {
+        rows[i].style.display = (type === 'all' || rows[i].dataset.type === type) ? '' : 'none';
+    }
+}
+function toggleAll() {
+    var details = document.querySelectorAll('details');
+    var anyOpen = false;
+    for (var i = 0; i < details.length; i++) {
+        if (details[i].open) { anyOpen = true; break; }
+    }
+    for (var i = 0; i < details.length; i++) {
+        details[i].open = !anyOpen;
+    }
+}
+</script>
+</body></html>
