@@ -148,7 +148,26 @@ static int exfat_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
 static int exfat_write_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
 		unsigned int flags, struct iomap *iomap, struct iomap *srcmap)
 {
-	return __exfat_iomap_begin(inode, offset, length, flags, iomap, true);
+	struct exfat_inode_info *ei = EXFAT_I(inode);
+	loff_t end;
+	int err;
+
+	err = __exfat_iomap_begin(inode, offset, length, flags, iomap, true);
+	if (err || flags & (IOMAP_DIRECT | IOMAP_FAULT) ||
+	    iomap->flags & IOMAP_F_NEW)
+		return err;
+
+	end = iomap->offset + iomap->length;
+	if (end >= ei->valid_size ||
+	    round_up(end, i_blocksize(inode)) <= ei->valid_size)
+		return 0;
+
+	/*
+	 * Zero the invalid bytes from valid_size to the end of the block
+	 * to prevent stale data from being exposed through the page cache.
+	 */
+	return iomap_truncate_page(inode, ei->valid_size, NULL, &exfat_iomap_ops,
+				   NULL, NULL);
 }
 
 static DEFINE_IOMAP_ITER_NEXT(exfat_iomap_next, exfat_iomap_begin);
@@ -156,6 +175,27 @@ static DEFINE_IOMAP_ITER_NEXT(exfat_iomap_next, exfat_iomap_begin);
 const struct iomap_ops exfat_iomap_ops = {
 	.iomap_next = exfat_iomap_next,
 };
+
+#ifdef CONFIG_SWAP
+static int exfat_swap_iomap_begin(struct inode *inode, loff_t offset,
+		loff_t length, unsigned int flags, struct iomap *iomap,
+		struct iomap *srcmap)
+{
+	/*
+	 * Swap activation needs the physical mappings of preallocated
+	 * ranges. Do not report the VDL tail as a hole.
+	 */
+	return __exfat_iomap_begin(inode, offset, length,
+			flags & ~IOMAP_REPORT, iomap, false);
+}
+
+static DEFINE_IOMAP_ITER_NEXT(exfat_swap_iomap_next,
+		exfat_swap_iomap_begin);
+
+static const struct iomap_ops exfat_swap_iomap_ops = {
+	.iomap_next = exfat_swap_iomap_next,
+};
+#endif
 
 /*
  * exfat_write_iomap_end - Update the state after write
@@ -275,5 +315,10 @@ const struct iomap_read_ops exfat_iomap_bio_read_ops = {
 int exfat_iomap_swap_activate(struct swap_info_struct *sis,
 			       struct file *file, sector_t *span)
 {
-	return iomap_swapfile_activate(sis, file, span, &exfat_iomap_ops);
+#ifdef CONFIG_SWAP
+	return iomap_swapfile_activate(sis, file, span,
+				       &exfat_swap_iomap_ops);
+#else
+	return -EIO;
+#endif
 }
