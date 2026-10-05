@@ -3,6 +3,7 @@ CFLAGS += $(KHDR_INCLUDES)
 
 TEST_INCLUDES := $(wildcard lib/py/*.py) \
 		 $(wildcard lib/sh/*.sh) \
+		 $(wildcard ../../net/lib/sh/*.sh) \
 		 ../../net/lib.sh \
 
 TEST_GEN_FILES := \
@@ -24,6 +25,7 @@ TEST_PROGS := \
 	psp.py \
 	queues.py \
 	ring_reconfig.py \
+	rss_key.py \
 	shaper.py \
 	so_txtime.py \
 	stats.py \
