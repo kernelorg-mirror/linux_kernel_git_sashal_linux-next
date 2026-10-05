@@ -12,8 +12,6 @@
 #include <linux/netdevice.h>
 #include <linux/etherdevice.h>
 #include <linux/init.h>
-#include <linux/llc.h>
-#include <net/llc.h>
 #include <net/stp.h>
 #include <net/switchdev.h>
 
@@ -202,7 +200,7 @@ static int br_switchdev_event(struct notifier_block *unused,
 	case SWITCHDEV_FDB_FLUSH_TO_BRIDGE:
 		fdb_info = ptr;
 		/* Don't delete static entries */
-		br_fdb_delete_by_port(br, p, fdb_info->vid, 0);
+		br_fdb_cleanup_by_dst(br, br_port_to_dst(p), fdb_info->vid, 0);
 		break;
 	}
 

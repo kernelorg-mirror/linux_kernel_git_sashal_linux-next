@@ -3218,6 +3218,7 @@ M:	UNGLinuxDriver@microchip.com
 L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
 S:	Supported
 F:	arch/arm64/boot/dts/microchip/sparx*
+F:	drivers/net/ethernet/microchip/fdma/
 F:	drivers/net/ethernet/microchip/vcap/
 F:	drivers/pinctrl/pinctrl-microchip-sgpio.c
 N:	sparx5
@@ -18306,7 +18307,7 @@ F:	include/linux/cciss*.h
 F:	include/uapi/linux/cciss*.h
 
 MICROSOFT MANA RDMA DRIVER
-M:	Long Li <longli@microsoft.com>
+M:	Wei Hu <weh@microsoft.com>
 M:	Konstantin Taranov <kotaranov@microsoft.com>
 L:	linux-rdma@vger.kernel.org
 L:	linux-hyperv@vger.kernel.org
@@ -19910,6 +19911,8 @@ F:	include/linux/nvmem-consumer.h
 F:	include/linux/nvmem-provider.h
 
 NXP BLUETOOTH WIRELESS DRIVERS
+M:	Song Xue <song.xue_1@nxp.com>
+M:	Alex Zhou <alex.zhou@nxp.com>
 M:	Amitkumar Karwar <amitkumar.karwar@nxp.com>
 M:	Neeraj Kale <neeraj.sanjaykale@nxp.com>
 S:	Maintained
@@ -29845,6 +29848,13 @@ WISTRON LAPTOP BUTTON DRIVER
 M:	Miloslav Trmac <mitr@volny.cz>
 S:	Maintained
 F:	drivers/input/misc/wistron_btns.c
+
+WIZNET W5100 ETHERNET DRIVER
+M:	Arthur Crepin Leblond <arthur@marmottus.net>
+L:	netdev@vger.kernel.org
+S:	Maintained
+F:	Documentation/devicetree/bindings/net/wiznet,w5100.yaml
+F:	drivers/net/ethernet/wiznet/
 
 WMI BINARY MOF DRIVER
 M:	Armin Wolf <W_Armin@gmx.de>
