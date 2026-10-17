@@ -353,6 +353,14 @@ static int ipc_server_config_on_startup(struct ksmbd_startup_request *req)
 	if (req->max_ip_connections)
 		server_conf.max_ip_connections = req->max_ip_connections;
 
+	if (req->max_active_sessions)
+		server_conf.max_active_sessions =
+			min_t(unsigned int, req->max_active_sessions,
+			      KSMBD_MAX_ACTIVE_SESSIONS);
+	else
+		server_conf.max_active_sessions =
+			KSMBD_DEFAULT_MAX_ACTIVE_SESSIONS;
+
 	ret = ksmbd_set_netbios_name(req->netbios_name);
 	ret |= ksmbd_set_server_string(req->server_string);
 	ret |= ksmbd_set_work_group(req->work_group);

@@ -6,7 +6,12 @@
 #ifndef __SERVER_H__
 #define __SERVER_H__
 
+#include <linux/limits.h>
+
 #include "smbacl.h"
+
+#define KSMBD_DEFAULT_MAX_ACTIVE_SESSIONS	4096
+#define KSMBD_MAX_ACTIVE_SESSIONS		U32_MAX
 
 /*
  * Server state type
@@ -44,6 +49,7 @@ struct ksmbd_server_config {
 	unsigned int		max_connections;
 	unsigned int		max_inflight_req;
 	unsigned int		max_ip_connections;
+	unsigned int		max_active_sessions;
 
 	char			*conf[SERVER_CONF_WORK_GROUP + 1];
 	struct task_struct	*dh_task;
