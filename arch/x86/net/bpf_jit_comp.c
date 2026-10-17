@@ -239,6 +239,13 @@ static const int reg2pt_regs[] = {
 	[BPF_REG_AX] = offsetof(struct pt_regs, r10),
 };
 
+static bool is_atomic_fetch_op(const struct bpf_insn *insn)
+{
+	return insn->imm == (BPF_AND | BPF_FETCH) ||
+	       insn->imm == (BPF_OR | BPF_FETCH) ||
+	       insn->imm == (BPF_XOR | BPF_FETCH);
+}
+
 /*
  * is_ereg() == true if BPF register 'reg' maps to x86-64 r8..r15
  * which need extra byte of encoding.
@@ -1785,6 +1792,93 @@ static int emit_atomic_ld_st_index(u8 **pprog, u32 atomic_op, u32 size,
 }
 
 /*
+ * A fetching AND/OR/XOR can't be implemented with a single x86 insn, so do a
+ * CMPXCHG loop. @index_reg is X86_REG_R12 for an arena access or -1 otherwise.
+ * Unless @r0_on_stack, the caller has substituted BPF_REG_AX for R0 in
+ * @dst_reg and @src_reg.
+ *
+ * Both the load and the CMPXCHG can fault when accessing the arena, so their
+ * addresses are handed back in @fault[0] and @fault[1]. A fault has to resume
+ * at @resume, which is past the loop and past the move that delivers the old
+ * value, but before R0 is restored. Both are NULL for the non-arena case,
+ * which needs no fixup.
+ *
+ * R0 is expected to be saved in BPF_REG_AX by the caller, or pushed on the
+ * stack if @r0_on_stack. In that case an R0 operand stays in the stack slot,
+ * RAX ends up holding the old value that R0 is to return, and the slot is
+ * dropped rather than popped.
+ */
+static int emit_atomic_fetch_rmw(u8 **pprog, struct bpf_insn *insn, u32 dst_reg,
+				 u32 src_reg, int index_reg, bool r0_on_stack,
+				 u8 **fault, u8 **resume)
+{
+	bool is64 = BPF_SIZE(insn->code) == BPF_DW;
+	bool operand_on_stack = r0_on_stack && src_reg == BPF_REG_0;
+	u8 *branch_target, *prog = *pprog;
+	int err;
+
+	branch_target = prog;
+
+	/* Load old value */
+	if (fault)
+		fault[0] = prog;
+	if (index_reg < 0)
+		emit_ldx(&prog, BPF_SIZE(insn->code), BPF_REG_0, dst_reg, insn->off);
+	else
+		emit_ldx_index(&prog, BPF_SIZE(insn->code), BPF_REG_0, dst_reg,
+			       index_reg, insn->off);
+
+	/*
+	 * Perform the (commutative) operation locally, put the result in
+	 * the AUX_REG.
+	 */
+	if (operand_on_stack) {
+		/* mov r11, [rsp]: the operand is the R0 saved there, RAX is the old value */
+		if (is64)
+			EMIT4(0x4C, 0x8B, 0x1C, 0x24);
+		else
+			EMIT4(0x44, 0x8B, 0x1C, 0x24);
+	} else {
+		emit_mov_reg(&prog, is64, AUX_REG, BPF_REG_0);
+	}
+	maybe_emit_mod(&prog, AUX_REG, src_reg, is64);
+	EMIT2(simple_alu_opcodes[BPF_OP(insn->imm)],
+	      add_2reg(0xC0, AUX_REG, src_reg));
+
+	/* Attempt to swap in new value */
+	if (fault)
+		fault[1] = prog;
+	if (index_reg < 0)
+		err = emit_atomic_rmw(&prog, BPF_CMPXCHG, dst_reg, AUX_REG,
+				      insn->off, BPF_SIZE(insn->code));
+	else
+		err = emit_atomic_rmw_index(&prog, BPF_CMPXCHG, BPF_SIZE(insn->code),
+					    dst_reg, AUX_REG, index_reg, insn->off);
+	if (WARN_ON(err))
+		return err;
+
+	/* ZF tells us whether we won the race. If it's cleared we need to try again. */
+	EMIT2(X86_JNE, -(prog - branch_target) - 2);
+	/* Return the pre-modification value, which RAX already is for R0 */
+	if (!operand_on_stack)
+		emit_mov_reg(&prog, is64, src_reg, BPF_REG_0);
+
+	if (resume)
+		*resume = prog;
+
+	/* Restore R0 after clobbering RAX */
+	if (!r0_on_stack)
+		emit_mov_reg(&prog, true, BPF_REG_0, BPF_REG_AX);
+	else if (operand_on_stack)
+		EMIT2(0x41, 0x5B); /* pop r11, dropping the operand */
+	else
+		EMIT1(0x58); /* pop rax */
+
+	*pprog = prog;
+	return 0;
+}
+
+/*
  * Metadata encoding for exception handling in JITed code.
  *
  * Format of `fixup` and `data` fields in `struct exception_table_entry`:
@@ -1797,7 +1891,12 @@ static int emit_atomic_ld_st_index(u8 **pprog, u32 atomic_op, u32 size,
  * | ARENA_ACC | ARENA_WRITE | Unused | ARENA_REG | DST_REG | INSN_LEN |
  * +-----------+-------------+--------+-----------+---------+----------+
  *
- * - INSN_LEN (8 bits): Length of faulting insn (max x86 insn = 15 bytes (fits in 8 bits)).
+ * - INSN_LEN (8 bits): How far past the faulting insn to resume. That is its own length
+ *                      for a single-insn access, but the distance to the end of the whole
+ *                      sequence where one BPF insn became several, as for the CMPXCHG loop
+ *                      of a fetching AND/OR/XOR. A sequence long enough to overflow this
+ *                      field would first have to exceed BPF_MAX_INSN_SIZE, which do_jit()
+ *                      rejects with -EFAULT before the image is used.
  * - DST_REG  (8 bits): Offset of dst_reg from reg2pt_regs[] (max offset = 112 (fits in 8 bits)).
  *                      This is set to DONT_CLEAR if the insn does not read into a register.
  * - ARENA_REG (8 bits): Offset of the register that is used to calculate the
@@ -1844,12 +1943,50 @@ bool ex_handler_bpf(const struct exception_table_entry *x, struct pt_regs *regs)
 		bpf_prog_report_arena_violation(is_write, addr, regs->ip);
 	}
 
-	/* jump over faulting load and clear dest register */
+	/* jump over the faulting access, or the sequence it is part of, and clear dest register */
 	if (reg != DONT_CLEAR)
 		*(unsigned long *)((void *)regs + reg) = 0;
 	regs->ip += insn_len;
 
 	return true;
+}
+
+/*
+ * Record an arena access that may fault. @fault_ip is the address of the
+ * faulting insn in the RO image, @resume_off how far past it execution has to
+ * resume: for a multi-insn lowering that is the end of the whole sequence, not
+ * the end of the one insn.
+ */
+static int emit_arena_exentry(struct bpf_prog *bpf_prog, u8 *image, u8 *rw_image,
+			      int *excnt, u8 *fault_ip, u32 resume_off,
+			      u32 fixup_reg, u32 arena_reg, bool is_write, s16 off)
+{
+	struct exception_table_entry *ex;
+	s64 delta;
+
+	if (!bpf_prog->aux->extable)
+		return 0;
+
+	if (*excnt >= bpf_prog->aux->num_exentries) {
+		pr_err("arena extable bug\n");
+		return -EFAULT;
+	}
+	ex = &bpf_prog->aux->extable[(*excnt)++];
+
+	delta = fault_ip - (u8 *)&ex->insn;
+	/* switch ex to rw buffer for writes */
+	ex = (void *)rw_image + ((void *)ex - (void *)image);
+
+	ex->insn = delta;
+	ex->data = EX_TYPE_BPF | FIELD_PREP(DATA_ARENA_OFFSET_MASK, off);
+	ex->fixup = FIELD_PREP(FIXUP_INSN_LEN_MASK, resume_off) |
+		    FIELD_PREP(FIXUP_ARENA_REG_MASK, arena_reg) |
+		    FIELD_PREP(FIXUP_REG_MASK, fixup_reg) |
+		    FIXUP_ARENA_ACCESS;
+	if (is_write)
+		ex->fixup |= FIXUP_ARENA_WRITE;
+
+	return 0;
 }
 
 static void detect_reg_usage(struct bpf_insn *insn, int insn_cnt,
@@ -2221,6 +2358,16 @@ static const struct bpf_jit_arg_abi x86_arg_abi = {
 static const u8 x86_arg_reg[] = {
 	BPF_REG_1, BPF_REG_2, BPF_REG_3, BPF_REG_4, BPF_REG_5, X86_REG_R9,
 };
+
+static bool x86_arg_on_stack(u8 pos)
+{
+	return pos >= x86_arg_abi.nr_arg_regs;
+}
+
+static s32 x86_arg_stack_off(u8 pos)
+{
+	return (pos - x86_arg_abi.nr_arg_regs) * 8;
+}
 
 /*
  * Move the arguments the x86-64 ABI places somewhere other than the argument
@@ -2967,28 +3114,8 @@ div_done:
 			}
 populate_extable:
 			{
-				struct exception_table_entry *ex;
-				u8 *_insn = image + proglen + (start_of_ldx - temp);
 				u32 arena_reg, fixup_reg;
 				bool is_write;
-				s64 delta;
-
-				if (!bpf_prog->aux->extable)
-					break;
-
-				if (excnt >= bpf_prog->aux->num_exentries) {
-					pr_err("mem32 extable bug\n");
-					return -EFAULT;
-				}
-				ex = &bpf_prog->aux->extable[excnt++];
-
-				delta = _insn - (u8 *)&ex->insn;
-				/* switch ex to rw buffer for writes */
-				ex = (void *)rw_image + ((void *)ex - (void *)image);
-
-				ex->insn = delta;
-
-				ex->data = EX_TYPE_BPF;
 
 				/*
 				 * src_reg/dst_reg holds the address in the arena region with upper
@@ -3024,14 +3151,12 @@ populate_extable:
 					is_write = true;
 				}
 
-				ex->fixup = FIELD_PREP(FIXUP_INSN_LEN_MASK, prog - start_of_ldx) |
-					    FIELD_PREP(FIXUP_ARENA_REG_MASK, arena_reg) |
-					    FIELD_PREP(FIXUP_REG_MASK, fixup_reg);
-				ex->fixup |= FIXUP_ARENA_ACCESS;
-				if (is_write)
-					ex->fixup |= FIXUP_ARENA_WRITE;
-
-				ex->data |= FIELD_PREP(DATA_ARENA_OFFSET_MASK, insn->off);
+				err = emit_arena_exentry(bpf_prog, image, rw_image, &excnt,
+							 image + proglen + (start_of_ldx - temp),
+							 prog - start_of_ldx, fixup_reg,
+							 arena_reg, is_write, insn->off);
+				if (err)
+					return err;
 			}
 			break;
 
@@ -3177,20 +3302,12 @@ populate_extable:
 			fallthrough;
 		case BPF_STX | BPF_ATOMIC | BPF_W:
 		case BPF_STX | BPF_ATOMIC | BPF_DW: {
-			bool is64 = BPF_SIZE(insn->code) == BPF_DW;
 			u32 real_src_reg = src_reg;
 			u32 real_dst_reg = dst_reg;
+			bool is_atomic_fetch = is_atomic_fetch_op(insn);
 			u8 *old_prog;
-			bool is_atomic_fetch =
-				(insn->imm == (BPF_AND | BPF_FETCH) ||
-				 insn->imm == (BPF_OR | BPF_FETCH) ||
-				 insn->imm == (BPF_XOR | BPF_FETCH));
-			if (is_atomic_fetch) {
-				/*
-				 * Can't be implemented with a single x86 insn.
-				 * Need to do a CMPXCHG loop.
-				 */
 
+			if (is_atomic_fetch) {
 				/* Will need RAX as a CMPXCHG operand so save R0 */
 				old_prog = prog;
 				emit_mov_reg(&prog, true, BPF_REG_AX, BPF_REG_0);
@@ -3211,34 +3328,11 @@ populate_extable:
 				}
 			}
 			if (is_atomic_fetch) {
-				u8 *branch_target = prog;
-				/* Load old value */
-				emit_ldx(&prog, BPF_SIZE(insn->code),
-					 BPF_REG_0, real_dst_reg, insn->off);
-				/*
-				 * Perform the (commutative) operation locally,
-				 * put the result in the AUX_REG.
-				 */
-				emit_mov_reg(&prog, is64, AUX_REG, BPF_REG_0);
-				maybe_emit_mod(&prog, AUX_REG, real_src_reg, is64);
-				EMIT2(simple_alu_opcodes[BPF_OP(insn->imm)],
-				      add_2reg(0xC0, AUX_REG, real_src_reg));
-				/* Attempt to swap in new value */
-				err = emit_atomic_rmw(&prog, BPF_CMPXCHG,
-						      real_dst_reg, AUX_REG,
-						      insn->off,
-						      BPF_SIZE(insn->code));
-				if (WARN_ON(err))
+				err = emit_atomic_fetch_rmw(&prog, insn, real_dst_reg,
+							    real_src_reg, -1, false,
+							    NULL, NULL);
+				if (err)
 					return err;
-				/*
-				 * ZF tells us whether we won the race. If it's
-				 * cleared we need to try again.
-				 */
-				EMIT2(X86_JNE, -(prog - branch_target) - 2);
-				/* Return the pre-modification value */
-				emit_mov_reg(&prog, is64, real_src_reg, BPF_REG_0);
-				/* Restore R0 after clobbering RAX */
-				emit_mov_reg(&prog, true, BPF_REG_0, BPF_REG_AX);
 				break;
 			}
 
@@ -3262,6 +3356,53 @@ populate_extable:
 			fallthrough;
 		case BPF_STX | BPF_PROBE_ATOMIC | BPF_W:
 		case BPF_STX | BPF_PROBE_ATOMIC | BPF_DW:
+			if (is_atomic_fetch_op(insn)) {
+				u32 real_src_reg = src_reg, real_dst_reg = dst_reg;
+				/*
+				 * An access through a number has its address in
+				 * BPF_REG_AX (see arena_scalar_access()), so R0 is
+				 * saved on the stack instead, as div and mod do.
+				 */
+				bool r0_on_stack = dst_reg == BPF_REG_AX;
+				u8 *fault[2], *resume;
+				int j;
+
+				/* Will need RAX as a CMPXCHG operand so save R0 */
+				if (r0_on_stack) {
+					EMIT1(0x50); /* push rax */
+				} else {
+					emit_mov_reg(&prog, true, BPF_REG_AX, BPF_REG_0);
+					if (src_reg == BPF_REG_0)
+						real_src_reg = BPF_REG_AX;
+					if (dst_reg == BPF_REG_0)
+						real_dst_reg = BPF_REG_AX;
+				}
+
+				err = emit_atomic_fetch_rmw(&prog, insn, real_dst_reg,
+							    real_src_reg, X86_REG_R12,
+							    r0_on_stack, fault, &resume);
+				if (err)
+					return err;
+
+				/*
+				 * The page may be unmapped between the load and the
+				 * CMPXCHG, so both need an entry. Both report a write,
+				 * since the BPF insn is a read-modify-write.
+				 */
+				for (j = 0; j < 2; j++) {
+					err = emit_arena_exentry(bpf_prog, image, rw_image,
+								 &excnt,
+								 image + proglen +
+									 (fault[j] - temp),
+								 resume - fault[j],
+								 reg2pt_regs[real_src_reg],
+								 reg2pt_regs[real_dst_reg],
+								 true, insn->off);
+					if (err)
+						return err;
+				}
+				break;
+			}
 			start_of_ldx = prog;
 
 			if (bpf_atomic_is_load_store(insn))
@@ -3752,21 +3893,17 @@ static void clean_stack_garbage(const struct btf_func_model *m,
 	}
 }
 
-/* get the count of the regs that are used to pass arguments */
-static int get_nr_used_regs(const struct btf_func_model *m)
+/* the eightbytes taken by the on-stack arguments, alignment holes included */
+static int get_nr_stack_slots(const u8 *pos_of_slot, int nr_slots)
 {
-	int i, arg_regs, nr_used_regs = 0;
+	int slot;
 
-	for (i = 0; i < min_t(int, m->nr_args, MAX_BPF_FUNC_ARGS); i++) {
-		arg_regs = (m->arg_size[i] + 7) / 8;
-		if (nr_used_regs + arg_regs <= 6)
-			nr_used_regs += arg_regs;
-
-		if (nr_used_regs >= 6)
-			break;
+	for (slot = nr_slots - 1; slot >= 0; slot--) {
+		if (x86_arg_on_stack(pos_of_slot[slot]))
+			return x86_arg_stack_off(pos_of_slot[slot]) / 8 + 1;
 	}
 
-	return nr_used_regs;
+	return 0;
 }
 
 /*
@@ -3796,20 +3933,21 @@ static void emit_arena_arg_conv(u8 **pprog, u32 src_reg, bool nullable, u32 base
 }
 
 static void save_args(const struct btf_func_model *m, u8 **prog,
-		      int stack_size, bool for_call_origin, u32 flags,
-		      u64 arena_base)
+		      const u8 *pos_of_slot, int stack_size,
+		      bool for_call_origin, u32 flags, u64 arena_base)
 {
-	int arg_regs, first_off = 0, nr_regs = 0, nr_stack_slots = 0;
+	int arg_regs, first_off = 0, nr_stack_slots = 0;
 	bool use_jmp = bpf_trampoline_use_jmp(flags);
 	int stack_args_off = (use_jmp || (flags & BPF_TRAMP_F_INDIRECT)) ? 16 : 24;
-	int i, j;
+	int bargs_off = stack_size;
+	int i, j, slot, off, doff;
 
 	/* Store function arguments to stack.
 	 * For a function that accepts two pointers the sequence will be:
 	 * mov QWORD PTR [rbp-0x10],rdi
 	 * mov QWORD PTR [rbp-0x8],rsi
 	 */
-	for (i = 0; i < min_t(int, m->nr_args, MAX_BPF_FUNC_ARGS); i++) {
+	for (i = 0, slot = 0; i < m->nr_args; i++) {
 		bool arena_arg = arena_base && (m->arg_flags[i] & BTF_FMODEL_ARENA_ARG);
 		bool nullable = m->arg_flags[i] & BTF_FMODEL_NULLABLE_ARG;
 
@@ -3831,8 +3969,36 @@ static void save_args(const struct btf_func_model *m, u8 **prog,
 		 *
 		 * the arg1-5,arg7 will be passed by regs, and arg6 will
 		 * by stack.
+		 *
+		 * An argument aligned to 16 bytes, an __int128 or a struct
+		 * holding one, also starts at an even stack slot, which can
+		 * leave a hole before it. bpf_jit_place_args() worked out
+		 * where each eightbyte is.
 		 */
-		if (nr_regs + arg_regs > 6) {
+		for (j = 0; j < arg_regs; j++, slot++, bargs_off -= 8) {
+			u8 pos = pos_of_slot[slot];
+			u32 src;
+
+			if (!x86_arg_on_stack(pos)) {
+				/*
+				 * Only copy the arguments on-stack to
+				 * current 'stack_size' and ignore the regs,
+				 * used to prepare the arguments on-stack for
+				 * origin call.
+				 */
+				if (for_call_origin)
+					continue;
+
+				/* copy the arguments from regs into stack */
+				src = x86_arg_reg[pos];
+				if (arena_arg) {
+					emit_arena_arg_conv(prog, src, nullable, (u32)arena_base);
+					src = BPF_REG_0;
+				}
+				emit_stx(prog, BPF_DW, BPF_REG_FP, src, -bargs_off);
+				continue;
+			}
+
 			/* copy function arguments from origin stack frame
 			 * into current stack frame.
 			 *
@@ -3842,53 +4008,33 @@ static void save_args(const struct btf_func_model *m, u8 **prog,
 			 * entered through the fentry call, so rbp + 24, and
 			 * a single one when it is entered with a jmp or
 			 * called indirectly, so rbp + 16.
+			 *
+			 * The area for the origin call mirrors the incoming
+			 * one, hole and all; only the bpf program takes the
+			 * arguments packed.
 			 */
-			for (j = 0; j < arg_regs; j++) {
-				emit_ldx(prog, BPF_DW, BPF_REG_0, BPF_REG_FP,
-					 nr_stack_slots * 8 + stack_args_off);
-				if (arena_arg)
-					emit_arena_arg_conv(prog, BPF_REG_0, nullable,
-							    (u32)arena_base);
-				emit_stx(prog, BPF_DW, BPF_REG_FP, BPF_REG_0,
-					 -stack_size);
+			off = x86_arg_stack_off(pos);
+			doff = for_call_origin ? stack_size - off : bargs_off;
+			emit_ldx(prog, BPF_DW, BPF_REG_0, BPF_REG_FP,
+				 stack_args_off + off);
+			if (arena_arg)
+				emit_arena_arg_conv(prog, BPF_REG_0, nullable,
+						    (u32)arena_base);
+			emit_stx(prog, BPF_DW, BPF_REG_FP, BPF_REG_0, -doff);
 
-				if (!nr_stack_slots)
-					first_off = stack_size;
-				stack_size -= 8;
-				nr_stack_slots++;
-			}
-		} else {
-			/* Only copy the arguments on-stack to current
-			 * 'stack_size' and ignore the regs, used to
-			 * prepare the arguments on-stack for origin call.
-			 */
-			if (for_call_origin) {
-				nr_regs += arg_regs;
-				continue;
-			}
-
-			/* copy the arguments from regs into stack */
-			for (j = 0; j < arg_regs; j++) {
-				u32 src = nr_regs == 5 ? X86_REG_R9 : BPF_REG_1 + nr_regs;
-
-				if (arena_arg) {
-					emit_arena_arg_conv(prog, src, nullable, (u32)arena_base);
-					src = BPF_REG_0;
-				}
-				emit_stx(prog, BPF_DW, BPF_REG_FP, src, -stack_size);
-				stack_size -= 8;
-				nr_regs++;
-			}
+			if (!nr_stack_slots)
+				first_off = doff;
+			nr_stack_slots++;
 		}
 	}
 
 	clean_stack_garbage(m, prog, nr_stack_slots, first_off);
 }
 
-static void restore_regs(const struct btf_func_model *m, u8 **prog,
+static void restore_regs(u8 **prog, const u8 *pos_of_slot, int nr_slots,
 			 int stack_size)
 {
-	int i, j, arg_regs, nr_regs = 0;
+	int slot;
 
 	/* Restore function arguments from stack.
 	 * For a function that accepts two pointers the sequence will be:
@@ -3897,23 +4043,10 @@ static void restore_regs(const struct btf_func_model *m, u8 **prog,
 	 *
 	 * The logic here is similar to what we do in save_args()
 	 */
-	for (i = 0; i < min_t(int, m->nr_args, MAX_BPF_FUNC_ARGS); i++) {
-		arg_regs = (m->arg_size[i] + 7) / 8;
-		if (nr_regs + arg_regs <= 6) {
-			for (j = 0; j < arg_regs; j++) {
-				emit_ldx(prog, BPF_DW,
-					 nr_regs == 5 ? X86_REG_R9 : BPF_REG_1 + nr_regs,
-					 BPF_REG_FP,
-					 -stack_size);
-				stack_size -= 8;
-				nr_regs++;
-			}
-		} else {
-			stack_size -= 8 * arg_regs;
-		}
-
-		if (nr_regs >= 6)
-			break;
+	for (slot = 0; slot < nr_slots; slot++, stack_size -= 8) {
+		if (!x86_arg_on_stack(pos_of_slot[slot]))
+			emit_ldx(prog, BPF_DW, x86_arg_reg[pos_of_slot[slot]],
+				 BPF_REG_FP, -stack_size);
 	}
 }
 
@@ -4102,9 +4235,9 @@ static int invoke_bpf_mod_ret(const struct btf_func_model *m, u8 **pprog,
 	return 0;
 }
 
-/* mov rax, qword ptr [rbp - rounded_stack_depth - 8] */
-#define LOAD_TRAMP_TAIL_CALL_CNT_PTR(stack)	\
-	__LOAD_TCC_PTR(-round_up(stack, 8) - 8)
+/* mov rax, qword ptr [rbp - off] */
+#define LOAD_TRAMP_TAIL_CALL_CNT_PTR(off)	\
+	__LOAD_TCC_PTR(-(off))
 
 /* Example:
  * __be16 eth_type_trans(struct sk_buff *skb, struct net_device *dev);
@@ -4172,8 +4305,10 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
 					 struct bpf_tramp_nodes *tnodes,
 					 void *func_addr)
 {
-	int i, ret, nr_regs = m->nr_args, stack_size = 0;
+	int i, ret, nr_regs, stack_size = 0;
+	u8 pos_of_slot[MAX_BPF_FUNC_ARG_SLOTS];
 	int regs_off, func_meta_off, ip_off, run_ctx_off, arg_stack_off, rbx_off;
+	int tcc_off = 0;
 	struct bpf_tramp_nodes *fentry = &tnodes[BPF_TRAMP_FENTRY];
 	struct bpf_tramp_nodes *fexit = &tnodes[BPF_TRAMP_FEXIT];
 	struct bpf_tramp_nodes *fmod_ret = &tnodes[BPF_TRAMP_MODIFY_RETURN];
@@ -4195,12 +4330,12 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
 
 	arena_base = bpf_tramp_arena_base(m, tnodes, flags);
 
-	for (i = 0; i < m->nr_args; i++)
-		nr_regs += (m->arg_size[i] + 7) / 8 - 1;
-
-	/* x86-64 supports up to MAX_BPF_FUNC_ARGS arguments. 1-6
-	 * are passed through regs, the remains are through stack.
+	/*
+	 * x86-64 supports up to MAX_BPF_FUNC_ARGS argument slots, six in
+	 * registers and the rest on the stack, where bpf_jit_place_args()
+	 * puts them.
 	 */
+	nr_regs = bpf_jit_place_args(&x86_arg_abi, m, pos_of_slot);
 	if (nr_regs > MAX_BPF_FUNC_ARGS)
 		return -ENOTSUPP;
 
@@ -4212,11 +4347,11 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
 	 * RBP - 8         [ return value    ]  BPF_TRAMP_F_CALL_ORIG or
 	 *                                      BPF_TRAMP_F_RET_FENTRY_RET flags
 	 *
-	 *                 [ reg_argN        ]  always
-	 *                 [ ...             ]
-	 * RBP - regs_off  [ reg_arg1        ]  program's ctx pointer
+	 *                 [ arg slotN       ]  always, packed, whether
+	 *                 [ ...             ]  in a register or on the
+	 * RBP - regs_off  [ arg slot1       ]  stack; program's ctx pointer
 	 *
-	 * RBP - func_meta_off [ regs count, etc ]  always
+	 * RBP - func_meta_off [ slot count, etc ]  always
 	 *
 	 * RBP - ip_off    [ traced function ]  BPF_TRAMP_F_IP_ARG flag
 	 *
@@ -4224,11 +4359,12 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
 	 *
 	 * RBP - run_ctx_off [ bpf_tramp_run_ctx ]
 	 *
-	 *                     [ stack_argN ]  BPF_TRAMP_F_CALL_ORIG
-	 *                     [ ...        ]
-	 *                     [ stack_arg2 ]
-	 * RBP - arg_stack_off [ stack_arg1 ]
-	 * RSP                 [ tail_call_cnt_ptr ] BPF_TRAMP_F_TAIL_CALL_CTX
+	 * RBP - tcc_off   [ tail_call_cnt_ptr ]  BPF_TRAMP_F_TAIL_CALL_CTX
+	 *
+	 *                     [ stack slotN ]  BPF_TRAMP_F_CALL_ORIG,
+	 *                     [ ...         ]  the incoming stack
+	 *                     [ stack slot2 ]  arguments, alignment
+	 * RBP - arg_stack_off [ stack slot1 ]  holes included
 	 */
 
 	/* room for return value of orig_call or fentry prog */
@@ -4239,7 +4375,7 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
 	stack_size += nr_regs * 8;
 	regs_off = stack_size;
 
-	/* function matedata, such as regs count  */
+	/* function matedata, such as the argument slot count */
 	stack_size += 8;
 	func_meta_off = stack_size;
 
@@ -4259,9 +4395,14 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
 	stack_size += (sizeof(struct bpf_tramp_run_ctx) + 7) & ~0x7;
 	run_ctx_off = stack_size;
 
+	if (flags & BPF_TRAMP_F_TAIL_CALL_CTX) {
+		stack_size += 8;
+		tcc_off = stack_size;
+	}
+
 	if (nr_regs > 6 && (flags & BPF_TRAMP_F_CALL_ORIG)) {
 		/* the space that used to pass arguments on-stack */
-		stack_size += (nr_regs - get_nr_used_regs(m)) * 8;
+		stack_size += get_nr_stack_slots(pos_of_slot, nr_regs) * 8;
 		/* make sure the stack pointer is 16-byte aligned if we
 		 * need pass arguments on stack, which means
 		 *  [stack_size + 8(rbp) + 8(rip) + 8(origin rip)]
@@ -4311,12 +4452,13 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
 	/* sub rsp, stack_size */
 	emit_sub_rsp(&prog, stack_size);
 	if (flags & BPF_TRAMP_F_TAIL_CALL_CTX)
-		EMIT1(0x50);		/* push rax */
+		/* mov QWORD PTR [rbp - tcc_off], rax */
+		emit_stx(&prog, BPF_DW, BPF_REG_FP, BPF_REG_0, -tcc_off);
 	/* mov QWORD PTR [rbp - rbx_off], rbx */
 	emit_stx(&prog, BPF_DW, BPF_REG_FP, BPF_REG_6, -rbx_off);
 
 	func_meta = nr_regs;
-	/* Store number of argument registers of the traced function */
+	/* Store number of argument slots of the traced function */
 	emit_store_stack_imm64(&prog, BPF_REG_0, -func_meta_off, func_meta);
 
 	if (flags & BPF_TRAMP_F_IP_ARG) {
@@ -4324,7 +4466,7 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
 		emit_store_stack_imm64(&prog, BPF_REG_0, -ip_off, (long)func_addr);
 	}
 
-	save_args(m, &prog, regs_off, false, flags, arena_base);
+	save_args(m, &prog, pos_of_slot, regs_off, false, flags, arena_base);
 
 	if (flags & BPF_TRAMP_F_CALL_ORIG) {
 		/* arg1: mov rdi, im */
@@ -4365,14 +4507,14 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
 	}
 
 	if (flags & BPF_TRAMP_F_CALL_ORIG) {
-		restore_regs(m, &prog, regs_off);
-		save_args(m, &prog, arg_stack_off, true, flags, 0);
+		restore_regs(&prog, pos_of_slot, nr_regs, regs_off);
+		save_args(m, &prog, pos_of_slot, arg_stack_off, true, flags, 0);
 
 		if (flags & BPF_TRAMP_F_TAIL_CALL_CTX) {
 			/* Before calling the original function, load the
 			 * tail_call_cnt_ptr from stack to rax.
 			 */
-			LOAD_TRAMP_TAIL_CALL_CNT_PTR(stack_size);
+			LOAD_TRAMP_TAIL_CALL_CNT_PTR(tcc_off);
 		}
 
 		if (flags & BPF_TRAMP_F_ORIG_STACK) {
@@ -4419,7 +4561,7 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
 	}
 
 	if (flags & BPF_TRAMP_F_RESTORE_REGS)
-		restore_regs(m, &prog, regs_off);
+		restore_regs(&prog, pos_of_slot, nr_regs, regs_off);
 
 	/* This needs to be done regardless. If there were fmod_ret programs,
 	 * the return value is only updated on the stack and still needs to be
@@ -4436,7 +4578,7 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *rw_im
 		/* Before running the original function, load the
 		 * tail_call_cnt_ptr from stack to rax.
 		 */
-		LOAD_TRAMP_TAIL_CALL_CNT_PTR(stack_size);
+		LOAD_TRAMP_TAIL_CALL_CNT_PTR(tcc_off);
 	}
 
 	/* restore return value of orig_call or fentry prog back into RAX */
@@ -4707,6 +4849,22 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_verifier_env *env, struct bpf_pr
 		padding = true;
 		goto skip_init_addrs;
 	}
+
+	/*
+	 * An arena fetching AND/OR/XOR is lowered to a CMPXCHG loop whose load
+	 * and CMPXCHG can both fault, one more entry than the verifier reserved.
+	 * The extra pass of a program with subprograms returned above, so the
+	 * count is adjusted once.
+	 */
+	for (i = 0; prog->aux->arena && i < prog->len; i++) {
+		const struct bpf_insn *insn = &prog->insnsi[i];
+
+		if (BPF_CLASS(insn->code) == BPF_STX &&
+		    BPF_MODE(insn->code) == BPF_PROBE_ATOMIC &&
+		    is_atomic_fetch_op(insn))
+			prog->aux->num_exentries++;
+	}
+
 	addrs = kvmalloc_objs(*addrs, prog->len + 1);
 	if (!addrs)
 		goto out_addrs;
@@ -4761,7 +4919,9 @@ out_image:
 			 * The number of entries in extable is the number of BPF_LDX
 			 * insns that access kernel memory via "pointer to BTF type".
 			 * The verifier changed their opcode from LDX|MEM|size
-			 * to LDX|PROBE_MEM|size to make JITing easier.
+			 * to LDX|PROBE_MEM|size to make JITing easier. Arena
+			 * accesses add one each, and an arena fetching AND/OR/XOR
+			 * one more, see the adjustment of num_exentries above.
 			 */
 			u32 align = __alignof__(struct exception_table_entry);
 			u32 extable_size = prog->aux->num_exentries *
@@ -5035,16 +5195,6 @@ bool bpf_jit_supports_arena_scalar(void)
 
 bool bpf_jit_supports_insn(struct bpf_insn *insn, bool in_arena)
 {
-	if (!in_arena)
-		return true;
-	switch (insn->code) {
-	case BPF_STX | BPF_ATOMIC | BPF_W:
-	case BPF_STX | BPF_ATOMIC | BPF_DW:
-		if (insn->imm == (BPF_AND | BPF_FETCH) ||
-		    insn->imm == (BPF_OR | BPF_FETCH) ||
-		    insn->imm == (BPF_XOR | BPF_FETCH))
-			return false;
-	}
 	return true;
 }
 
