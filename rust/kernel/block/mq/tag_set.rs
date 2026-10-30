@@ -38,7 +38,10 @@ pub struct TagSet<T: Operations> {
 impl<T: Operations> TagSet<T> {
     /// Try to create a new tag set
     pub fn new(nr_hw_queues: u32, num_tags: u32, num_maps: u32) -> impl PinInit<Self, Error> {
-        let tag_set: bindings::blk_mq_tag_set = pin_init::zeroed();
+        // SAFETY: All fields of `blk_mq_tag_set`, including the opaque storage
+        // for `spinlock_t`, allow an all-zero bit pattern. The locks are
+        // initialized by `blk_mq_alloc_tag_set()` below.
+        let tag_set: bindings::blk_mq_tag_set = unsafe { core::mem::zeroed() };
         let tag_set: Result<_> = core::mem::size_of::<RequestDataWrapper>()
             .try_into()
             .map(|cmd_size| {
