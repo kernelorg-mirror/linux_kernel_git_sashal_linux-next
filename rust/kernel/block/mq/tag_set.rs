@@ -15,10 +15,7 @@ use crate::{
     prelude::*,
     types::Opaque, //
 };
-use core::{
-    convert::TryInto,
-    marker::PhantomData, //
-};
+use core::marker::PhantomData;
 
 /// A wrapper for the C `struct blk_mq_tag_set`.
 ///
@@ -38,32 +35,27 @@ pub struct TagSet<T: Operations> {
 impl<T: Operations> TagSet<T> {
     /// Try to create a new tag set
     pub fn new(nr_hw_queues: u32, num_tags: u32, num_maps: u32) -> impl PinInit<Self, Error> {
-        let tag_set: bindings::blk_mq_tag_set = pin_init::zeroed();
-        let tag_set: Result<_> = core::mem::size_of::<RequestDataWrapper>()
-            .try_into()
-            .map(|cmd_size| {
-                bindings::blk_mq_tag_set {
-                    ops: OperationsVTable::<T>::build(),
-                    nr_hw_queues,
-                    timeout: 0, // 0 means default which is 30Hz in C
-                    numa_node: bindings::NUMA_NO_NODE,
-                    queue_depth: num_tags,
-                    cmd_size,
-                    flags: 0,
-                    driver_data: core::ptr::null_mut::<crate::ffi::c_void>(),
-                    nr_maps: num_maps,
-                    ..tag_set
-                }
-            })
-            .map(Opaque::new)
-            .map_err(|e| e.into());
+        let cmd_size = crate::ffi::c_uint::try_from(core::mem::size_of::<RequestDataWrapper>())
+            .map_err(Error::from);
 
         try_pin_init!(TagSet {
-            inner <- tag_set.pin_chain(|tag_set| {
-                // SAFETY: we do not move out of `tag_set`.
-                let tag_set: &mut Opaque<_> = unsafe { Pin::get_unchecked_mut(tag_set) };
-                // SAFETY: `tag_set` is a reference to an initialized `blk_mq_tag_set`.
-                to_result( unsafe { bindings::blk_mq_alloc_tag_set(tag_set.get())})
+            inner <- Opaque::try_ffi_init(move |tag_set: *mut bindings::blk_mq_tag_set| {
+                let cmd_size = cmd_size?;
+                // SAFETY: `tag_set` points to pinned, exclusively owned memory. The configuration
+                // fields are initialized before `blk_mq_alloc_tag_set()` initializes the rest.
+                unsafe {
+                    tag_set.write_bytes(0, 1);
+                    (*tag_set).ops = OperationsVTable::<T>::build();
+                    (*tag_set).nr_hw_queues = nr_hw_queues;
+                    (*tag_set).timeout = 0; // 0 means default which is 30Hz in C
+                    (*tag_set).numa_node = bindings::NUMA_NO_NODE;
+                    (*tag_set).queue_depth = num_tags;
+                    (*tag_set).cmd_size = cmd_size;
+                    (*tag_set).flags = 0;
+                    (*tag_set).driver_data = core::ptr::null_mut::<crate::ffi::c_void>();
+                    (*tag_set).nr_maps = num_maps;
+                    to_result(bindings::blk_mq_alloc_tag_set(tag_set))
+                }
             }),
             _p: PhantomData,
         })
