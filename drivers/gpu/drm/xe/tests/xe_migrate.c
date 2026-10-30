@@ -776,6 +776,7 @@ static void xe_validate_ccs_kunit(struct kunit *test)
 #define ACCESS_MEM_BO_SIZE		SZ_512K
 #define ACCESS_MEM_NUM_CELLS		(ACCESS_MEM_BO_SIZE / sizeof(u32))
 #define ACCESS_MEM_UNALIGNED_OFFSET	0x215ee
+#define ACCESS_MEM_BOUNCE_LEN		SZ_16K
 
 /*
  * Verify byte-by-byte that data read from the BO matches expected cell pattern.
@@ -848,12 +849,22 @@ static bool verify_access_memory_read(struct kunit *test, u8 *buf,
 	return true;
 }
 
+/* Bounce buffering without MEM_COPY is slow, keep those accesses short */
+static u32 access_memory_test_len(struct xe_migrate *m, u32 len)
+{
+	if (!tile_to_xe(m->tile)->info.has_mem_copy_instr)
+		return min(len, ACCESS_MEM_BOUNCE_LEN);
+
+	return len;
+}
+
 static void access_memory_test_unaligned_bo_offset(struct kunit *test,
 						   struct xe_migrate *m,
 						   struct xe_bo *bo, u8 *buf,
 						   u32 unaligned_offset)
 {
-	u32 partial_size = ACCESS_MEM_BO_SIZE - unaligned_offset;
+	u32 partial_size = access_memory_test_len(m, ACCESS_MEM_BO_SIZE -
+						     unaligned_offset);
 	int ret;
 
 	memset(buf, 0, ACCESS_MEM_BO_SIZE);
@@ -880,7 +891,8 @@ static void access_memory_test_unaligned_dst(struct kunit *test,
 					     struct xe_bo *bo, u8 *buf,
 					     u32 unaligned_offset)
 {
-	u32 partial_size = ACCESS_MEM_BO_SIZE - unaligned_offset;
+	u32 partial_size = access_memory_test_len(m, ACCESS_MEM_BO_SIZE -
+						     unaligned_offset);
 	int ret;
 
 	memset(buf, 0, ACCESS_MEM_BO_SIZE);
@@ -908,7 +920,8 @@ static void access_memory_test_unaligned_dst_aligned_size(struct kunit *test,
 							  u8 *buf,
 							  u32 unaligned_offset)
 {
-	u32 partial_size = round_down(ACCESS_MEM_BO_SIZE - unaligned_offset, 4);
+	u32 partial_size = round_down(access_memory_test_len(m, ACCESS_MEM_BO_SIZE -
+								unaligned_offset), 4);
 	int ret;
 
 	memset(buf, 0, ACCESS_MEM_BO_SIZE);
@@ -1041,6 +1054,54 @@ free_buf:
 	kvfree(buf);
 }
 
+static void access_memory_test_unaligned_large_write(struct kunit *test,
+						     struct xe_tile *tile)
+{
+	/* Not cacheline aligned would take the slow bounce buffer path */
+	const u32 size = SZ_16M, offset = XE_CACHELINE_BYTES;
+	struct xe_bo *bo;
+	u32 j;
+	u8 *buf;
+	int ret;
+
+	buf = kvmalloc(size, GFP_KERNEL);
+	if (!buf) {
+		KUNIT_FAIL(test, "Failed to allocate buffer\n");
+		return;
+	}
+
+	bo = xe_bo_create_pin_map_novm(tile_to_xe(tile), tile, size,
+				       ttm_bo_type_kernel,
+				       XE_BO_FLAG_VRAM_IF_DGFX(tile), false);
+	if (IS_ERR(bo)) {
+		KUNIT_FAIL(test, "Failed to create bo: %pe\n", bo);
+		goto free_buf;
+	}
+
+	for (j = 0; j < size / sizeof(u32); j++)
+		((u32 *)buf)[j] = j;
+
+	xe_bo_lock(bo, false);
+	ret = xe_migrate_access_memory(tile->migrate, bo, offset, buf,
+				       size - offset, true);
+	if (!ret) {
+		memset(buf, 0, size);
+		ret = xe_migrate_access_memory(tile->migrate, bo, offset, buf,
+					       size - offset, false);
+	}
+	xe_bo_unlock(bo);
+
+	if (ret)
+		KUNIT_FAIL(test, "Unaligned large write failed: %d\n", ret);
+	else
+		verify_access_memory_read(test, buf, 0, 0, size - offset,
+					  "Unaligned large write");
+
+	xe_bo_unpin_map_no_vm(bo);
+free_buf:
+	kvfree(buf);
+}
+
 static int access_memory_test_run_device(struct xe_device *xe)
 {
 	struct kunit *test = kunit_get_current_test();
@@ -1059,6 +1120,9 @@ static int access_memory_test_run_device(struct xe_device *xe)
 
 		kunit_info(test, "Testing tile id %d (random offset)\n", id);
 		access_memory_test_run_tile(xe, tile, test, true);
+
+		kunit_info(test, "Testing tile id %d (unaligned large write)\n", id);
+		access_memory_test_unaligned_large_write(test, tile);
 	}
 
 	return 0;
