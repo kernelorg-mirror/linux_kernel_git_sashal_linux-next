@@ -16100,6 +16100,14 @@ L:	linux-mips@vger.kernel.org
 S:	Maintained
 F:	arch/mips/boot/dts/img/pistachio*
 
+MARVEL ALPHASERVER ENVIRONMENTAL SENSOR DRIVER
+M:	Matt Turner <mattst88@gmail.com>
+L:	linux-hwmon@vger.kernel.org
+L:	linux-alpha@vger.kernel.org
+S:	Maintained
+F:	Documentation/hwmon/marvel-env.rst
+F:	drivers/hwmon/marvel-env.c
+
 MARVELL 88E6XXX ETHERNET SWITCH FABRIC DRIVER
 M:	Andrew Lunn <andrew@lunn.ch>
 L:	netdev@vger.kernel.org

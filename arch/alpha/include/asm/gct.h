@@ -43,11 +43,13 @@ typedef struct {
  * node types 
  */
 #define GCT_TYPE_HOSE			0x0E
+#define GCT_TYPE_PE			0x13	/* power and environment */
 
 /*
  * node subtypes
  */
 #define GCT_SUBTYPE_IO_PORT_MODULE	0x2C
+#define GCT_SUBTYPE_PE_CABINET		0x3D	/* id holds an 8-bit cabinet */
 
 #define GCT_NODE_PTR(off) ((gct6_node *)((char *)hwrpb + 		\
 					 hwrpb->frut_offset + 		\

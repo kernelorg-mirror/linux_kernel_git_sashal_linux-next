@@ -1255,6 +1255,17 @@ config SENSORS_MACSMC_HWMON
 	  This driver can also be built as a module. If so, the module will
 	  be called macsmc-hwmon.
 
+config SENSORS_MARVEL_ENV
+	tristate "Marvel (EV7) AlphaServer environmental sensors"
+	depends on ALPHA_MARVEL || (ALPHA_GENERIC && !ALPHA_LEGACY_START_ADDRESS)
+	help
+	  If you say yes here you get support for the temperature, fan,
+	  voltage and power supply sensors of Marvel AlphaServers (the
+	  GS1280, ES80 and ES47), as described by the SRM console.
+
+	  This driver can also be built as a module. If so, the module
+	  will be called marvel-env.
+
 config SENSORS_MAX1111
 	tristate "Maxim MAX1111 Serial 8-bit ADC chip and compatibles"
 	depends on SPI_MASTER
