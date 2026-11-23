@@ -1104,10 +1104,6 @@ static int imx_rproc_scu_api_detect_mode(struct rproc *rproc)
 	else
 		priv->core_index = 0;
 
-	ret = devm_add_action_or_reset(dev, imx_rproc_put_scu, priv);
-	if (ret)
-		return dev_err_probe(dev, ret, "Failed to add action for put scu\n");
-
 	/*
 	 * If Mcore resource is not owned by Acore partition, It is kicked by ROM,
 	 * and Linux could only do IPC with Mcore and nothing else.
@@ -1116,7 +1112,11 @@ static int imx_rproc_scu_api_detect_mode(struct rproc *rproc)
 		if (of_property_read_u32(dev->of_node, "fsl,entry-address", &priv->entry))
 			return -EINVAL;
 
-		return imx_rproc_attach_pd(priv);
+		ret = imx_rproc_attach_pd(priv);
+		if (ret)
+			return ret;
+
+		goto add_scu_action;
 	}
 
 	priv->rproc->state = RPROC_DETACHED;
@@ -1146,6 +1146,11 @@ static int imx_rproc_scu_api_detect_mode(struct rproc *rproc)
 		dev_err(dev, "Enable irq failed, %d\n", ret);
 		return ret;
 	}
+
+add_scu_action:
+	ret = devm_add_action_or_reset(dev, imx_rproc_put_scu, priv);
+	if (ret)
+		return dev_err_probe(dev, ret, "Failed to add action for put scu\n");
 
 	return 0;
 }
