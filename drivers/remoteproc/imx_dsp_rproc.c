@@ -824,8 +824,10 @@ static int imx_dsp_rproc_memset(void *addr, u8 value, size_t size)
 	q = size / 4;
 	r = size % 4;
 
-	while (q--)
-		writel(tmp_val, tmp_dst++);
+	while (q--) {
+		writel(tmp_val, tmp_dst);
+		tmp_dst += 4;
+	}
 
 	if (r) {
 		affected_mask = GENMASK(8 * r, 0);
