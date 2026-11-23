@@ -780,7 +780,7 @@ static int imx_dsp_rproc_memcpy(void *dst, const void *src, size_t size)
 		writel(source[i], dest + i * 4);
 
 	if (r) {
-		affected_mask = GENMASK(8 * r, 0);
+		affected_mask = GENMASK(8 * r - 1, 0);
 
 		/*
 		 * first read the 32bit data of dest, then change affected
@@ -830,7 +830,7 @@ static int imx_dsp_rproc_memset(void *addr, u8 value, size_t size)
 	}
 
 	if (r) {
-		affected_mask = GENMASK(8 * r, 0);
+		affected_mask = GENMASK(8 * r - 1, 0);
 
 		/*
 		 * first read the 32bit data of addr, then change affected
