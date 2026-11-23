@@ -289,7 +289,6 @@ static int rproc_check_carveout_da(struct rproc *rproc,
 				   struct rproc_mem_entry *mem, u32 da, u32 len)
 {
 	struct device *dev = &rproc->dev;
-	int delta;
 
 	/* Check requested resource length */
 	if (len > mem->len) {
@@ -301,16 +300,14 @@ static int rproc_check_carveout_da(struct rproc *rproc,
 		/* Address doesn't match registered carveout configuration */
 		return -EINVAL;
 	} else if (da != FW_RSC_ADDR_ANY && mem->da != FW_RSC_ADDR_ANY) {
-		delta = da - mem->da;
-
 		/* Check requested resource belongs to registered carveout */
-		if (delta < 0) {
+		if (da < mem->da) {
 			dev_err(dev,
 				"Registered carveout doesn't fit da request\n");
 			return -EINVAL;
 		}
 
-		if (delta + len > mem->len) {
+		if (da - mem->da > mem->len - len) {
 			dev_err(dev,
 				"Registered carveout doesn't fit len request\n");
 			return -EINVAL;
