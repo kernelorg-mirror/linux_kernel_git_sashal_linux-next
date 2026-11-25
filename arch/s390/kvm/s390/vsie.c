@@ -958,6 +958,20 @@ static inline void clear_vsie_icpt(struct vsie_page *vsie_page)
 	vsie_page->scb_s.icptcode = 0;
 }
 
+static void vsie_rewind_psw(struct kvm_s390_sie_block *scb, int ilen)
+{
+	u64 addr_mask;
+
+	if (atomic_read(&scb->cpuflags) & CPUSTAT_ZARCH) {
+		scb->gpsw.addr = __rewind_psw(scb->gpsw, ilen);
+		return;
+	}
+	/* ESA short PSW: mask and address both live in gpsw.mask */
+	addr_mask = scb->gpsw.mask & PSW32_ADDR_AMODE ? PSW32_ADDR_INSN : 0x00ffffffUL;
+	scb->gpsw.mask = (scb->gpsw.mask & ~PSW32_ADDR_INSN) |
+			 ((scb->gpsw.mask - ilen) & addr_mask);
+}
+
 /* rewind the psw and clear the vsie icpt, so we can retry execution */
 static void retry_vsie_icpt(struct vsie_page *vsie_page)
 {
@@ -970,7 +984,7 @@ static void retry_vsie_icpt(struct vsie_page *vsie_page)
 		if (!ilen)
 			ilen = 4;
 	}
-	scb_s->gpsw.addr = __rewind_psw(scb_s->gpsw, ilen);
+	vsie_rewind_psw(scb_s, ilen);
 	clear_vsie_icpt(vsie_page);
 }
 
@@ -1423,7 +1437,7 @@ static int vsie_run(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
 		scb_s->icptcode = ICPT_PROGI;
 		scb_s->iprcc = PGM_ADDRESSING;
 		scb_s->pgmilc = 4;
-		scb_s->gpsw.addr = __rewind_psw(scb_s->gpsw, 4);
+		vsie_rewind_psw(scb_s, 4);
 		rc = 1;
 	}
 	return rc;
