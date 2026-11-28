@@ -1350,9 +1350,11 @@ static bool udf_device_spec_valid(struct deviceSpec *dsea)
 	u32 attr_length, imp_use_length;
 
 	attr_length = le32_to_cpu(dsea->attrLength);
+	if (attr_length < sizeof(struct deviceSpec))
+		return false;
+
 	imp_use_length = le32_to_cpu(dsea->impUseLength);
-	if (attr_length < sizeof(struct deviceSpec) ||
-	    imp_use_length < sizeof(struct regid) ||
+	if (imp_use_length < sizeof(struct regid) ||
 	    imp_use_length > attr_length - sizeof(struct deviceSpec))
 		return false;
 

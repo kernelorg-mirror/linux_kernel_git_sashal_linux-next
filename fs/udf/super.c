@@ -1580,9 +1580,30 @@ static int udf_load_logicalvol(struct super_block *sb, sector_t block,
 	     i < sbi->s_partitions && offset < table_len;
 	     i++, offset += gpm->partitionMapLength) {
 		struct udf_part_map *map = &sbi->s_partmaps[i];
+		unsigned int min_len;
+
+		if (table_len - offset < sizeof(struct genericPartitionMap)) {
+			udf_err(sb, "Truncated partition map header at offset %d\n",
+				offset);
+			ret = -EFSCORRUPTED;
+			goto out_bh;
+		}
 		gpm = (struct genericPartitionMap *)
 				&(lvd->partitionMaps[offset]);
 		type = gpm->partitionMapType;
+		/* Validate length of partition map entry */
+		min_len = sizeof(struct genericPartitionMap);
+		if (type == 1)
+			min_len = sizeof(struct genericPartitionMap1);
+		else if (type == 2)
+			min_len = sizeof(struct genericPartitionMap2);
+		if (gpm->partitionMapLength < min_len ||
+		    gpm->partitionMapLength > table_len - offset) {
+			udf_err(sb, "Invalid partition map length %u at offset %d\n",
+				gpm->partitionMapLength, offset);
+			ret = -EFSCORRUPTED;
+			goto out_bh;
+		}
 		if (type == 1) {
 			struct genericPartitionMap1 *gpm1 =
 				(struct genericPartitionMap1 *)gpm;
