@@ -124,11 +124,18 @@ impl DeliveryState {
         self.has_pushed_wrapper = true;
         self.has_strong_zero2one = true;
     }
+
+    /// The `Node` was delivered or dropped, and the wrapper is not scheduled.
+    fn node_done(&mut self) {
+        self.has_pushed_node = false;
+        self.has_weak_zero2one = false;
+        self.has_strong_zero2one = false;
+    }
 }
 
 struct CountState {
     /// The reference count.
-    count: usize,
+    count: u64,
     /// Whether the process that owns this node thinks that we hold a refcount on it. (Note that
     /// even if count is greater than one, we only increment it once in the owning process.)
     has_count: bool,
@@ -178,6 +185,8 @@ struct NodeInner {
     active_inc_refs: u8,
     /// List of `NodeRefInfo` objects that reference this node.
     refs: List<NodeRefInfo, { NodeRefInfo::LIST_NODE }>,
+    /// Set when `do_work_locked` removes the node from the owner's `nodes` tree.
+    is_deleted: bool,
 }
 
 use kernel::bindings::rb_node_layout;
@@ -238,6 +247,7 @@ impl Node {
                     has_oneway_transaction: false,
                     active_inc_refs: 0,
                     refs: List::new(),
+                    is_deleted: false,
                 },
             ),
             debug_id: super::next_debug_id(),
@@ -381,7 +391,7 @@ impl Node {
         self: &DArc<Node>,
         inc: bool,
         strong: bool,
-        count: usize,
+        count: u64,
         owner_inner: &mut ProcessInner,
     ) -> Option<DLArc<Node>> {
         let is_dead = owner_inner.is_dead;
@@ -478,7 +488,7 @@ impl Node {
         }
     }
 
-    pub(crate) fn update_refcount(self: &DArc<Self>, inc: bool, count: usize, strong: bool) {
+    pub(crate) fn update_refcount(self: &DArc<Self>, inc: bool, count: u64, strong: bool) {
         self.owner
             .inner
             .lock()
@@ -491,8 +501,8 @@ impl Node {
         guard: &Guard<'_, ProcessInner, SpinLockBackend>,
     ) {
         let inner = self.inner.access(guard);
-        out.strong_count = inner.strong.count as u32;
-        out.weak_count = inner.weak.count as u32;
+        out.strong_count = u32::try_from(inner.strong.count).unwrap_or(u32::MAX);
+        out.weak_count = u32::try_from(inner.weak.count).unwrap_or(u32::MAX);
     }
 
     pub(crate) fn populate_debug_info(
@@ -636,6 +646,7 @@ impl Node {
         }
         if no_active_inc_refs && !weak {
             // Remove the node if there are no references to it.
+            inner.is_deleted = true;
             guard.remove_node(self.ptr);
         }
         drop(guard);
@@ -727,9 +738,13 @@ impl DeliverToRead for Node {
             return Ok(true);
         }
 
-        inner.delivery_state.has_pushed_node = false;
-        inner.delivery_state.has_weak_zero2one = false;
-        inner.delivery_state.has_strong_zero2one = false;
+        inner.delivery_state.node_done();
+
+        if inner.is_deleted {
+            // Nothing is pending for a deleted node, and userspace may already have reused its
+            // address for a new node, so leave the tree alone.
+            return Ok(true);
+        }
 
         self.do_work_locked(writer, owner_inner)
     }
@@ -740,6 +755,13 @@ impl DeliverToRead for Node {
 
         // We only do something on BINDER_THREAD_EXIT, not process exit.
         if owner_inner.is_dead {
+            return;
+        }
+
+        let inner = self.inner.access_mut(&mut owner_inner);
+        if inner.is_deleted {
+            // A deleted node has nothing to deliver, so don't requeue it.
+            inner.delivery_state.node_done();
             return;
         }
 
@@ -780,15 +802,15 @@ impl DeliverToRead for Node {
 pub(crate) struct NodeRef {
     pub(crate) node: DArc<Node>,
     /// How many times does this NodeRef hold a refcount on the Node?
-    strong_node_count: usize,
-    weak_node_count: usize,
+    strong_node_count: u64,
+    weak_node_count: u64,
     /// How many times does userspace hold a refcount on this NodeRef?
-    strong_count: usize,
-    weak_count: usize,
+    strong_count: u64,
+    weak_count: u64,
 }
 
 impl NodeRef {
-    pub(crate) fn new(node: DArc<Node>, strong_count: usize, weak_count: usize) -> Self {
+    pub(crate) fn new(node: DArc<Node>, strong_count: u64, weak_count: u64) -> Self {
         Self {
             node,
             strong_node_count: strong_count,
@@ -829,7 +851,7 @@ impl NodeRef {
         }
     }
 
-    pub(crate) fn get_count(&self) -> (usize, usize) {
+    pub(crate) fn get_count(&self) -> (u64, u64) {
         (self.strong_count, self.weak_count)
     }
 

@@ -32,7 +32,7 @@ use crate::{
     stats::GLOBAL_STATS,
     trace::{trace_transaction_alloc_buf, trace_transaction_buffer_release},
     transaction::{Transaction, TransactionFlag, TransactionFlags, TransactionInfo},
-    BinderReturnWriter, DArc, DLArc, DTRWrap, DeliverCode, DeliverToRead,
+    u64_align, BinderReturnWriter, DArc, DLArc, DTRWrap, DeliverCode, DeliverToRead,
 };
 
 use core::mem::size_of;
@@ -213,7 +213,7 @@ impl UnusedBufferSpace {
     /// into the buffer is returned.
     fn claim_next(&mut self, size: usize) -> Result<usize> {
         // We require every chunk to be aligned.
-        let size = ptr_align(size).ok_or(EINVAL)?;
+        let size = u64_align(size).ok_or(EINVAL)?;
         let new_offset = self.offset.checked_add(size).ok_or(EINVAL)?;
 
         if new_offset <= self.limit {
@@ -1305,10 +1305,12 @@ impl Thread {
         info.code = td.transaction_data.code;
         info.flags = TransactionFlags::from_bits(td.transaction_data.flags);
         info.data_ptr = UserPtr::from_addr(trd_data_ptr.buffer as usize);
-        info.data_size = td.transaction_data.data_size as usize;
+        // Saturate sizes exceeding `usize::MAX` to `usize::MAX`, which is
+        // guaranteed to be rejected as `EINVAL` in `copy_transaction_data`.
+        info.data_size = usize::try_from(td.transaction_data.data_size).unwrap_or(usize::MAX);
         info.offsets_ptr = UserPtr::from_addr(trd_data_ptr.offsets as usize);
-        info.offsets_size = td.transaction_data.offsets_size as usize;
-        info.buffers_size = td.buffers_size as usize;
+        info.offsets_size = usize::try_from(td.transaction_data.offsets_size).unwrap_or(usize::MAX);
+        info.buffers_size = usize::try_from(td.buffers_size).unwrap_or(usize::MAX);
         // SAFETY: Above `read` call initializes all bytes, so this union read is ok.
         info.target_handle = unsafe { td.transaction_data.target.handle };
 
@@ -1515,9 +1517,10 @@ impl Thread {
 
     fn write(self: &Arc<Self>, req: &mut BinderWriteRead) -> Result {
         let write_start = req.write_buffer.wrapping_add(req.write_consumed);
-        let write_len = req.write_size.saturating_sub(req.write_consumed);
+        let write_len = usize::try_from(req.write_size.saturating_sub(req.write_consumed))
+            .unwrap_or(usize::MAX);
         let mut reader =
-            UserSlice::new(UserPtr::from_addr(write_start as usize), write_len as usize).reader();
+            UserSlice::new(UserPtr::from_addr(write_start as usize), write_len).reader();
 
         while reader.len() >= size_of::<u32>() && self.inner.lock().return_work.is_unused() {
             let before = reader.len();
@@ -1587,9 +1590,10 @@ impl Thread {
 
     fn read(self: &Arc<Self>, req: &mut BinderWriteRead, wait: bool) -> Result {
         let read_start = req.read_buffer.wrapping_add(req.read_consumed);
-        let read_len = req.read_size.saturating_sub(req.read_consumed);
+        let read_len =
+            usize::try_from(req.read_size.saturating_sub(req.read_consumed)).unwrap_or(usize::MAX);
         let mut writer = BinderReturnWriter::new(
-            UserSlice::new(UserPtr::from_addr(read_start as usize), read_len as usize).writer(),
+            UserSlice::new(UserPtr::from_addr(read_start as usize), read_len).writer(),
             self,
         );
         let (in_pool, has_transaction, thread_todo, use_proc_queue) = {
@@ -1649,13 +1653,13 @@ impl Thread {
             }
         }
 
-        req.read_consumed += read_len - writer.len() as u64;
+        req.read_consumed += (read_len - writer.len()) as u64;
 
         // Write BR_SPAWN_LOOPER if the process needs more threads for its pool.
         if has_noop_placeholder && in_pool && self.process.needs_thread() {
             let mut writer = UserSlice::new(
                 UserPtr::from_addr(req.read_buffer as usize),
-                req.read_size as usize,
+                usize::try_from(req.read_size).unwrap_or(usize::MAX),
             )
             .writer();
             writer.write(&BR_SPAWN_LOOPER)?;

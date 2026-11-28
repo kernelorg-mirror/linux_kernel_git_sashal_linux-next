@@ -231,7 +231,7 @@ impl ProcessInner {
         node: &DArc<Node>,
         inc: bool,
         strong: bool,
-        count: usize,
+        count: u64,
         othread: Option<&Thread>,
     ) {
         let push = node.update_refcount_locked(inc, strong, count, self);
@@ -579,7 +579,7 @@ impl Process {
 
         {
             let mut refs = self.node_refs.lock();
-            let (mut count, mut weak, mut strong) = (0, 0, 0);
+            let (mut count, mut weak, mut strong) = (0usize, 0u64, 0u64);
             for r in refs.by_handle.values_mut() {
                 let node_ref = r.node_ref();
                 let (nstrong, nweak) = node_ref.get_count();
@@ -952,7 +952,7 @@ impl Process {
             .lock()
             .by_handle
             .get_mut(&handle)
-            .ok_or(ENOENT)?
+            .ok_or(EINVAL)?
             .node_ref()
             .clone(strong)
     }
@@ -1119,7 +1119,8 @@ impl Process {
         Ok(NewAllocation(res))
     }
 
-    pub(crate) fn buffer_get(self: &Arc<Self>, ptr: usize) -> Option<Allocation> {
+    pub(crate) fn buffer_get(self: &Arc<Self>, ptr: u64) -> Option<Allocation> {
+        let ptr = usize::try_from(ptr).ok()?;
         let mut inner = self.inner.lock();
         let mapping = inner.mapping.as_mut()?;
         let offset = ptr.checked_sub(mapping.address)?;
@@ -1248,8 +1249,12 @@ impl Process {
 
         {
             let mut node_refs = self.node_refs.lock();
-            let node_info = node_refs.by_handle.get_mut(&out.handle).ok_or(ENOENT)?;
+            let node_info = node_refs.by_handle.get_mut(&out.handle).ok_or(EINVAL)?;
             let node_ref = node_info.node_ref();
+            if node_ref.get_count().0 == 0 {
+                binder_debug!(UserError, "tried to use weak ref as strong ref");
+                return Err(EINVAL);
+            }
             let owner_inner = node_ref.node.owner.inner.lock();
             node_ref.node.populate_counts(&mut out, &owner_inner);
         }
