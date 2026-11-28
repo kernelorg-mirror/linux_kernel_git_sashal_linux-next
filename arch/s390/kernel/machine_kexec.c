@@ -152,6 +152,7 @@ void crash_free_reserved_phys_range(unsigned long begin, unsigned long end)
 static void crash_protect_pages(int protect)
 {
 	unsigned long addr, size;
+	int rc;
 
 	if (!crashk_res.end)
 		return;
@@ -161,6 +162,8 @@ static void crash_protect_pages(int protect)
 		set_memory_ro(addr, size >> PAGE_SHIFT);
 	else
 		set_memory_rw(addr, size >> PAGE_SHIFT);
+	if (rc)
+		pr_warn("Failed to %sprotect crashkernel memory: %d\n",	protect ? "" : "un", rc);
 }
 
 void arch_kexec_protect_crashkres(void)
