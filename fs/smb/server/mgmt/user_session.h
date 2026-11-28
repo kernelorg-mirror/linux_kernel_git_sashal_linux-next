@@ -79,6 +79,9 @@ struct ksmbd_session {
 	struct xarray			rpc_handle_list;
 
 	__u8				smb3encryptionkey[SMB3_ENC_DEC_KEY_SIZE];
+	/* see ksmbd_new_enc_nonce() */
+	atomic64_t			enc_nonce_low;
+	u32				enc_nonce_high;
 	__u8				smb3decryptionkey[SMB3_ENC_DEC_KEY_SIZE];
 	__u8				smb3signingkey[SMB3_SIGN_KEY_SIZE];
 

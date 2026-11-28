@@ -418,6 +418,7 @@ static int smb_direct_listen(struct smb_direct_listener *listener,
 		       ret, ERR_PTR(ret));
 		return ret;
 	}
+	listener->socket = sc;
 
 	/*
 	 * Create the initial parameters
@@ -467,7 +468,6 @@ static int smb_direct_listen(struct smb_direct_listener *listener,
 	}
 
 	listener->port = port;
-	listener->socket = sc;
 
 	kthread = kthread_run(smb_direct_listener_kthread_fn,
 			      listener,

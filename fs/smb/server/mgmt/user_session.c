@@ -1043,6 +1043,7 @@ static struct ksmbd_session *__session_create(struct ksmbd_conn *conn, int proto
 	xa_init(&sess->rpc_handle_list);
 	INIT_LIST_HEAD(&sess->dispose_entry);
 	sess->sequence_number = 1;
+	get_random_bytes(&sess->enc_nonce_high, sizeof(sess->enc_nonce_high));
 	atomic_set(&sess->refcnt, 2);
 	init_rwsem(&sess->tree_conns_lock);
 	init_rwsem(&sess->rpc_lock);

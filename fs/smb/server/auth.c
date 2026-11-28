@@ -18,6 +18,7 @@
 #include <crypto/utils.h>
 #include <linux/random.h>
 #include <linux/scatterlist.h>
+#include <linux/unaligned.h>
 
 #include "auth.h"
 #include "glob.h"
@@ -732,6 +733,48 @@ int ksmbd_gen_preauth_integrity_hash(struct ksmbd_conn *conn, char *buf,
 	sha512_update(&sha_ctx, pi_hash, 64);
 	sha512_update(&sha_ctx, all_bytes_msg, msg_size);
 	sha512_final(&sha_ctx, pi_hash);
+	return 0;
+}
+
+/**
+ * ksmbd_new_enc_nonce() - generate the nonce for an encrypted response
+ * @sess: session whose encryption key is used
+ * @cipher_type: cipher of the connection
+ * @nonce: nonce output, 11 bytes for AES-CCM, 12 bytes for AES-GCM
+ *
+ * The nonce must not be used for any other encrypted message within the
+ * session (MS-SMB2 3.1.4.3), this also covers the payload of RDMA reads with
+ * an SMB2_RDMA_TRANSFORM_TYPE_ENCRYPTION transform, which uses the same key.
+ * A random nonce only makes a collision unlikely, but with AES-GCM and
+ * AES-CCM a reused nonce reveals the XOR of the plaintexts and allows
+ * forgeries.
+ *
+ * So, like Samba, the nonce is a 64-bit counter of the session followed by
+ * random bits chosen when the session is created, 32 bits for AES-GCM and
+ * 24 bits for AES-CCM.
+ *
+ * Return: 0 on success, otherwise a negative errno
+ */
+int ksmbd_new_enc_nonce(struct ksmbd_session *sess, __le16 cipher_type,
+			u8 *nonce)
+{
+	u64 low = atomic64_inc_return(&sess->enc_nonce_low);
+	u32 high = sess->enc_nonce_high;
+
+	/* the counter can't wrap in practice, but never reuse a nonce */
+	if (WARN_ON_ONCE(low == 0))
+		return -EIO;
+
+	put_unaligned_le64(low, nonce);
+	if (cipher_type == SMB2_ENCRYPTION_AES128_GCM ||
+	    cipher_type == SMB2_ENCRYPTION_AES256_GCM) {
+		put_unaligned_le32(high, nonce + 8);
+	} else {
+		nonce[8] = high;
+		nonce[9] = high >> 8;
+		nonce[10] = high >> 16;
+	}
+
 	return 0;
 }
 

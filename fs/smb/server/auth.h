@@ -36,6 +36,9 @@ struct ksmbd_conn;
 struct ksmbd_work;
 struct kvec;
 
+
+int ksmbd_new_enc_nonce(struct ksmbd_session *sess, __le16 cipher_type,
+			u8 *nonce);
 int ksmbd_crypt_message(struct ksmbd_work *work, struct kvec *iov,
 			unsigned int nvec, int enc);
 int ksmbd_crypt_rdma(struct ksmbd_conn *conn, const u8 *key,
