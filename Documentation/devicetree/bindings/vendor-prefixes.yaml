@@ -1277,6 +1277,8 @@ patternProperties:
     description: OpenCores.org
   "^openembed,.*":
     description: OpenEmbed
+  "^openhwgroup,.*":
+    description: OpenHW Group
   "^openpandora,.*":
     description: OpenPandora GmbH
   "^openrisc,.*":
@@ -1525,6 +1527,8 @@ patternProperties:
     description: SGX Sensortech
   "^sharp,.*":
     description: Sharp Corporation
+  "^shenrongda,.*":
+    description: Shenzhen Rongda Computer Co., Ltd.
   "^shift,.*":
     description: SHIFT GmbH
   "^shimafuji,.*":

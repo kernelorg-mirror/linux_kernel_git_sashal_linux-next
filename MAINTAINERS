@@ -24091,14 +24091,6 @@ F:	Documentation/devicetree/bindings/riscv/andes.yaml
 F:	Documentation/devicetree/bindings/timer/andestech,plmt0.yaml
 F:	arch/riscv/boot/dts/andes/
 
-RISC-V ANLOGIC SoC SUPPORT
-M:	Conor Dooley <conor@kernel.org>
-T:	git https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/
-L:	linux-riscv@lists.infradead.org
-S:	Odd Fixes
-F:	Documentation/devicetree/bindings/riscv/anlogic.yaml
-F:	arch/riscv/boot/dts/anlogic/
-
 RISC-V ARCHITECTURE
 M:	Paul Walmsley <pjw@kernel.org>
 M:	Palmer Dabbelt <palmer@dabbelt.com>
@@ -24171,8 +24163,19 @@ M:	Conor Dooley <conor@kernel.org>
 L:	linux-riscv@lists.infradead.org
 S:	Odd Fixes
 T:	git https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/
+F:	Documentation/devicetree/bindings/riscv/anlogic.yaml
+F:	Documentation/devicetree/bindings/riscv/openhwgroup.yaml
+F:	arch/riscv/boot/dts/anlogic/
 F:	arch/riscv/boot/dts/canaan/
 F:	arch/riscv/boot/dts/sifive/
+F:	arch/riscv/boot/dts/openhwgroup/
+
+RISC-V OPENHW GROUP SoC SUPPORT
+M:	Marouene Boubakri <marouene.boubakri@oss.nxp.com>
+L:	linux-riscv@lists.infradead.org
+S:	Maintained
+F:	Documentation/devicetree/bindings/riscv/openhwgroup.yaml
+F:	arch/riscv/boot/dts/openhwgroup/
 
 RISC-V PMU DRIVERS
 M:	Atish Patra <atish.patra@linux.dev>
@@ -24272,6 +24275,14 @@ F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
 F:	include/dt-bindings/power/thead,th1520-power.h
 F:	include/dt-bindings/reset/thead,th1520-reset.h
 F:	include/linux/firmware/thead/thead,th1520-aon.h
+
+RISC-V ULTRARISC SoC SUPPORT
+M:	Xincheng Ji <jixincheng@ultrarisc.com>
+L:	linux-riscv@lists.infradead.org
+S:	Supported
+T:	git https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/
+F:	Documentation/devicetree/bindings/riscv/ultrarisc.yaml
+F:	arch/riscv/boot/dts/ultrarisc/
 
 RNBD BLOCK DRIVERS
 M:	Md. Haris Iqbal <haris.iqbal@ionos.com>
