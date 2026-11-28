@@ -21939,8 +21939,7 @@ static int do_check_block(struct bpf_verifier_env *env, int prev_insn_idx)
 		}
 
 		/* only a store that stays gets it, see bpf_convert_ctx_accesses() */
-		if (state->speculative && insn_aux->nospec_result && !insn_aux->fastcall_pattern &&
-		    bpf_is_mem_insn(insn) && BPF_MODE(insn->code) == BPF_MEM) {
+		if (state->speculative && insn_aux->nospec_result && !insn_aux->fastcall_pattern) {
 process_bpf_exit:
 			account_current_path(env);
 			bpf_free_verifier_state(env, state, false);
