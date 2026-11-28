@@ -425,6 +425,15 @@ static void prepare_ibc(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
 	}
 }
 
+static void unshadow_icpt(struct kvm_s390_sie_block *scb_o,
+			  struct kvm_s390_sie_block *scb_s)
+{
+	scb_o->icptcode = scb_s->icptcode;
+	scb_o->icptstatus = scb_s->icptstatus;
+	scb_o->ipa = scb_s->ipa;
+	scb_o->ipb = scb_s->ipb;
+}
+
 /* unshadow the scb, copying parameters back to the real scb */
 static void unshadow_scb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
 {
@@ -432,10 +441,7 @@ static void unshadow_scb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
 	struct kvm_s390_sie_block *scb_o = vsie_page->scb_o;
 
 	/* interception */
-	scb_o->icptcode = scb_s->icptcode;
-	scb_o->icptstatus = scb_s->icptstatus;
-	scb_o->ipa = scb_s->ipa;
-	scb_o->ipb = scb_s->ipb;
+	unshadow_icpt(scb_o, scb_s);
 	scb_o->gbea = scb_s->gbea;
 
 	/* timer */
@@ -491,6 +497,9 @@ static int shadow_scb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
 
 	/* make sure we don't have any leftovers when reusing the scb */
 	scb_s->icptcode = 0;
+	scb_s->icptstatus = 0;
+	scb_s->ipa = 0;
+	scb_s->ipb = 0;
 	scb_s->eca = 0;
 	scb_s->ecb = 0;
 	scb_s->ecb2 = 0;
@@ -500,8 +509,10 @@ static int shadow_scb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
 	scb_s->fpf = 0;
 
 	rc = prepare_cpuflags(vcpu, vsie_page);
-	if (rc)
-		goto out;
+	if (rc) {
+		unshadow_icpt(scb_o, scb_s);
+		return rc;
+	}
 
 	/* timer */
 	scb_s->cputm = scb_o->cputm;
@@ -615,7 +626,6 @@ static int shadow_scb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
 
 	prepare_ibc(vcpu, vsie_page);
 	rc = shadow_crycb(vcpu, vsie_page);
-out:
 	if (rc)
 		unshadow_scb(vcpu, vsie_page);
 	return rc;
@@ -948,6 +958,20 @@ static inline void clear_vsie_icpt(struct vsie_page *vsie_page)
 	vsie_page->scb_s.icptcode = 0;
 }
 
+static void vsie_rewind_psw(struct kvm_s390_sie_block *scb, int ilen)
+{
+	u64 addr_mask;
+
+	if (atomic_read(&scb->cpuflags) & CPUSTAT_ZARCH) {
+		scb->gpsw.addr = __rewind_psw(scb->gpsw, ilen);
+		return;
+	}
+	/* ESA short PSW: mask and address both live in gpsw.mask */
+	addr_mask = scb->gpsw.mask & PSW32_ADDR_AMODE ? PSW32_ADDR_INSN : 0x00ffffffUL;
+	scb->gpsw.mask = (scb->gpsw.mask & ~PSW32_ADDR_INSN) |
+			 ((scb->gpsw.mask - ilen) & addr_mask);
+}
+
 /* rewind the psw and clear the vsie icpt, so we can retry execution */
 static void retry_vsie_icpt(struct vsie_page *vsie_page)
 {
@@ -960,7 +984,7 @@ static void retry_vsie_icpt(struct vsie_page *vsie_page)
 		if (!ilen)
 			ilen = 4;
 	}
-	scb_s->gpsw.addr = __rewind_psw(scb_s->gpsw, ilen);
+	vsie_rewind_psw(scb_s, ilen);
 	clear_vsie_icpt(vsie_page);
 }
 
@@ -1413,7 +1437,7 @@ static int vsie_run(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
 		scb_s->icptcode = ICPT_PROGI;
 		scb_s->iprcc = PGM_ADDRESSING;
 		scb_s->pgmilc = 4;
-		scb_s->gpsw.addr = __rewind_psw(scb_s->gpsw, 4);
+		vsie_rewind_psw(scb_s, 4);
 		rc = 1;
 	}
 	return rc;
