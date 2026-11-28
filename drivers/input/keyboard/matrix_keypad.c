@@ -268,7 +268,10 @@ static int matrix_keypad_suspend(struct device *dev)
 	struct platform_device *pdev = to_platform_device(dev);
 	struct matrix_keypad *keypad = platform_get_drvdata(pdev);
 
-	matrix_keypad_stop(keypad->input_dev);
+	guard(mutex)(&keypad->input_dev->mutex);
+
+	if (input_device_enabled(keypad->input_dev))
+		matrix_keypad_stop(keypad->input_dev);
 
 	if (device_may_wakeup(&pdev->dev))
 		matrix_keypad_enable_wakeup(keypad);
@@ -281,10 +284,13 @@ static int matrix_keypad_resume(struct device *dev)
 	struct platform_device *pdev = to_platform_device(dev);
 	struct matrix_keypad *keypad = platform_get_drvdata(pdev);
 
+	guard(mutex)(&keypad->input_dev->mutex);
+
 	if (device_may_wakeup(&pdev->dev))
 		matrix_keypad_disable_wakeup(keypad);
 
-	matrix_keypad_start(keypad->input_dev);
+	if (input_device_enabled(keypad->input_dev))
+		matrix_keypad_start(keypad->input_dev);
 
 	return 0;
 }

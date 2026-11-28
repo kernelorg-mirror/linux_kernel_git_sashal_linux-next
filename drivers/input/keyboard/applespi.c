@@ -1819,6 +1819,7 @@ static void applespi_remove(struct spi_device *spi)
 	device_wakeup_disable(&spi->dev);
 
 	applespi_drain_reads(applespi);
+	disable_work_sync(&applespi->work);
 
 	debugfs_remove_recursive(applespi->debugfs_root);
 }

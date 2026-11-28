@@ -455,8 +455,11 @@ static ssize_t stmfts_sysfs_read_status(struct device *dev,
 
 	err = i2c_smbus_read_i2c_block_data(sdata->client, STMFTS_READ_STATUS,
 					    sizeof(status), status);
-	if (err)
+	if (err < 0)
 		return err;
+
+	if (err != sizeof(status))
+		return -EIO;
 
 	return sysfs_emit(buf, "%#02x\n", status[0]);
 }
