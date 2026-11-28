@@ -635,6 +635,25 @@ static int imx_rproc_sm_lmm_prepare(struct rproc *rproc)
 	return 0;
 }
 
+static int imx_rproc_rmem_to_resource(struct device_node *np,
+				      int index,
+				      struct resource *res)
+{
+	int ret;
+
+	ret = of_reserved_mem_region_to_resource(np, index, res);
+	if (ret)
+		return ret;
+
+	/* "memory-region-names" is optional */
+	ret = of_property_read_string_index(np, "memory-region-names",
+					    index, &res->name);
+	if (ret == -EINVAL)
+		return 0;
+
+	return ret;
+}
+
 static int imx_rproc_prepare(struct rproc *rproc)
 {
 	struct imx_rproc *priv = rproc->priv;
@@ -648,7 +667,7 @@ static int imx_rproc_prepare(struct rproc *rproc)
 		int err;
 		struct resource res;
 
-		err = of_reserved_mem_region_to_resource(np, i++, &res);
+		err = imx_rproc_rmem_to_resource(np, i++, &res);
 		if (err)
 			break;
 
@@ -823,11 +842,17 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
 	if (nph <= 0)
 		return 0;
 
+	if (of_property_present(np, "memory-region-names") &&
+	    nph != of_property_count_strings(np, "memory-region-names")) {
+		dev_err(dev, "invalid reserved memory name count\n");
+		return -EINVAL;
+	}
+
 	/* remap optional addresses */
 	for (a = 0; a < nph; a++) {
 		struct resource res;
 
-		err = of_reserved_mem_region_to_resource(np, a, &res);
+		err = imx_rproc_rmem_to_resource(np, a, &res);
 		if (err) {
 			dev_err(dev, "unable to resolve memory region\n");
 			return err;
@@ -1079,10 +1104,6 @@ static int imx_rproc_scu_api_detect_mode(struct rproc *rproc)
 	else
 		priv->core_index = 0;
 
-	ret = devm_add_action_or_reset(dev, imx_rproc_put_scu, priv);
-	if (ret)
-		return dev_err_probe(dev, ret, "Failed to add action for put scu\n");
-
 	/*
 	 * If Mcore resource is not owned by Acore partition, It is kicked by ROM,
 	 * and Linux could only do IPC with Mcore and nothing else.
@@ -1091,7 +1112,11 @@ static int imx_rproc_scu_api_detect_mode(struct rproc *rproc)
 		if (of_property_read_u32(dev->of_node, "fsl,entry-address", &priv->entry))
 			return -EINVAL;
 
-		return imx_rproc_attach_pd(priv);
+		ret = imx_rproc_attach_pd(priv);
+		if (ret)
+			return ret;
+
+		goto add_scu_action;
 	}
 
 	priv->rproc->state = RPROC_DETACHED;
@@ -1121,6 +1146,11 @@ static int imx_rproc_scu_api_detect_mode(struct rproc *rproc)
 		dev_err(dev, "Enable irq failed, %d\n", ret);
 		return ret;
 	}
+
+add_scu_action:
+	ret = devm_add_action_or_reset(dev, imx_rproc_put_scu, priv);
+	if (ret)
+		return dev_err_probe(dev, ret, "Failed to add action for put scu\n");
 
 	return 0;
 }

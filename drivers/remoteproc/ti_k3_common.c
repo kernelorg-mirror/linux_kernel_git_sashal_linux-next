@@ -356,7 +356,8 @@ void *k3_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
 	struct k3_rproc *kproc = rproc->priv;
 	void __iomem *va = NULL;
 	phys_addr_t bus_addr;
-	u32 dev_addr, offset;
+	u32 dev_addr;
+	u64 offset;
 	size_t size;
 	int i;
 
@@ -369,17 +370,21 @@ void *k3_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
 		size = kproc->mem[i].size;
 
 		/* handle rproc-view addresses */
-		if (da >= dev_addr && ((da + len) <= (dev_addr + size))) {
+		if (da >= dev_addr) {
 			offset = da - dev_addr;
-			va = kproc->mem[i].cpu_addr + offset;
-			return (__force void *)va;
+			if (offset <= size && len <= size - offset) {
+				va = kproc->mem[i].cpu_addr + offset;
+				return (__force void *)va;
+			}
 		}
 
 		/* handle SoC-view addresses */
-		if (da >= bus_addr && (da + len) <= (bus_addr + size)) {
+		if (da >= bus_addr) {
 			offset = da - bus_addr;
-			va = kproc->mem[i].cpu_addr + offset;
-			return (__force void *)va;
+			if (offset <= size && len <= size - offset) {
+				va = kproc->mem[i].cpu_addr + offset;
+				return (__force void *)va;
+			}
 		}
 	}
 
@@ -388,10 +393,12 @@ void *k3_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
 		dev_addr = kproc->rmem[i].dev_addr;
 		size = kproc->rmem[i].size;
 
-		if (da >= dev_addr && ((da + len) <= (dev_addr + size))) {
+		if (da >= dev_addr) {
 			offset = da - dev_addr;
-			va = kproc->rmem[i].cpu_addr + offset;
-			return (__force void *)va;
+			if (offset <= size && len <= size - offset) {
+				va = kproc->rmem[i].cpu_addr + offset;
+				return (__force void *)va;
+			}
 		}
 	}
 

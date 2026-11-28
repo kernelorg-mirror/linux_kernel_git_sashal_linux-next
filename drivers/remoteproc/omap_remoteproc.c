@@ -735,7 +735,7 @@ static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *
 {
 	struct omap_rproc *oproc = rproc->priv;
 	int i;
-	u32 offset;
+	u64 offset;
 
 	if (len <= 0)
 		return NULL;
@@ -744,9 +744,12 @@ static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *
 		return NULL;
 
 	for (i = 0; i < oproc->num_mems; i++) {
-		if (da >= oproc->mem[i].dev_addr && da + len <=
-		    oproc->mem[i].dev_addr + oproc->mem[i].size) {
-			offset = da - oproc->mem[i].dev_addr;
+		if (da < oproc->mem[i].dev_addr)
+			continue;
+
+		offset = da - oproc->mem[i].dev_addr;
+		if (offset <= oproc->mem[i].size &&
+		    len <= oproc->mem[i].size - offset) {
 			/* __force to make sparse happy with type conversion */
 			return (__force void *)(oproc->mem[i].cpu_addr +
 						offset);
