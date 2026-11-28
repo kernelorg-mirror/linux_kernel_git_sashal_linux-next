@@ -719,7 +719,6 @@ efi_guid_to_str(const efi_guid_t *guid, char *out)
 }
 
 extern void efi_init (void);
-extern void efi_earlycon_reprobe(void);
 #ifdef CONFIG_EFI
 extern void efi_enter_virtual_mode (void);	/* switch EFI to virtual mode, if possible */
 #else
@@ -1067,6 +1066,17 @@ struct efivar_operations {
 struct efivars {
 	struct kset *kset;
 	const struct efivar_operations *ops;
+};
+
+/*
+ * The "efivars" platform device is registered while the generic, EFI runtime
+ * services based efivars ops are registered and support SetVariable().
+ */
+#define EFIVARS_PDEV_NAME	"efivars"
+
+struct efivars_pdev_data {
+	/* true only while platform_device_register_data() is in progress */
+	bool registering;
 };
 
 #ifdef CONFIG_X86
