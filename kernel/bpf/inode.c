@@ -311,6 +311,11 @@ static int bpffs_map_open(struct inode *inode, struct file *file)
 	struct seq_file *m;
 	int err;
 
+	/* Special fields are printed as they are. Most have addresses. */
+	if (btf_record_has_field(map->record, ~(BPF_SPIN_LOCK | BPF_RES_SPIN_LOCK)) &&
+	    !perfmon_capable())
+		return -EPERM;
+
 	iter = map_iter_alloc(map);
 	if (!iter)
 		return -ENOMEM;
@@ -1056,7 +1061,7 @@ static int bpf_parse_param(struct fs_context *fc, struct fs_parameter *param)
 		struct bpffs_btf_enums info;
 		const struct btf_type *enum_t;
 		const char *enum_pfx;
-		u64 *delegate_msk, msk = 0;
+		u64 *delegate_msk, msk = 0, num;
 		char *p, *str;
 		int val;
 
@@ -1095,9 +1100,10 @@ static int bpf_parse_param(struct fs_context *fc, struct fs_parameter *param)
 			} else if (find_btf_enum_const(info.btf, enum_t, enum_pfx, p, &val)) {
 				msk |= 1ULL << val;
 			} else {
-				err = kstrtou64(p, 0, &msk);
+				err = kstrtou64(p, 0, &num);
 				if (err)
 					return err;
+				msk |= num;
 			}
 		}
 
