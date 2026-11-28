@@ -75,6 +75,7 @@ struct sdmmc_dlyb {
 	void __iomem *base;
 	u32 unit;
 	u32 max;
+	unsigned int min_freq;
 	struct sdmmc_tuning_ops *ops;
 };
 
@@ -537,10 +538,20 @@ static int sdmmc_dlyb_mp15_prepare(struct mmci_host *host)
 static int sdmmc_dlyb_mp25_enable(struct sdmmc_dlyb *dlyb)
 {
 	u32 cr, sr;
+	int ret;
 
 	cr = readl_relaxed(dlyb->base + SYSCFG_DLYBSD_CR);
-	cr |= DLYBSD_CR_EN;
 
+	cr &= ~DLYBSD_CR_EN;
+	writel_relaxed(cr, dlyb->base + SYSCFG_DLYBSD_CR);
+
+	ret = readl_relaxed_poll_timeout(dlyb->base + SYSCFG_DLYBSD_SR,
+					 sr, !(sr & DLYBSD_SR_LOCK), 1,
+					 DLYBSD_TIMEOUT_1S_IN_US);
+	if (ret)
+		return ret;
+
+	cr |= DLYBSD_CR_EN;
 	writel_relaxed(cr, dlyb->base + SYSCFG_DLYBSD_CR);
 
 	return readl_relaxed_poll_timeout(dlyb->base + SYSCFG_DLYBSD_SR,
@@ -626,13 +637,15 @@ static int sdmmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
 	u32 clk;
 	int ret;
 
-	if ((host->mmc->ios.timing != MMC_TIMING_UHS_SDR104 &&
-	     host->mmc->ios.timing != MMC_TIMING_MMC_HS200) ||
-	    host->mmc->actual_clock <= 50000000)
+	if (host->mmc->ios.timing != MMC_TIMING_UHS_SDR104 &&
+	    host->mmc->ios.timing != MMC_TIMING_MMC_HS200)
 		return 0;
 
 	if (!dlyb || !dlyb->base)
 		return -EINVAL;
+
+	if (host->mmc->actual_clock <= dlyb->min_freq)
+		return 0;
 
 	ret = dlyb->ops->dlyb_enable(dlyb);
 	if (ret)
@@ -739,10 +752,13 @@ void sdmmc_variant_init(struct mmci_host *host)
 		return;
 
 	dlyb->base = base_dlyb;
-	if (of_device_is_compatible(np, "st,stm32mp25-sdmmc2"))
+	if (of_device_is_compatible(np, "st,stm32mp25-sdmmc2")) {
 		dlyb->ops = &dlyb_tuning_mp25_ops;
-	else
+		dlyb->min_freq = 100000000;
+	} else {
 		dlyb->ops = &dlyb_tuning_mp15_ops;
+		dlyb->min_freq = 50000000;
+	}
 
 	host->variant_priv = dlyb;
 	host->mmc_ops->execute_tuning = sdmmc_execute_tuning;

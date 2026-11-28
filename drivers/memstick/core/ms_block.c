@@ -1350,12 +1350,8 @@ static int msb_ftl_initialize(struct msb_data *msb)
 		kmalloc_objs(u16, msb->logical_block_count);
 
 	if (!msb->used_blocks_bitmap || !msb->lba_to_pba_table ||
-						!msb->erased_blocks_bitmap) {
-		bitmap_free(msb->used_blocks_bitmap);
-		bitmap_free(msb->erased_blocks_bitmap);
-		kfree(msb->lba_to_pba_table);
+						!msb->erased_blocks_bitmap)
 		return -ENOMEM;
-	}
 
 	for (i = 0; i < msb->zone_count; i++)
 		msb->free_block_count[i] = MS_BLOCKS_IN_ZONE;
@@ -1952,6 +1948,7 @@ static void msb_data_clear(struct msb_data *msb)
 	bitmap_free(msb->erased_blocks_bitmap);
 	kfree(msb->lba_to_pba_table);
 	kfree(msb->cache);
+	kfree(msb->block_buffer);
 	msb->card = NULL;
 }
 

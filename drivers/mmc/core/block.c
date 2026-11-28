@@ -1506,6 +1506,7 @@ static void mmc_blk_data_prep(struct mmc_queue *mq, struct mmc_queue_req *mqrq,
 			data_size -= sg->length;
 			if (data_size <= 0) {
 				sg->length += data_size;
+				sg_mark_end(sg);
 				i++;
 				break;
 			}
