@@ -157,6 +157,7 @@ Hardware Monitoring Kernel Drivers
    ltc4286
    lx1308
    macsmc-hwmon
+   marvel-env
    max127
    max15301
    max16064
