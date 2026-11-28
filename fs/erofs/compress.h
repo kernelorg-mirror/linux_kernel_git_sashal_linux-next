@@ -41,7 +41,7 @@ struct z_erofs_decompressor {
  */
 static inline bool z_erofs_is_shortlived_page(struct page *page)
 {
-	return page->private == Z_EROFS_SHORTLIVED_PAGE;
+	return page_private(page) == Z_EROFS_SHORTLIVED_PAGE;
 }
 
 static inline bool z_erofs_put_shortlivedpage(struct page **pagepool,
