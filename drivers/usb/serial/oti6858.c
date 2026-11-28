@@ -261,7 +261,7 @@ static void send_data(struct work_struct *work)
 	struct usb_serial_port *port = priv->port;
 	int count = 0, result;
 	unsigned long flags;
-	u8 *allow;
+	u8 allow;
 
 	spin_lock_irqsave(&priv->lock, flags);
 	if (priv->flags.write_urb_in_use) {
@@ -281,18 +281,13 @@ static void send_data(struct work_struct *work)
 		count = port->bulk_out_size;
 
 	if (count != 0) {
-		allow = kmalloc(1, GFP_KERNEL);
-		if (!allow)
-			return;
-
-		result = usb_control_msg(port->serial->dev,
-				usb_rcvctrlpipe(port->serial->dev, 0),
-				OTI6858_REQ_T_CHECK_TXBUFF,
-				OTI6858_REQ_CHECK_TXBUFF,
-				count, 0, allow, 1, 100);
-		if (result != 1 || *allow != 0)
+		result = usb_control_msg_recv(port->serial->dev, 0,
+					      OTI6858_REQ_T_CHECK_TXBUFF,
+					      OTI6858_REQ_CHECK_TXBUFF,
+					      count, 0, &allow, sizeof(allow),
+					      100, GFP_KERNEL);
+		if (result || allow != 0)
 			count = 0;
-		kfree(allow);
 	}
 
 	if (count == 0) {
