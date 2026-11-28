@@ -13,6 +13,7 @@
 #include <linux/kernel.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
@@ -288,44 +289,28 @@ int main(int argc, char **argv)
 					watches[i].event = ret;
 					break;
 				case WATCH_CHANNEL:
-					if (!value) {
-						fprintf(stderr, "Invalid chan=<number>\n");
-						rc = EXIT_FAILURE;
-						goto err_free_watches;
-					}
-					watches[i].channel = strtoul(value, NULL, 10);
-					if (errno) {
-						perror("strtoul failed: chan=<number>\n");
-						rc = EXIT_FAILURE;
-						goto err_free_watches;
-					}
-					break;
 				case WATCH_ID:
-					if (!value) {
-						fprintf(stderr, "Invalid id=<number>\n");
+				case WATCH_PARENT: {
+					long num;
+					char *end;
+
+					errno = 0;
+					num = value ? strtol(value, &end, 10) : -1;
+					if (!value || end == value || *end || errno ||
+					    num < 0 || num > UINT8_MAX) {
+						fprintf(stderr, "Invalid value for %s\n",
+							counter_watch_subopts[ret]);
 						rc = EXIT_FAILURE;
 						goto err_free_watches;
 					}
-					watches[i].component.id = strtoul(value, NULL, 10);
-					if (errno) {
-						perror("strtoul failed: id=<number>\n");
-						rc = EXIT_FAILURE;
-						goto err_free_watches;
-					}
+					if (ret == WATCH_CHANNEL)
+						watches[i].channel = num;
+					else if (ret == WATCH_ID)
+						watches[i].component.id = num;
+					else
+						watches[i].component.parent = num;
 					break;
-				case WATCH_PARENT:
-					if (!value) {
-						fprintf(stderr, "Invalid parent=<number>\n");
-						rc = EXIT_FAILURE;
-						goto err_free_watches;
-					}
-					watches[i].component.parent = strtoul(value, NULL, 10);
-					if (errno) {
-						perror("strtoul failed: parent=<number>\n");
-						rc = EXIT_FAILURE;
-						goto err_free_watches;
-					}
-					break;
+				}
 				default:
 					fprintf(stderr, "Unknown suboption '%s'\n", value);
 					rc = EXIT_FAILURE;

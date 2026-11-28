@@ -491,6 +491,11 @@ static const struct regmap_config ti_eqep_regmap16_config = {
 	.max_register = QCPRDLAT,
 };
 
+static void ti_eqep_pm_put(void *dev)
+{
+	pm_runtime_put_sync(dev);
+}
+
 static int ti_eqep_probe(struct platform_device *pdev)
 {
 	struct device *dev = &pdev->dev;
@@ -543,19 +548,25 @@ static int ti_eqep_probe(struct platform_device *pdev)
 	 * parent PWMSS bus driver. On AM17xx, this comes from the PSC power
 	 * domain.
 	 */
-	pm_runtime_enable(dev);
-	pm_runtime_get_sync(dev);
+	err = devm_pm_runtime_enable(dev);
+	if (err)
+		return err;
+
+	err = pm_runtime_resume_and_get(dev);
+	if (err)
+		return err;
+
+	err = devm_add_action_or_reset(dev, ti_eqep_pm_put, dev);
+	if (err)
+		return err;
 
 	clk = devm_clk_get_enabled(dev, NULL);
 	if (IS_ERR(clk))
 		return dev_err_probe(dev, PTR_ERR(clk), "failed to enable clock\n");
 
 	err = counter_add(counter);
-	if (err < 0) {
-		pm_runtime_put_sync(dev);
-		pm_runtime_disable(dev);
-		return err;
-	}
+	if (err < 0)
+		return dev_err_probe(dev, err, "failed to add counter\n");
 
 	return 0;
 }
@@ -563,11 +574,8 @@ static int ti_eqep_probe(struct platform_device *pdev)
 static void ti_eqep_remove(struct platform_device *pdev)
 {
 	struct counter_device *counter = platform_get_drvdata(pdev);
-	struct device *dev = &pdev->dev;
 
 	counter_unregister(counter);
-	pm_runtime_put_sync(dev);
-	pm_runtime_disable(dev);
 }
 
 static const struct of_device_id ti_eqep_of_match[] = {

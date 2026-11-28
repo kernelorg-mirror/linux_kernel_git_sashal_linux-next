@@ -506,13 +506,16 @@ static int rz_mtu3_count_enable_write(struct counter_device *counter,
 	if (enable) {
 		pm_runtime_get_sync(counter->parent);
 		ret = rz_mtu3_initialize_counter(counter, count->id);
-		if (ret == 0)
-			priv->count_is_enabled[count->id] = true;
+		if (ret < 0) {
+			pm_runtime_put(counter->parent);
+			goto exit;
+		}
 	} else {
 		rz_mtu3_terminate_counter(counter, count->id);
-		priv->count_is_enabled[count->id] = false;
 		pm_runtime_put(counter->parent);
 	}
+
+	priv->count_is_enabled[count->id] = enable;
 
 exit:
 	mutex_unlock(&priv->lock);
