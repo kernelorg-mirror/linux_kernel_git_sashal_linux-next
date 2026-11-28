@@ -328,18 +328,6 @@ the case today. Please follow the standard stable rules in
 :ref:`Documentation/process/stable-kernel-rules.rst <stable_kernel_rules>`,
 and make sure you include appropriate Fixes tags!
 
-Security fixes
-~~~~~~~~~~~~~~
-
-Do not email netdev maintainers directly if you think you discovered
-a bug that might have possible security implications.
-The current netdev maintainer has consistently requested that
-people use the mailing lists and not reach out directly.  If you aren't
-OK with that, then perhaps consider mailing security@kernel.org or
-reading about http://oss-security.openwall.org/wiki/mailing-lists/distros
-as possible alternative mechanisms.
-
-
 Co-posting changes to user space components
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

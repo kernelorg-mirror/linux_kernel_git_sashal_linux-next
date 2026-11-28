@@ -256,11 +256,11 @@ He gets a lot of e-mail, and, at this point, very few patches go through
 Linus directly, so typically you should do your best to -avoid-
 sending him e-mail.
 
-If you have a patch that fixes an exploitable security bug, send that patch
-to security@kernel.org.  For severe bugs, a short embargo may be considered
-to allow distributors to get the patch out to users; in such cases,
-obviously, the patch should not be sent to any public lists. See also
-Documentation/process/security-bugs.rst.
+If you have a patch that fixes a bug with possible security implications, you
+need to read Documentation/process/security-bugs.rst first: it explains which
+bugs need to be handled privately, and whom to send them to.  Most such fixes
+are posted publicly like any other fix, but their reproducers and exploits must
+never be posted publicly.
 
 Patches that fix a severe bug in a released kernel should be directed
 toward the stable maintainers by putting a line like this::

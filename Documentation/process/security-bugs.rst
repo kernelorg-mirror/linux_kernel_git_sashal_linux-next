@@ -5,7 +5,59 @@ Security bugs
 
 Linux kernel developers take security very seriously.  As such, we'd
 like to know when a security bug is found so that it can be fixed and
-disclosed as quickly as possible.
+disclosed as quickly as possible. If you are a maintainer and received
+a report, there is a section dedicated to you below.
+
+What qualifies as a security bug
+--------------------------------
+
+It is important that most bugs are handled publicly so as to involve the widest
+possible audience and find the best solution.  By nature, bugs that are handled
+in closed discussions between a small set of participants are less likely to
+produce the best possible fix (e.g., risk of missing valid use cases, limited
+testing abilities). In addition, dealing with private discussions on patches
+adds much more burden to maintainers who cannot follow their usual process nor
+benefit from their usual tools. For example, many subsystems have CI jobs
+running on publicly posted patches and will not merge a fix before it has been
+validated, and automated review tools such as Sashiko review patches posted to
+the lists. Since the fix will have to be posted publicly anyway, sending it
+privately first only delays it by the time needed to ask for it to be reposted
+publicly, adds extra work, and loses the benefit of early reviews.
+
+It turns out that the majority of the bugs reported via the security team are
+just regular bugs that have been improperly qualified as security bugs due to
+a lack of awareness of the Linux kernel's threat model, as described in
+Documentation/process/threat-model.rst, and ought to have been sent through
+the normal channels described in Documentation/admin-guide/reporting-issues.rst
+instead. Note that when such a bug may still have a security impact for some
+users, its reproducer and any exploit must never be posted publicly; only the
+fix is (see Documentation/process/threat-model.rst).
+
+The security list exists for urgent bugs that grant an attacker a capability
+they are not supposed to have on a correctly configured production system, and
+can be easily exploited, representing an imminent threat to many users.  Before
+reporting, consider whether the issue actually crosses a trust boundary on such
+a system.
+
+**If you resorted to AI assistance to identify a bug, you must treat it as
+public**. While you may have valid reasons to believe it is not, the security
+team's experience shows that bugs discovered this way systematically surface
+simultaneously across multiple researchers, often on the same day. Others are
+then likely to be already working on exploiting the same bug, so keeping it
+private would protect nobody, while handling it publicly lets everyone fix it
+quickly without wasting time in a needless embargo. This applies even when the
+bug falls within the threat model: only the fix and its description are made
+public, and reporters following this procedure will never be blamed for it. In
+any case, do not publicly share a reproducer, as this could cause unintended
+harm; just mention that one is available and maintainers might ask for it
+privately if they need it, or better, send it upfront in a separate message to
+maintainers only.
+
+If you are unsure whether an issue qualifies, err on the side of reporting
+privately: the security team would rather triage a borderline report than miss
+a real vulnerability.  Reporting ordinary bugs to the security list, however,
+does not make them move faster and consumes triage capacity that other reports
+need.
 
 Preparing your report
 ---------------------
@@ -70,58 +122,100 @@ In addition, the following information are highly desirable:
     the issue appear. It is useful to share them, as they can be helpful to
     keep end users protected during the time it takes them to apply the fix.
 
-What qualifies as a security bug
---------------------------------
+Responsible use of AI to find bugs
+----------------------------------
 
-It is important that most bugs are handled publicly so as to involve the widest
-possible audience and find the best solution.  By nature, bugs that are handled
-in closed discussions between a small set of participants are less likely to
-produce the best possible fix (e.g., risk of missing valid use cases, limited
-testing abilities).
+A significant fraction of bug reports submitted to the security team are
+actually the result of code reviews assisted by AI tools. While this can be an
+efficient means to find bugs in rarely explored areas, it causes an overload on
+maintainers, who are sometimes forced to ignore such reports due to their poor
+quality or accuracy. As such, reporters must be particularly cautious about a
+number of points which tend to make these reports needlessly difficult to
+handle:
 
-It turns out that the majority of the bugs reported via the security team are
-just regular bugs that have been improperly qualified as security bugs due to
-a lack of awareness of the Linux kernel's threat model, as described in
-Documentation/process/threat-model.rst, and ought to have been sent through
-the normal channels described in Documentation/admin-guide/reporting-issues.rst
-instead.
+  * **Length**: AI-generated reports tend to be excessively long, containing
+    multiple sections and excessive detail. This makes it difficult to spot
+    important information such as affected files, versions, and impact. Please
+    ensure that a clear summary of the problem and all critical details are
+    presented first. Do not require triage engineers to scan multiple pages of
+    text. Configure your tools to produce concise, human-style reports.
 
-The security list exists for urgent bugs that grant an attacker a capability
-they are not supposed to have on a correctly configured production system, and
-can be easily exploited, representing an imminent threat to many users.  Before
-reporting, consider whether the issue actually crosses a trust boundary on such
-a system.
+  * **Formatting**: Most AI-generated reports are littered with Markdown tags.
+    These decorations complicate the search for important information and do
+    not survive the quoting processes involved in forwarding or replying.
+    Please **always convert your report to plain text** without any formatting
+    decorations before sending it.
 
-**If you resorted to AI assistance to identify a bug, you must treat it as
-public**. While you may have valid reasons to believe it is not, the security
-team's experience shows that bugs discovered this way systematically surface
-simultaneously across multiple researchers, often on the same day. In this
-case, do not publicly share a reproducer, as this could cause unintended harm;
-just mention that one is available and maintainers might ask for it privately
-if they need it.
+  * **Impact Evaluation**: Many AI-generated reports lack an understanding
+    of the kernel's threat model (see Documentation/process/threat-model.rst)
+    and go to great lengths inventing theoretical consequences. This adds
+    noise and complicates triage. Please stick to verifiable facts (e.g.,
+    "this bug permits any user to gain CAP_NET_ADMIN") without enumerating
+    speculative implications. Have your tool read this documentation as
+    part of the evaluation process.
 
-If you are unsure whether an issue qualifies, err on the side of reporting
-privately: the security team would rather triage a borderline report than miss
-a real vulnerability.  Reporting ordinary bugs to the security list, however,
-does not make them move faster and consumes triage capacity that other reports
-need.
+  * **Reproducer**: AI-based tools are often capable of generating reproducers.
+    Please always ensure your tool provides one and **test it thoroughly**. If
+    the reproducer does not work, or if the tool cannot produce one, the
+    validity of the report should be seriously questioned. Note that since the
+    report will be posted to a public list, the reproducer must only be
+    shared privately with the maintainers.
+
+  * **Propose a Fix**: Many AI tools are actually better at writing code than
+    evaluating it. Please ask your tool to propose a fix and **test it** before
+    reporting the problem. If the fix cannot be tested because it relies on
+    rare hardware or almost extinct network protocols, the issue is likely not
+    a security bug. In any case, if a fix is proposed, it must adhere to
+    Documentation/process/submitting-patches.rst and include a 'Fixes:' tag
+    designating the commit that introduced the bug.
+
+Failure to consider these points exposes your report to the risk of being
+ignored.
+
+Use common sense when evaluating the report. If the affected file has not been
+touched for more than one year and is maintained by a single individual, it is
+likely that usage has declined and exposed users are virtually non-existent
+(e.g., drivers for very old hardware, obsolete filesystems). In such cases, as
+well as when the issue is clearly trivial and publicly discoverable, there is
+no need to consume a maintainer's time with a private security report: just
+send the fix publicly like any regular bug fix, without the reproducer.
+
+At the very least, when using an AI assistant to find and report bugs, make the
+assistant read this file and threat-model.rst before proceeding, and have it
+follow the procedure described in coding-assistants.rst: work on an up-to-date
+mainline tree and note the commit ID, verify the bug is real, write a fix,
+build it warning-free and checkpatch-clean, commit it with a Fixes tag, and
+identify the maintainers with get_maintainer.pl.
+
+On top of that procedure, the AI assistant **MUST**:
+
+1. Prepare a plain-text report explaining the problem. It must contain the
+   four items listed above as absolutely necessary: the
+   affected version or commit ID noted while following the procedure above,
+   the description of the problem, the reproducer or its status, and the
+   triggering conditions.
+2. Start the report with a temporary section listing the recipients' addresses
+   (maintainers+list for the patch, maintainers only for the report and
+   reproducer), and with instructions reminding the reporter to check that
+   their email client is properly setup (see email-clients.rst), and leave it
+   to the reporter to remove that temporary section.
+
+A more detailed process is covered at https://github.com/masoncl/kres.git.
 
 Identifying contacts
 --------------------
 
 The most effective way to report a security bug is to send it directly to the
-affected subsystem's maintainers and Cc: the Linux kernel security team.  Do
-not send it to a public list at this stage, unless you have good reasons to
-consider the issue as being public or trivial to discover (e.g. result of a
-widely available automated vulnerability scanning tool that can be repeated by
-anyone, or use of AI-based tools).
+affected subsystem's maintainers, and to Cc: the Linux kernel security team
+when needed (see below).  Do not send it to a public list at this stage,
+unless you have good reasons to consider the issue as being public or trivial
+to discover (e.g. result of a widely available automated vulnerability
+scanning tool that can be repeated by anyone, or use of AI-based tools).  Even
+in this case, never post a reproducer or an exploit to a public list; only
+maintainers need it, and publishing it could put some users in trouble.
 
-If you're sending a report for issues affecting multiple parts in the kernel,
-even if they're fairly similar issues, please send individual messages (think
-that maintainers will not all work on the issues at the same time). The only
-exception is when an issue concerns closely related parts maintained by the
-exact same subset of maintainers, and these parts are expected to be fixed all
-at once by the same commit, then it may be acceptable to report them at once.
+Finding the maintainers
+~~~~~~~~~~~~~~~~~~~~~~~
 
 One difficulty for most first-time reporters is to figure the right list of
 recipients to send a report to.  In the Linux kernel, all official maintainers
@@ -171,85 +265,41 @@ the Linux kernel security team only.  Your message will be triaged, and you
 will receive instructions about whom to contact, if needed.  Your message may
 equally be forwarded as-is to the relevant maintainers.
 
-Responsible use of AI to find bugs
-----------------------------------
+Copying the security team
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A significant fraction of bug reports submitted to the security team are
-actually the result of code reviews assisted by AI tools. While this can be an
-efficient means to find bugs in rarely explored areas, it causes an overload on
-maintainers, who are sometimes forced to ignore such reports due to their poor
-quality or accuracy. As such, reporters must be particularly cautious about a
-number of points which tend to make these reports needlessly difficult to
-handle:
+The report must be sent to maintainers.  You must also Cc: the Linux kernel
+security team in any of the following cases:
 
-  * **Length**: AI-generated reports tend to be excessively long, containing
-    multiple sections and excessive detail. This makes it difficult to spot
-    important information such as affected files, versions, and impact. Please
-    ensure that a clear summary of the problem and all critical details are
-    presented first. Do not require triage engineers to scan multiple pages of
-    text. Configure your tools to produce concise, human-style reports.
+  * it is your first report: many first reports are incomplete, too long, too
+    strong, difficult to handle, and put a lot of pressure on maintainers. The
+    security team will help with the process and with the qualification of the
+    issue. Note that this rule also applies if you were asked to fix or adjust
+    a previous submission;
 
-  * **Formatting**: Most AI-generated reports are littered with Markdown tags.
-    These decorations complicate the search for important information and do
-    not survive the quoting processes involved in forwarding or replying.
-    Please **always convert your report to plain text** without any formatting
-    decorations before sending it.
+  * there are two or fewer maintainers among the recipients: the security
+    team will ensure the message is delivered to the proper people, and
+    will be able to assist small maintainer teams with processes they may
+    not be familiar with;
 
-  * **Impact Evaluation**: Many AI-generated reports lack an understanding
-    of the kernel's threat model (see Documentation/process/threat-model.rst)
-    and go to great lengths inventing theoretical consequences. This adds
-    noise and complicates triage. Please stick to verifiable facts (e.g.,
-    "this bug permits any user to gain CAP_NET_ADMIN") without enumerating
-    speculative implications. Have your tool read this documentation as
-    part of the evaluation process.
+  * the maintainers could not be clearly identified (see above);
 
-  * **Reproducer**: AI-based tools are often capable of generating reproducers.
-    Please always ensure your tool provides one and **test it thoroughly**. If
-    the reproducer does not work, or if the tool cannot produce one, the
-    validity of the report should be seriously questioned. Note that since the
-    report will be posted to a public list, the reproducer should only be
-    shared upon maintainers' request.
+  * the impact of the issue is uncertain and needs to be qualified. In this
+    case, your must clearly state upfront that you are seeking help to qualify
+    this impact, and you will need to share any information you have;
 
-  * **Propose a Fix**: Many AI tools are actually better at writing code than
-    evaluating it. Please ask your tool to propose a fix and **test it** before
-    reporting the problem. If the fix cannot be tested because it relies on
-    rare hardware or almost extinct network protocols, the issue is likely not
-    a security bug. In any case, if a fix is proposed, it must adhere to
-    Documentation/process/submitting-patches.rst and include a 'Fixes:' tag
-    designating the commit that introduced the bug.
+  * you are seeking specific help, such as when resending a message which got
+    no response within a week (see "After sending the report").
 
-Failure to consider these points exposes your report to the risk of being
-ignored.
+Otherwise, when a report of clear impact is sent to a larger team of clearly
+identified maintainers, it is not necessary to Cc: the security list.  Never
+Cc: the security list on a message sent to a public list.
 
-Use common sense when evaluating the report. If the affected file has not been
-touched for more than one year and is maintained by a single individual, it is
-likely that usage has declined and exposed users are virtually non-existent
-(e.g., drivers for very old hardware, obsolete filesystems). In such cases,
-there is no need to consume a maintainer's time with an unimportant report. If
-the issue is clearly trivial and publicly discoverable, you should report it
-directly to the public mailing lists.
-
-At the very least, when using an AI assistant to find and report bugs, make the
-assistant read this file and threat-model.rst before proceeding, and have it
-follow the procedure described in coding-assistants.rst: work on an up-to-date
-mainline tree and note the commit ID, verify the bug is real, write a fix,
-build it warning-free and checkpatch-clean, commit it with a Fixes tag, and
-identify the maintainers with get_maintainer.pl.
-
-On top of that procedure, the AI assistant **MUST**:
-
-1. Prepare a plain-text report explaining the problem. It must contain the
-   four items listed at the top of this file as absolutely necessary: the
-   affected version or commit ID noted while following the procedure above,
-   the description of the problem, the reproducer or its status, and the
-   triggering conditions.
-2. Start the report with a temporary section listing the recipients' addresses
-   (maintainers+list for the patch, maintainers only for the report and
-   reproducer), and with instructions reminding the reporter to check that
-   their email client is properly setup (see email-clients.rst), and leave it
-   to the reporter to remove that temporary section.
-
-A more detailed process is covered at https://github.com/masoncl/kres.git.
+The Linux kernel security team can be contacted by email at
+<security@kernel.org>.  This is a private list of security officers
+who will help verify the bug report and assist developers working on a fix.
+It is possible that the security team will bring in extra help from area
+maintainers to understand and fix the security vulnerability.
 
 Sending the report
 ------------------
@@ -257,6 +307,84 @@ Sending the report
 Reports are to be sent over e-mail exclusively.  Please use a working e-mail
 address, preferably the same that you want to appear in ``Reported-by`` tags
 if any.  If unsure, send your report to yourself first.
+
+If you're sending a report for issues affecting multiple parts in the kernel,
+even if they're fairly similar issues, please send individual messages (think
+that maintainers will not all work on the issues at the same time). The only
+exception is when an issue concerns closely related parts maintained by the
+exact same subset of maintainers, and these parts are expected to be fixed all
+at once by the same commit, then it may be acceptable to report them at once.
+
+If this is your first report, send only one, and wait for confirmation that it
+is in the expected form before sending the other ones as individual messages.
+The vast majority of first reports need to be adjusted, and otherwise the same
+mistakes are repeated in all of them, putting needless pressure on the
+maintainers and on the security team.  Violating this rule is a clear
+indication that the reporter did not read this document, and such reporters
+should be prepared not to receive any response at all, as maintainers and the
+security team have better things to do than to repeat what is written here.
+
+Please send **plain text** emails without attachments where possible.
+It is much harder to have a context-quoted discussion about a complex
+issue if all the details are hidden away in attachments. Archives (zip, tar,
+etc.), binary files and documents (PDF, etc.) are never acceptable: when a
+reproducer is too large to be placed in the message, attach its source files
+as plain text, and provide scripts that generate the required files (e.g. file
+system images) instead of the files themselves. Think of it like a
+:doc:`regular patch submission <../process/submitting-patches>`
+(even if you don't have a patch yet): describe the problem and impact, and
+list reproduction steps, all in plain text, then provide a proposed fix as
+described below.
+Markdown, HTML and RST formatted reports are particularly frowned upon since
+they're quite hard to read for humans and encourage to use dedicated viewers,
+sometimes online, which by definition is not acceptable for a confidential
+security report. Note that some mailers tend to mangle formatting of plain
+text by default, please consult Documentation/process/email-clients.rst for
+more info.
+
+Sending a fix
+~~~~~~~~~~~~~
+
+Most fixes sent along with reports cannot be applied as-is because they were
+damaged by the mailer or lacking a commit message, forcing maintainers to ask
+for a resend. A fix must be applicable using ``git am``, which is most easily
+achieved by letting git produce and send the messages (see
+Documentation/process/submitting-patches.rst).
+
+When the fix is meant to only be sent privately, the preferred method is to
+send the report as a cover letter of a series, followed by the fix::
+
+  $ git format-patch --cover-letter -1
+  (edit 0000-cover-letter.patch and replace the subject and text with the
+   report's subject and text)
+  $ git send-email --suppress-cc=all --to=<maintainers> 000*.patch
+
+The recipients are those determined above (add ``--cc=`` for the security team
+when needed). The ``--suppress-cc=all`` option is important: without it,
+``git send-email`` also sends the messages to addresses found in the patch's
+tags (e.g. ``Cc: stable@vger.kernel.org``), which would leak the report to a
+public list.
+
+If the report was already sent, the fix may be sent as a reply to it, to the
+same recipients, for example using ``git send-email --suppress-cc=all
+--in-reply-to=<report's Message-ID>``. As a last resort, when none of these
+methods is possible, the file produced by ``git format-patch`` may be attached
+as-is to the report, but be aware that some maintainers will not look at
+attachments. However, never attach more than one patch per message without
+being explicitly invited to so, as this would significantly complicate reviews.
+
+When the fix is meant to be public (e.g. for bugs found using AI-based tools,
+see above), send it using ``git send-email`` to the maintainers and lists
+reported by get_maintainer.pl (i.e. without the ``--no-l`` option), with a
+commit message that does not detail how to exploit the bug. Then send the
+report and the reproducer privately to the maintainers (and to the security
+team when needed), mentioning the patch's Message-ID or its link on
+https://lore.kernel.org/ so that they can be matched. The report may also be
+sent as a reply to the public message, after carefully removing all public
+addresses from the To: and Cc: fields.
+
+After sending the report
+------------------------
 
 The security team and maintainers almost always require additional
 information beyond what was initially provided in a report and rely on
@@ -268,33 +396,44 @@ run additional tests.  Reports where the reporter does not respond promptly
 or cannot effectively discuss their findings may be abandoned if the
 communication does not quickly improve.
 
-The report must be sent to maintainers.  If there are two or fewer
-recipients in your message, you must also always Cc: the Linux kernel
-security team who will ensure the message is delivered to the proper
-people, and will be able to assist small maintainer teams with processes
-they may not be familiar with.  For larger teams, Cc: the Linux kernel
-security team for your first few reports or when seeking specific help,
-such as when resending a message which got no response within a week.
-Once you have become comfortable with the process for a few reports, it is
-no longer necessary to Cc: the security list when sending to large teams.
-The Linux kernel security team can be contacted by email at
-<security@kernel.org>.  This is a private list of security officers
-who will help verify the bug report and assist developers working on a fix.
-It is possible that the security team will bring in extra help from area
-maintainers to understand and fix the security vulnerability.
+In practice, a report for which questions or requests from the security team
+or the maintainers remain unanswered for 7 days will most likely be dropped.
+This matches the maximum embargo duration described below, which is how long
+the security team considers it reasonable to keep an issue private.  Given the
+number of reports handled in parallel, the same bug may also end up being fixed
+later after being reported by someone else, in which case credit can no longer
+be guaranteed.
 
-Please send **plain text** emails without attachments where possible.
-It is much harder to have a context-quoted discussion about a complex
-issue if all the details are hidden away in attachments.  Think of it like a
-:doc:`regular patch submission <../process/submitting-patches>`
-(even if you don't have a patch yet): describe the problem and impact, list
-reproduction steps, and follow it with a proposed fix, all in plain text.
-Markdown, HTML and RST formatted reports are particularly frowned upon since
-they're quite hard to read for humans and encourage to use dedicated viewers,
-sometimes online, which by definition is not acceptable for a confidential
-security report. Note that some mailers tend to mangle formatting of plain
-text by default, please consult Documentation/process/email-clients.rst for
-more info.
+Messages sometimes get lost, especially those containing attachments or HTML.
+Since the report is private, you have no other way to know whether it was
+delivered than to ask. However, some subsystems have a long report queue, some
+maintainers are overloaded or only work in their spare time, so please wait for
+a week without any response before resending your report with the security team
+in Cc: (see above). In this case, be clear about the fact that it is a resend,
+and if possible, provide a reference to the original message. Better double
+check that the message is sent in plain text, and drop any attachment when
+resending, to increase the chances of successful delivery. In any case, please
+do not ask for proper receipt before this delay. This will not make your report
+be processed faster, will add extra load on maintainers and all you risk is
+your future messages being ignored.
+
+For maintainers receiving a report
+----------------------------------
+
+If you maintain some code in the kernel and received a security report, don't
+panic, you're not alone! The wording of AI-generated reports these days tends
+to sound scary, but just stick to technical facts and proceed like you would
+with any other bug report. Feel free to share the report with other maintainers
+who you think can help you, telling them upfront that the report is private.
+Many other reports are being handled by other maintainers at any instant, do
+not start to worry that the security of the whole kernel suddenly depends on
+your ability to provide a quick fix. Do not let reporters dictate conditions
+that are not compatible with what this document describes. If you have any
+question or doubt, be it about the validity of the report, its impact, the
+process to follow, difficult interactions with a reporter, or even if you've
+mistakenly leaked part of the report to a public list (yes, this happens), just
+ask the security team for help, for example by replying to the report with the
+security team in Cc:, or by forwarding it to them if you're seeking advice.
 
 Disclosure and embargoed information
 ------------------------------------

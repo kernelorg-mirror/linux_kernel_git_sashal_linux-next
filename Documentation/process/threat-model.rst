@@ -105,7 +105,21 @@ In the Linux kernel's threat model, the following classes of problems are
 **NOT** considered Linux Kernel vulnerabilities. However, when it is believed
 that the kernel could do better, they should be reported, so that they can be
 reviewed and fixed where reasonably possible, but they will be handled as any
-regular bug:
+regular bug.
+
+Some of these bugs may still have a security impact for a few users, for
+example when their exploitation requires a dedicated network link, a crafted
+device, or a crafted file system image that only root may mount. For the vast
+majority of users the impact is null, and such isolated bugs do not represent a
+target worth writing an exploit for, which is why they are handled publicly
+(a CVE may still be assigned later by the :doc:`CVE team <cve>`). However,
+publishing a reproducer or an exploit could put the few exposed users at risk.
+For such bugs, the fix is sent publicly like any regular fix, with a commit
+message that does not detail how to exploit the bug, while the reproducer and
+any exploit are only shared privately with the maintainers and are never posted
+to public lists.
+
+The following classes of problems are not considered vulnerabilities:
 
 * **Configuration**:
 
@@ -220,7 +234,12 @@ regular bug:
     image: mounting a block device is a privileged operation (see above), and
     the administrator is responsible for the media they mount. This includes
     issues that are resolved, mitigated, or detected by running a filesystem
-    consistency check (fsck) on the image prior to mounting.
+    consistency check (fsck) on the image prior to mounting. Automatic
+    mounting of unchecked file systems (e.g. removable media mounted by a
+    desktop environment) does not change this: an automounter is expected to
+    check a file system before mounting it, otherwise it is at fault, and if
+    the check does not detect the issue, the file system checker is at fault.
+    In such cases, fixes should be directed to these tools.
 
   * bugs whose reproduction requires hardware modification or emulation,
     including fake USB devices that pretend to be another one, or devices
