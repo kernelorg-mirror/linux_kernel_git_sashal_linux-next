@@ -178,17 +178,16 @@ noinstr void *aarch64_insn_set(void *dst, u32 insn, size_t len)
 
 int __kprobes aarch64_insn_patch_text_nosync(void *addr, u32 insn)
 {
-	u32 *tp = addr;
+	uintptr_t tp = (uintptr_t)addr;
 	int ret;
 
 	/* A64 instructions must be word aligned */
-	if ((uintptr_t)tp & 0x3)
+	if (tp & 0x3)
 		return -EINVAL;
 
-	ret = aarch64_insn_write(tp, insn);
+	ret = aarch64_insn_write(addr, insn);
 	if (ret == 0)
-		caches_clean_inval_pou((uintptr_t)tp,
-				     (uintptr_t)tp + AARCH64_INSN_SIZE);
+		caches_clean_inval_pou(tp, tp + AARCH64_INSN_SIZE);
 
 	return ret;
 }

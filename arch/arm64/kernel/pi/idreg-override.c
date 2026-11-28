@@ -354,8 +354,9 @@ static __init void __parse_cmdline(const char *cmdline, bool parse_aliases)
 
 		cmdline = skip_spaces(cmdline);
 
-		/* terminate on "--" appearing on the command line by itself */
-		if (cmdline[0] == '-' && cmdline[1] == '-' && isspace(cmdline[2]))
+		/* Stop at "--" appearing as a separate argument. */
+		if (cmdline[0] == '-' && cmdline[1] == '-' &&
+		    (!cmdline[2] || isspace(cmdline[2])))
 			return;
 
 		for (len = 0; cmdline[len] && !isspace(cmdline[len]); len++) {
@@ -385,15 +386,17 @@ static __init const u8 *get_bootargs_cmdline(const void *fdt, int node)
 {
 	static char const bootargs[] __initconst = "bootargs";
 	const u8 *prop;
+	int len;
 
 	if (node < 0)
 		return NULL;
 
-	prop = fdt_getprop(fdt, node, bootargs, NULL);
-	if (!prop)
+	prop = fdt_getprop(fdt, node, bootargs, &len);
+	/* No bootargs for a missing, zero-length, or empty-string property. */
+	if (!prop || !len || !*prop)
 		return NULL;
 
-	return strlen(prop) ? prop : NULL;
+	return prop;
 }
 
 static __init void parse_cmdline(const void *fdt, int chosen)

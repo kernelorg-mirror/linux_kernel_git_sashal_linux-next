@@ -494,10 +494,8 @@ static int restore_sve_fpsimd_context(struct user_ctxs *user)
 	}
 
 	sve_alloc(current, true);
-	if (!current->thread.sve_state) {
-		clear_thread_flag(TIF_SVE);
+	if (!current->thread.sve_state)
 		return -ENOMEM;
-	}
 
 	if (sm) {
 		current->thread.svcr |= SVCR_SM_MASK;
@@ -629,11 +627,8 @@ static int restore_za_context(struct user_ctxs *user)
 		return -ENOMEM;
 
 	sme_alloc(current, true);
-	if (!current->thread.sme_state) {
-		current->thread.svcr &= ~SVCR_ZA_MASK;
-		clear_thread_flag(TIF_SME);
+	if (!current->thread.sme_state)
 		return -ENOMEM;
-	}
 
 	err = __copy_from_user(current->thread.sme_state,
 			       (char __user const *)user->za +

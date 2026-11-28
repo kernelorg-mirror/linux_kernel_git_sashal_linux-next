@@ -966,18 +966,17 @@ static int sve_set_common(struct task_struct *target,
 		return -EINVAL;
 
 	/*
-	 * On systems without SVE we accept FPSIMD format writes with
-	 * a VL of 0 to allow exiting streaming mode, otherwise a VL
-	 * is required.
+	 * On systems with SME but not SVE, accept writes to NT_ARM_SVE if and
+	 * only if VL==0 and data is in FPSIMD format and no flags are set.
+	 * This permits exiting streaming mode, and avoids the possibility of
+	 * creating non-streaming SVE state.
 	 */
-	if (header.vl) {
-		/*
-		 * If the system does not support SVE we can't
-		 * configure a SVE VL.
-		 */
-		if (!system_supports_sve() && type == ARM64_VEC_SVE)
+	if (!system_supports_sve() && type == ARM64_VEC_SVE) {
+		if (header.vl)
 			return -EINVAL;
-
+		if (header.flags != SVE_PT_REGS_FPSIMD)
+			return -EINVAL;
+	} else {
 		/*
 		 * Apart from SVE_PT_REGS_MASK, all SVE_PT_* flags are
 		 * consumed by vec_set_vector_length(), which will
@@ -987,17 +986,6 @@ static int sve_set_common(struct task_struct *target,
 					    ((unsigned long)header.flags & ~SVE_PT_REGS_MASK) << 16);
 		if (ret)
 			return ret;
-	} else {
-		/* If the system supports SVE we require a VL. */
-		if (system_supports_sve())
-			return -EINVAL;
-
-		/*
-		 * Only FPSIMD formatted data with no flags set is
-		 * supported.
-		 */
-		if (header.flags != SVE_PT_REGS_FPSIMD)
-			return -EINVAL;
 	}
 
 	/* Allocate SME storage if necessary, preserving any existing ZA/ZT state */

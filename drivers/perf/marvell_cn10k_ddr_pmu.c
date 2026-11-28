@@ -516,7 +516,7 @@ module_param_named(poll_period_sec, cn10k_ddr_pmu_poll_period_sec, ulong, 0644);
 
 static ktime_t cn10k_ddr_pmu_timer_period(void)
 {
-	return ms_to_ktime((u64)cn10k_ddr_pmu_poll_period_sec * USEC_PER_SEC);
+	return ms_to_ktime((u64)cn10k_ddr_pmu_poll_period_sec * MSEC_PER_SEC);
 }
 
 static int ddr_perf_get_event_bitmap(int eventid, u64 *event_bitmap,
